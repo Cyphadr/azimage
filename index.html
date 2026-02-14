@@ -1350,6 +1350,7 @@
     ? "https://azimage-production.up.railway.app/api/az-generate-ai"
     : "/api/az-generate-ai";
   const AI_TIMEOUT_MS = 30000;
+  const MAX_UPLOAD_FILE_BYTES = 1024 * 1024; // 1MB
   const FALLBACK_VARS = {
     "--bg":"#0b0f14",
     "--card":"#111824",
@@ -1835,10 +1836,7 @@
 
   function insertImageFromFile(file){
     if(!file) return;
-    if(!/^image\//i.test(file.type || "")){
-      showToast("请选择图片文件。");
-      return;
-    }
+    if(!validateImageUploadFile(file, "文段插图")) return;
     const reader = new FileReader();
     reader.onload = ()=>{
       const src = String(reader.result || "");
@@ -1850,6 +1848,19 @@
       showToast("图片已插入文段。");
     };
     reader.readAsDataURL(file);
+  }
+
+  function validateImageUploadFile(file, label){
+    if(!file) return false;
+    if(!/^image\//i.test(file.type || "")){
+      showToast(`${label}请选择图片文件。`);
+      return false;
+    }
+    if((Number(file.size) || 0) > MAX_UPLOAD_FILE_BYTES){
+      showToast(`${label}不能超过 1MB。`);
+      return false;
+    }
+    return true;
   }
 
   function applyRichCommand(cmd){
@@ -2413,8 +2424,9 @@
   }
 
   function setFrameBackgroundImageFile(kind, file){
-    if(!file) return;
+    if(!file) return false;
     const isCover = kind === "cover";
+    if(!validateImageUploadFile(file, isCover ? "封面背景图" : "卡片页背景图")) return false;
     const dataKey = isCover ? "coverBgImageData" : "letterBgImageData";
     const runtimeKey = isCover ? "coverBgImageRuntimeUrl" : "letterBgImageRuntimeUrl";
     const objectKey = isCover ? "coverBgImageObjectUrl" : "letterBgImageObjectUrl";
@@ -2455,6 +2467,7 @@
     };
     reader.onerror = ()=>{};
     reader.readAsDataURL(file);
+    return true;
   }
 
   function setCoverImageData(dataUrl){
@@ -3193,9 +3206,13 @@
   coverBgImageInput.addEventListener("change", (e)=>{
     const file = e.target.files && e.target.files[0];
     if(!file) return;
+    const ok = setFrameBackgroundImageFile("cover", file);
+    if(!ok){
+      coverBgImageInput.value = "";
+      return;
+    }
     state.coverBgImageEnabled = true;
     coverBgImageEnabled.checked = true;
-    setFrameBackgroundImageFile("cover", file);
     applyPreviewBackground();
     showToast("封面背景图已更新。");
     coverBgImageInput.value = "";
@@ -3216,9 +3233,13 @@
   letterBgImageInput.addEventListener("change", (e)=>{
     const file = e.target.files && e.target.files[0];
     if(!file) return;
+    const ok = setFrameBackgroundImageFile("letter", file);
+    if(!ok){
+      letterBgImageInput.value = "";
+      return;
+    }
     state.letterBgImageEnabled = true;
     letterBgImageEnabled.checked = true;
-    setFrameBackgroundImageFile("letter", file);
     applyPreviewBackground();
     showToast("卡片页背景图已更新。");
     letterBgImageInput.value = "";
@@ -3239,6 +3260,10 @@
   coverImageInput.addEventListener("change", (e)=>{
     const file = e.target.files && e.target.files[0];
     if(!file) return;
+    if(!validateImageUploadFile(file, "封面头图")){
+      coverImageInput.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onload = ()=>{
       setCoverImageData(String(reader.result || ""));
