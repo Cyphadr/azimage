@@ -611,6 +611,10 @@
       font-size: var(--custom-meta-size, var(--font-size-small)) !important;
       line-height: 1.36 !important;
       display: inline-block;
+      min-width: 0 !important;
+      width: max-content;
+      max-width: 100%;
+      white-space: nowrap;
     }
     #previewScope .az-body-page-watermark__input{
       text-align: center;
@@ -622,10 +626,14 @@
     /* Keep watermark as overlay so it won't push card away from center. */
     #previewScope .az-letter-page > .az-body-page-watermark{
       position: absolute !important;
-      left: 50% !important;
+      left: 0 !important;
+      right: 0 !important;
       bottom: var(--spacing-page);
-      transform: translateX(-50%) !important;
+      transform: none !important;
       padding: 0 !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
       align-self: auto !important;
       z-index: 2;
     }
