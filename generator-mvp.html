@@ -914,6 +914,9 @@
         <div class="row" id="projectSaveLoadMount">
           <button class="btn" id="saveLocalBtn">保存本地</button>
           <button class="btn" id="loadLocalBtn">导入进度</button>
+          <button class="btn" id="exportJsonBtn">导出JSON</button>
+          <button class="btn" id="importJsonBtn">读取JSON</button>
+          <input id="importJsonInput" type="file" accept=".json,application/json" hidden />
         </div>
 
         <div class="hr"></div>
@@ -1369,6 +1372,7 @@
     : "/api/az-generate-ai";
   const AI_TIMEOUT_MS = 30000;
   const MAX_UPLOAD_FILE_BYTES = 1024 * 1024; // 1MB
+  const MAX_PROGRESS_JSON_BYTES = 5 * 1024 * 1024; // 5MB
   const FALLBACK_VARS = {
     "--bg":"#0b0f14",
     "--card":"#111824",
@@ -1586,6 +1590,9 @@
   const exportZipBtn = $("exportZipBtn");
   const exportLongBtn = $("exportLongBtn");
   const exportStatusPill = $("exportStatusPill");
+  const exportJsonBtn = $("exportJsonBtn");
+  const importJsonBtn = $("importJsonBtn");
+  const importJsonInput = $("importJsonInput");
 
   const coverBgColor = $("coverBgColor");
   const letterBgColor = $("letterBgColor");
@@ -2820,6 +2827,17 @@
     a.remove();
   }
 
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=> URL.revokeObjectURL(url), 500);
+  }
+
   function safeTitle(){
     const t = ($("projectTitle").value || "").trim() || state.projectTitle || "AZ";
     return t.replace(/[\\/:*?"<>|]+/g,"_").slice(0,40);
@@ -3130,9 +3148,12 @@
 
   // ---------- Local save/load ----------
   const STORAGE_KEY = "az_writer_demo_v3_unified_theme";
-  function saveLocal(){
+  const PROGRESS_SCHEMA = "az-progress";
+  const PROGRESS_VERSION = 1;
+
+  function buildProgressData(){
     saveCurrentEdits();
-    const payload = {
+    return {
       projectTitle: $("projectTitle").value,
       projectAuthor: $("projectAuthor").value,
       projectSubtitle: projectSubtitleInput.value,
@@ -3151,63 +3172,152 @@
       items: state.items,
       current: state.current
     };
+  }
+
+  function normalizeProgressPayload(raw){
+    if(!raw || typeof raw !== "object") return null;
+    if(raw.schema === PROGRESS_SCHEMA && raw.data && typeof raw.data === "object"){
+      return raw.data;
+    }
+    return raw;
+  }
+
+  function applyProgressData(p, successMsg){
+    if(!p || typeof p !== "object"){
+      showToast("载入失败：JSON 内容无效。");
+      return false;
+    }
+    state.style = p.style || state.style;
+    state.theme = THEME_IDS.includes(p.theme) ? p.theme : state.theme;
+    state.vars = p.vars || readThemeVarsFromCss(state.theme);
+    state.coverBgImageEnabled = typeof p.coverBgImageEnabled === "boolean"
+      ? p.coverBgImageEnabled
+      : (typeof p.bgImageEnabled === "boolean" ? p.bgImageEnabled : true);
+    state.letterBgImageEnabled = typeof p.letterBgImageEnabled === "boolean"
+      ? p.letterBgImageEnabled
+      : (typeof p.bgImageEnabled === "boolean" ? p.bgImageEnabled : true);
+    state.coverImageEnabled = typeof p.coverImageEnabled === "boolean" ? p.coverImageEnabled : true;
+    if(p.items && typeof p.items === "object"){
+      const nextItems = {};
+      letters.forEach((L)=>{
+        const src = p.items[L];
+        const prev = state.items[L] || {};
+        nextItems[L] = {
+          en: String(src && src.en != null ? src.en : prev.en || ""),
+          zh: String(src && src.zh != null ? src.zh : prev.zh || ""),
+          text: sanitizeEntryHtml(toCandidateEntryHtml(src && src.text != null ? src.text : prev.text || "")),
+          locked: !!(src && src.locked)
+        };
+      });
+      state.items = nextItems;
+    }
+    const currentLetter = normalizeLetter(p.current || "A");
+    state.current = currentLetter || "A";
+    state.projectSubtitle = typeof p.projectSubtitle === "string"
+      ? p.projectSubtitle
+      : (typeof p.cardMetaTitle === "string" ? p.cardMetaTitle : state.projectSubtitle);
+    state.projectWatermark = typeof p.projectWatermark === "string"
+      ? p.projectWatermark
+      : (typeof p.cardWatermark === "string" ? p.cardWatermark : state.projectWatermark);
+    state.aiKeywords = typeof p.aiKeywords === "string" ? p.aiKeywords : "";
+    state.aiStyleHint = typeof p.aiStyleHint === "string" ? p.aiStyleHint : "";
+
+    $("themeSelect").value = state.theme;
+    $("projectTitle").value = p.projectTitle || "";
+    $("projectAuthor").value = p.projectAuthor || "";
+    projectSubtitleInput.value = state.projectSubtitle;
+    projectWatermarkInput.value = state.projectWatermark;
+    aiKeywordsInput.value = state.aiKeywords;
+    aiStyleHintInput.value = state.aiStyleHint;
+    coverBgImageEnabled.checked = state.coverBgImageEnabled;
+    letterBgImageEnabled.checked = state.letterBgImageEnabled;
+    coverImageEnabled.checked = state.coverImageEnabled;
+    setFrameBackgroundImageData("cover", p.coverBgImageData || p.bgImageData || "");
+    setFrameBackgroundImageData("letter", p.letterBgImageData || p.bgImageData || "");
+    setCoverImageData(p.coverImageData || "");
+
+    clearCustomStyleVars();
+    setCSSVars(state.vars);
+    radius.value = parseInt(state.vars["--radius"],10) || 18;
+    radiusLabel.textContent = `${radius.value}px`;
+    syncFineTuneControls(false);
+
+    renderAZ();
+    loadCurrentEdits();
+    renderPreview();
+    showToast(successMsg || "已载入进度。");
+    return true;
+  }
+
+  function saveLocal(){
+    const payload = buildProgressData();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     showToast("已保存到本地（localStorage）。");
   }
+
   function loadLocal(){
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw){ showToast("本地没有存档。"); return; }
     try{
-      const p = JSON.parse(raw);
-      state.style = p.style || state.style;
-      state.theme = THEME_IDS.includes(p.theme) ? p.theme : state.theme;
-      state.vars = p.vars || readThemeVarsFromCss(state.theme);
-      state.coverBgImageEnabled = typeof p.coverBgImageEnabled === "boolean"
-        ? p.coverBgImageEnabled
-        : (typeof p.bgImageEnabled === "boolean" ? p.bgImageEnabled : true);
-      state.letterBgImageEnabled = typeof p.letterBgImageEnabled === "boolean"
-        ? p.letterBgImageEnabled
-        : (typeof p.bgImageEnabled === "boolean" ? p.bgImageEnabled : true);
-      state.coverImageEnabled = typeof p.coverImageEnabled === "boolean" ? p.coverImageEnabled : true;
-      state.items = p.items || state.items;
-      state.current = p.current || "A";
-      state.projectSubtitle = typeof p.projectSubtitle === "string"
-        ? p.projectSubtitle
-        : (typeof p.cardMetaTitle === "string" ? p.cardMetaTitle : state.projectSubtitle);
-      state.projectWatermark = typeof p.projectWatermark === "string"
-        ? p.projectWatermark
-        : (typeof p.cardWatermark === "string" ? p.cardWatermark : state.projectWatermark);
-      state.aiKeywords = typeof p.aiKeywords === "string" ? p.aiKeywords : "";
-      state.aiStyleHint = typeof p.aiStyleHint === "string" ? p.aiStyleHint : "";
-
-      $("themeSelect").value = state.theme;
-      $("projectTitle").value = p.projectTitle || "";
-      $("projectAuthor").value = p.projectAuthor || "";
-      projectSubtitleInput.value = state.projectSubtitle;
-      projectWatermarkInput.value = state.projectWatermark;
-      aiKeywordsInput.value = state.aiKeywords;
-      aiStyleHintInput.value = state.aiStyleHint;
-      coverBgImageEnabled.checked = state.coverBgImageEnabled;
-      letterBgImageEnabled.checked = state.letterBgImageEnabled;
-      coverImageEnabled.checked = state.coverImageEnabled;
-      setFrameBackgroundImageData("cover", p.coverBgImageData || p.bgImageData || "");
-      setFrameBackgroundImageData("letter", p.letterBgImageData || p.bgImageData || "");
-      setCoverImageData(p.coverImageData || "");
-
-      clearCustomStyleVars();
-      setCSSVars(state.vars);
-      radius.value = parseInt(state.vars["--radius"],10) || 18;
-      radiusLabel.textContent = `${radius.value}px`;
-      syncFineTuneControls(false);
-
-      renderAZ();
-      loadCurrentEdits();
-      renderPreview();
-      showToast("已从本地载入。");
+      const parsed = JSON.parse(raw);
+      const payload = normalizeProgressPayload(parsed);
+      applyProgressData(payload, "已从本地载入。");
     }catch(e){
       console.error(e);
       showToast("载入失败：存档损坏。");
     }
+  }
+
+  function exportProgressJson(){
+    try{
+      const payload = buildProgressData();
+      const wrapped = {
+        schema: PROGRESS_SCHEMA,
+        version: PROGRESS_VERSION,
+        exportedAt: new Date().toISOString(),
+        data: payload
+      };
+      const blob = new Blob([JSON.stringify(wrapped, null, 2)], {
+        type: "application/json;charset=utf-8"
+      });
+      downloadBlob(blob, `${safeTitle()}-progress.json`);
+      showToast("已导出 JSON 进度文件。");
+    }catch(e){
+      console.error(e);
+      showToast("导出 JSON 失败。");
+    }
+  }
+
+  function importProgressJson(){
+    if(importJsonInput){
+      importJsonInput.click();
+    }
+  }
+
+  function handleImportProgressJsonFile(file){
+    if(!file) return;
+    if((Number(file.size) || 0) > MAX_PROGRESS_JSON_BYTES){
+      showToast("JSON 文件不能超过 5MB。");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const rawText = String(reader.result || "");
+        const parsed = JSON.parse(rawText);
+        const payload = normalizeProgressPayload(parsed);
+        if(!applyProgressData(payload, "已从 JSON 导入进度。")){
+          return;
+        }
+      }catch(e){
+        console.error(e);
+        showToast("JSON 导入失败：文件格式无效。");
+      }
+    };
+    reader.onerror = ()=>{
+      showToast("JSON 导入失败：读取文件失败。");
+    };
+    reader.readAsText(file, "utf-8");
   }
 
   // ---------- Events ----------
@@ -3453,6 +3563,20 @@
   $("resetVarsBtn").addEventListener("click", ()=> applyTheme(state.theme));
   $("saveLocalBtn").addEventListener("click", saveLocal);
   $("loadLocalBtn").addEventListener("click", loadLocal);
+  if(exportJsonBtn){
+    exportJsonBtn.addEventListener("click", exportProgressJson);
+  }
+  if(importJsonBtn){
+    importJsonBtn.addEventListener("click", importProgressJson);
+  }
+  if(importJsonInput){
+    importJsonInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      handleImportProgressJsonFile(file);
+      importJsonInput.value = "";
+    });
+  }
 
   $("exportCoverBtn").addEventListener("click", exportCoverPNG);
   $("exportOneBtn").addEventListener("click", ()=>{
