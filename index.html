@@ -47,6 +47,7 @@
 
       --fontTitle: ui-serif, Georgia, "Times New Roman", serif;
       --fontBody: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --editor-font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
     }
     *{box-sizing:border-box}
     body{
@@ -185,9 +186,13 @@
       padding: 10px;
       outline: none;
       color: var(--text);
+      font-family: var(--editor-font-family, var(--fontBody));
       line-height: 1.65;
       font-size: 14px;
       overflow-wrap: anywhere;
+    }
+    .richInput *{
+      font-family: inherit;
     }
     .richInput:empty::before{
       content: attr(data-placeholder);
@@ -467,8 +472,6 @@
       color: var(--custom-body-color, var(--color-text));
       opacity: .6;
     }
-    .dualPreview .az-body-page-meta__title,
-    .dualPreview .az-body-page-meta__author,
     .dualPreview .az-body-page-watermark__input{
       pointer-events:auto;
       background: transparent !important;
@@ -603,11 +606,32 @@
     #previewScope .az-cover__image-preview{
       opacity: var(--custom-cover-image-opacity, 1);
     }
-    #previewScope .az-body-page-meta__title,
-    #previewScope .az-body-page-meta__author,
     #previewScope .az-body-page-watermark__input{
       color: var(--custom-meta-color, var(--color-text-secondary)) !important;
       font-size: var(--custom-meta-size, var(--font-size-small)) !important;
+      line-height: 1.36 !important;
+      display: inline-block;
+    }
+    #previewScope .az-body-page-watermark__input{
+      text-align: center;
+    }
+    /* Card page: remove top-right meta block from preview/export layout. */
+    #previewScope .az-letter-page > .az-body-page-meta{
+      display: none !important;
+    }
+    /* Keep watermark as overlay so it won't push card away from center. */
+    #previewScope .az-letter-page > .az-body-page-watermark{
+      position: absolute !important;
+      left: 50% !important;
+      bottom: var(--spacing-page);
+      transform: translateX(-50%) !important;
+      padding: 0 !important;
+      align-self: auto !important;
+      z-index: 2;
+    }
+    #previewScope .az-letter-page__card-wrap{
+      padding-top: var(--spacing-page);
+      padding-bottom: calc(var(--spacing-page) + 2.2rem);
     }
     #previewScope .az-letter-page__card{
       background: var(--custom-card-box-bg, var(--color-surface)) !important;
@@ -1045,10 +1069,6 @@
               <div class="dualItem">
                 <div class="dualLabel">当前字母卡片预览</div>
                 <div class="az-export-frame az-export-frame--letter az-letter-page" id="letterFrame">
-                  <div class="az-body-page-meta" aria-label="正文页标题与作者">
-                    <input type="text" class="az-body-page-meta__title" id="pvMetaTitle" placeholder="副标题" readonly />
-                    <input type="text" class="az-body-page-meta__author" id="pvMetaAuthor" placeholder="作者" readonly />
-                  </div>
                   <div class="az-letter-page__card-wrap" id="pvCardWrap" data-letter="A">
                     <div class="az-letter-page__card">
                       <header class="az-letter-page__header">
@@ -1060,7 +1080,7 @@
                     </div>
                   </div>
                   <div class="az-body-page-watermark" aria-label="水印">
-                    <input type="text" class="az-body-page-watermark__input" id="pvWatermark" placeholder="水印" readonly />
+                    <div class="az-body-page-watermark__input" id="pvWatermark">A / Z</div>
                   </div>
                 </div>
               </div>
@@ -1176,13 +1196,13 @@
               <div class="compact2">
                 <div class="control">
                   <div>
-                    <div style="font-size:12px;color:var(--muted)">右上小字/水印颜色</div>
+                    <div style="font-size:12px;color:var(--muted)">水印颜色</div>
                   </div>
                   <input type="color" id="metaColor" />
                 </div>
                 <div class="control">
                   <div>
-                    <div style="font-size:12px;color:var(--muted)">右上小字/水印字号</div>
+                    <div style="font-size:12px;color:var(--muted)">水印字号</div>
                     <div style="font-size:12px;opacity:.9" id="metaSizeLabel">13px</div>
                   </div>
                   <input type="range" id="metaSize" min="10" max="30" value="13" />
@@ -1565,8 +1585,6 @@
   const pvTitle = $("pvTitle");
   const pvCoverSubtitle = $("pvCoverSubtitle");
   const pvAuthor = $("pvAuthor");
-  const pvMetaTitle = $("pvMetaTitle");
-  const pvMetaAuthor = $("pvMetaAuthor");
   const pvCardWrap = $("pvCardWrap");
   const pvWatermark = $("pvWatermark");
   const coverFrame = $("coverFrame");
@@ -1750,6 +1768,35 @@
   }
 
   function sanitizeEntryHtml(raw){
+    const sanitizeInlineStyle = (styleText)=>{
+      const blocked = new Set([
+        "font",
+        "font-family",
+        "font-size",
+        "line-height",
+        "letter-spacing",
+        "text-size-adjust",
+        "-webkit-text-size-adjust"
+      ]);
+      return String(styleText || "")
+        .split(";")
+        .map((part)=> part.trim())
+        .filter(Boolean)
+        .map((part)=>{
+          const idx = part.indexOf(":");
+          if(idx <= 0) return "";
+          const prop = part.slice(0, idx).trim().toLowerCase();
+          const val = part.slice(idx + 1).trim();
+          if(!prop || !val) return "";
+          if(blocked.has(prop)) return "";
+          if(prop.startsWith("mso-")) return "";
+          if(/url\(\s*['"]?\s*javascript:/i.test(val)) return "";
+          return `${prop}: ${val}`;
+        })
+        .filter(Boolean)
+        .join("; ");
+    };
+
     const wrapper = document.createElement("div");
     wrapper.innerHTML = String(raw || "");
     wrapper.querySelectorAll("script,style,iframe,object,embed,link,meta,base").forEach((el)=>el.remove());
@@ -1766,7 +1813,7 @@
           return;
         }
         if(name === "style"){
-          const cleaned = val.replace(/url\(\s*['"]?\s*javascript:[^)]+\)/ig, "");
+          const cleaned = sanitizeInlineStyle(val);
           if(cleaned.trim()) el.setAttribute("style", cleaned);
           else el.removeAttribute("style");
         }
@@ -2010,7 +2057,7 @@
     };
     const pickPx = (key, el, min, max, fallback)=>{
       const fromState = !resetToTheme ? parseInt(state.vars[key], 10) : NaN;
-      const fromCss = parseInt(getComputedStyle(el).fontSize, 10);
+      const fromCss = el ? parseInt(getComputedStyle(el).fontSize, 10) : NaN;
       return clampNumber(Number.isFinite(fromState) ? fromState : (Number.isFinite(fromCss) ? fromCss : fallback), min, max);
     };
 
@@ -2030,7 +2077,7 @@
     const titleSizeVal = pickPx("--custom-cover-title-size", pvTitle, 18, 80, 42);
     const badgeSizeVal = pickPx("--custom-cover-badge-size", pvBadge, 10, 34, 14);
     const authorSizeVal = pickPx("--custom-cover-author-size", pvAuthor, 10, 34, 16);
-    const metaSizeVal = pickPx("--custom-meta-size", pvMetaTitle, 10, 30, 13);
+    const metaSizeVal = pickPx("--custom-meta-size", pvWatermark, 10, 30, 13);
     const letterSizeVal = pickPx("--custom-letter-size", pvLetter, 20, 130, 44);
     const wordSizeVal = pickPx("--custom-word-size", pvWord, 12, 56, 22);
     const transSizeVal = pickPx("--custom-trans-size", pvTrans, 12, 30, 16);
@@ -2340,9 +2387,7 @@
       pvCoverSubtitle.textContent = "";
       pvCoverSubtitle.style.display = "none";
     }
-    if(pvMetaTitle && pvMetaTitle.value !== subtitle) pvMetaTitle.value = subtitle;
-    if(pvMetaAuthor && pvMetaAuthor.value !== (author ? `作者：${author}` : "作者：—")) pvMetaAuthor.value = author ? `作者：${author}` : "作者：—";
-    if(pvWatermark && pvWatermark.value !== watermark) pvWatermark.value = watermark;
+    if(pvWatermark && pvWatermark.textContent !== watermark) pvWatermark.textContent = watermark;
 
     syncPreviewAspect();
     applyPreviewBackground();
@@ -2936,6 +2981,18 @@
       useCORS: true,
       scale
     });
+    const keepContentHeight = !!options.keepContentHeight && !cropBox;
+    if(keepContentHeight){
+      if(src.width === spec.W){
+        return src;
+      }
+      const keep = document.createElement("canvas");
+      keep.width = spec.W;
+      keep.height = Math.max(1, Math.round(src.height * (spec.W / Math.max(1, src.width))));
+      const kctx = keep.getContext("2d");
+      kctx.drawImage(src, 0, 0, keep.width, keep.height);
+      return keep;
+    }
     let out = src;
     if(src.width !== spec.W || src.height !== spec.H){
       out = document.createElement("canvas");
@@ -2996,7 +3053,7 @@
           switchCurrentLetter(letter);
         }
         const spec = getExportSpec();
-        const canvas = await captureFrameCanvas(letterFrame, spec);
+        const canvas = await captureFrameCanvas(letterFrame, spec, { keepContentHeight: true });
         downloadCanvas(canvas, `${safeTitle()}-${letter}.png`);
         showToast("已开始下载当前字母 PNG。");
       }finally{
@@ -3031,7 +3088,7 @@
         for(let i=0;i<letters.length;i++){
           const L = letters[i];
           switchCurrentLetter(L);
-          const letterCanvas = await captureFrameCanvas(letterFrame, spec);
+          const letterCanvas = await captureFrameCanvas(letterFrame, spec, { keepContentHeight: true });
           zip.file(`${safeTitle()}-${String(i+1).padStart(2,"0")}-${L}.png`, await canvasToBlob(letterCanvas));
         }
 
