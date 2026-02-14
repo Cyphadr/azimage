@@ -515,6 +515,20 @@
       font-size: 12px;
       color: var(--muted);
     }
+    .uploadLimitHint{
+      display: inline-block;
+      width: fit-content;
+      margin-top: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1px;
+      color: #261500;
+      background: linear-gradient(135deg, #ffd66e, #ffb24d);
+      border: 1px solid rgba(255, 177, 69, .92);
+      box-shadow: 0 0 0 1px rgba(255, 238, 204, .28) inset;
+    }
     .panelGroupTitle{
       font-size: 12px;
       color: var(--text);
@@ -964,6 +978,7 @@
                 <div id="entryText" class="richInput" contenteditable="true" data-placeholder="围绕该单词写一段（会出现在导出的卡片上）"></div>
               </div>
               <input id="entryImageInput" type="file" accept="image/*" hidden />
+              <div class="uploadLimitHint">插图最大 1MB</div>
               <div class="small" style="margin-top:6px">支持加粗/斜体/列表与插图；插入图片会自动按卡片宽度适配显示。</div>
               <div class="row" style="justify-content:space-between; margin-top:8px">
                 <span class="small" id="countInfo">字数：0</span>
@@ -1238,6 +1253,7 @@
                   <div style="font-size:12px;opacity:.9">仅作用于标题页导出帧</div>
                 </div>
                 <input id="coverBgImageInput" type="file" accept="image/*" />
+                <div class="uploadLimitHint">图片最大 1MB</div>
               </div>
 
               <div style="height:8px"></div>
@@ -1248,6 +1264,7 @@
                   <div style="font-size:12px;opacity:.9">仅作用于字母卡片页导出帧</div>
                 </div>
                 <input id="letterBgImageInput" type="file" accept="image/*" />
+                <div class="uploadLimitHint">图片最大 1MB</div>
               </div>
 
               <div style="height:8px"></div>
@@ -1278,6 +1295,7 @@
                   <div style="font-size:12px;opacity:.9">保留装饰容器，独立于背景图</div>
                 </div>
                 <input id="coverImageInput" type="file" accept="image/*" />
+                <div class="uploadLimitHint">图片最大 1MB</div>
               </div>
 
               <div style="height:8px"></div>
