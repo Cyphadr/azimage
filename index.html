@@ -3441,8 +3441,8 @@
     renderPreview();
   });
   entryText.addEventListener("blur", ()=>{
-    const it = state.items[state.current];
-    setEntryHtmlToEditor(it.text || "");
+    saveCurrentEdits();
+    updateEntryCount();
   });
   entryText.addEventListener("paste", ()=>{
     setTimeout(()=>{
@@ -3453,6 +3453,10 @@
   });
 
   document.querySelectorAll("[data-rich-cmd]").forEach((btn)=>{
+    btn.addEventListener("mousedown", (e)=>{
+      // Keep current text selection in contenteditable when clicking toolbar buttons.
+      e.preventDefault();
+    });
     btn.addEventListener("click", ()=>{
       const cmd = btn.getAttribute("data-rich-cmd");
       if(!cmd) return;
@@ -3460,6 +3464,10 @@
     });
   });
   if(entryImageBtn && entryImageInput){
+    entryImageBtn.addEventListener("mousedown", (e)=>{
+      // Avoid losing caret/selection before opening image picker.
+      e.preventDefault();
+    });
     entryImageBtn.addEventListener("click", ()=> entryImageInput.click());
     entryImageInput.addEventListener("change", (e)=>{
       const file = e.target.files && e.target.files[0];
