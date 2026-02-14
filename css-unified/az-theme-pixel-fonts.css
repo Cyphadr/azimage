@@ -1,0 +1,14 @@
+/* ============================================
+   像素主题 — 英文 + 简繁体中文像素字体 (远程 CDN，不依赖本地文件)
+   Zpix：多 CDN 源，任一路径可用即可加载
+   ============================================ */
+
+@font-face {
+  font-family: "Zpix";
+  src:
+    url("https://cdn.jsdelivr.net/gh/SolidZORO/zpix-pixel-font@3.1.7/dist/zpix.ttf") format("truetype"),
+    url("https://unpkg.com/zpix-pixel-font@3.1.7/dist/zpix.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

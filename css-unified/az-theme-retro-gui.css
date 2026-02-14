@@ -1,0 +1,141 @@
+/* ============================================
+   复古 GUI 主题 (Retro GUI) — 变量绑定版
+   颜色统一使用 --color-*、--color-bg-bottom 等
+   ============================================ */
+
+[data-theme="retro-gui"] {
+  --color-primary: #8b735f;
+  --color-background: #e0f2f7;
+  --color-surface: #f8e7d7;
+  --color-text: #5c4a3d;
+  --color-text-secondary: #7a6b5f;
+  --color-accent: #7a9b8e;
+  --color-accent-2: #6b8a9e;
+  --color-border: #8b735f;
+
+  --gradient-cover: linear-gradient(180deg, #f2ebe2 0%, #eae0d5 50%, #e4d9cc 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.03) 100%);
+  --gradient-accent: linear-gradient(135deg, #7a9b8e 0%, #6b8a9e 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(122,155,142,0.2) 0%, rgba(107,138,158,0.15) 100%);
+  --gradient-text: #5c4a3d;
+  --gradient-decoration: repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 15px,
+      rgba(200, 230, 240, 0.7) 15px,
+      rgba(200, 230, 240, 0.7) 16px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 15px,
+      rgba(200, 230, 240, 0.7) 15px,
+      rgba(200, 230, 240, 0.7) 16px
+    );
+
+  --font-family: "寒蝉半圆体", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --font-size-title: 1.65rem;
+  --font-size-subtitle: 1.05rem;
+  --font-size-body: 0.9375rem;
+  --font-size-small: 0.8125rem;
+  --line-height-body: 1.7;
+  --line-height-title: 1.35;
+
+  --radius-card: 0;
+  --radius-badge: 0;
+  --radius-full: 0;
+  --spacing-page: 1rem;
+  --spacing-card: 1.25rem;
+  --shadow-card: 2px 2px 0 rgba(91, 115, 95, 0.35), inset 1px 1px 0 rgba(255,255,255,0.6);
+  --shadow-cover: 3px 3px 0 rgba(91, 115, 95, 0.4), inset 1px 1px 0 rgba(255,255,255,0.5);
+  --shadow-glow: none;
+
+  --cover-deco-tl-size: 2.5rem;
+  --cover-deco-tl-shape: 0;
+  --cover-deco-tl-border: 2px solid var(--color-border);
+  --cover-deco-br-size: 3rem;
+  --cover-deco-br-radius: 0;
+  --cover-deco-br-border: 2px solid var(--color-border);
+  --card-border: 2px solid var(--color-border);
+  --card-topbar-height: 6px;
+  --full-item-bar-width: 5px;
+  --export-frame-border: 2px solid var(--color-border);
+
+  --color-bg-bottom: #c8e6f0;
+  --color-bg-bottom-inner: #d4ebf2;
+  --color-text-shadow-light: rgba(255,255,255,0.8);
+  --color-shadow-retro: rgba(91, 115, 95, 0.35);
+  --color-inset-highlight: rgba(255,255,255,0.5);
+
+  --cover-justify: flex-end;
+  --cover-align: center;
+  --cover-text-order: 1;
+  --cover-image-order: 0;
+  --cover-text-align: center;
+  --cover-padding-top: var(--spacing-page);
+  --cover-padding-bottom: 7rem;
+}
+
+[data-theme="retro-gui"] .az-page {
+  background-image: var(--gradient-decoration), linear-gradient(180deg, var(--color-background) 0%, var(--color-bg-bottom) 100%);
+  background-size: auto, auto, 100% 100%;
+}
+[data-theme="retro-gui"] .az-letter-page,
+[data-theme="retro-gui"] .az-full-page {
+  background-image: var(--gradient-decoration), linear-gradient(180deg, var(--color-background) 0%, var(--color-bg-bottom-inner) 100%);
+  background-size: auto, auto, 100% 100%;
+}
+
+[data-theme="retro-gui"] .az-cover__badge,
+[data-theme="retro-gui"] .az-cover__title,
+[data-theme="retro-gui"] .az-cover__subtitle,
+[data-theme="retro-gui"] .az-cover__author {
+  color: var(--color-text);
+  text-shadow: 1px 1px 0 var(--color-text-shadow-light);
+}
+[data-theme="retro-gui"] .az-cover::before { opacity: 0.85; }
+[data-theme="retro-gui"] .az-cover::after,
+[data-theme="retro-gui"] .az-cover .az-cover__deco {
+  border-color: var(--color-border);
+  box-shadow: inset 1px 1px 0 var(--color-inset-highlight);
+}
+
+[data-theme="retro-gui"] .az-letter-page__card,
+[data-theme="retro-gui"] .az-full-page__item {
+  border: var(--card-border);
+  box-shadow: 2px 2px 0 rgba(91, 115, 95, 0.3), inset 1px 1px 0 rgba(255,255,255,0.65);
+  background: var(--color-surface);
+}
+[data-theme="retro-gui"] .az-letter-page__header {
+  border-bottom: 2px solid var(--color-border);
+  border-image: none;
+}
+[data-theme="retro-gui"] .az-letter-page__card::after {
+  height: var(--card-topbar-height);
+  background: var(--gradient-accent);
+  box-shadow: none;
+}
+[data-theme="retro-gui"] .az-full-page__item::before {
+  width: var(--full-item-bar-width);
+  background: var(--gradient-accent);
+}
+
+[data-theme="retro-gui"] .az-export-frame--cover,
+[data-theme="retro-gui"] .az-export-frame--letter {
+  box-shadow: 3px 3px 0 var(--color-shadow-retro), inset 1px 1px 0 var(--color-inset-highlight);
+  border: var(--export-frame-border);
+}
+
+[data-theme="retro-gui"] .az-letter-page__letter,
+[data-theme="retro-gui"] .az-full-page__letter {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+[data-theme="retro-gui"] .az-full-page__title {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

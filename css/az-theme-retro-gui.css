@@ -1,0 +1,159 @@
+/* ============================================
+   复古 GUI 主题 (Retro GUI / Early OS 风格)
+   浅蓝灰网格背景 + 米色窗口 + 深褐描边 + 凿刻边框
+   字体：无衬线正文，不用像素字体
+   ============================================ */
+
+/* ---------- 主题变量 ---------- */
+[data-theme="retro-gui"] {
+  /* 色板 */
+  --color-primary: #8b735f;
+  --color-background: #e0f2f7;
+  --color-surface: #f8e7d7;
+  --color-text: #5c4a3d;
+  --color-text-secondary: #7a6b5f;
+  --color-accent: #7a9b8e;
+  --color-accent-2: #6b8a9e;
+  --color-border: #8b735f;
+
+  /* 封面：暖米色单色系，与卡片统一，不抢眼 */
+  --gradient-cover: linear-gradient(180deg, #f2ebe2 0%, #eae0d5 50%, #e4d9cc 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.03) 100%);
+  --gradient-accent: linear-gradient(135deg, #7a9b8e 0%, #6b8a9e 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(122,155,142,0.2) 0%, rgba(107,138,158,0.15) 100%);
+  --gradient-text: #5c4a3d;
+  /* 网格背景（复古 GUI 标志）：浅蓝网格线 */
+  --gradient-decoration: repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 15px,
+      rgba(200, 230, 240, 0.7) 15px,
+      rgba(200, 230, 240, 0.7) 16px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 15px,
+      rgba(200, 230, 240, 0.7) 15px,
+      rgba(200, 230, 240, 0.7) 16px
+    );
+
+  /* 无衬线正文，干净易读（不用像素字体） */
+  --font-family: "寒蝉半圆体", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --font-size-title: 1.65rem;
+  --font-size-subtitle: 1.05rem;
+  --font-size-body: 0.9375rem;
+  --font-size-small: 0.8125rem;
+  --line-height-body: 1.7;
+  --line-height-title: 1.35;
+
+  /* 直角 + 凿刻感 */
+  --radius-card: 0;
+  --radius-badge: 0;
+  --radius-full: 0;
+  --spacing-page: 1rem;
+  --spacing-card: 1.25rem;
+  /* 2px 深褐描边 + 右下小偏移阴影 */
+  --shadow-card: 2px 2px 0 rgba(91, 115, 95, 0.35), inset 1px 1px 0 rgba(255,255,255,0.6);
+  --shadow-cover: 3px 3px 0 rgba(91, 115, 95, 0.4), inset 1px 1px 0 rgba(255,255,255,0.5);
+  --shadow-glow: none;
+
+  /* 边框：2px 深褐 + 内高光凿刻 */
+  --cover-deco-tl-size: 2.5rem;
+  --cover-deco-tl-shape: 0;
+  --cover-deco-tl-border: 2px solid #8b735f;
+  --cover-deco-br-size: 3rem;
+  --cover-deco-br-radius: 0;
+  --cover-deco-br-border: 2px solid #8b735f;
+  --card-border: 2px solid var(--color-border);
+  --card-topbar-height: 6px;
+  --full-item-bar-width: 5px;
+  --export-frame-border: 2px solid var(--color-border);
+
+  /* 封面：居中靠下（头图在上） */
+  --cover-justify: flex-end;
+  --cover-align: center;
+  --cover-text-order: 1;
+  --cover-image-order: 0;
+  --cover-text-align: center;
+  --cover-padding-top: var(--spacing-page);
+  --cover-padding-bottom: 7rem;
+}
+
+/* ---------- 背景网格 ---------- */
+[data-theme="retro-gui"] .az-page {
+  background-image: var(--gradient-decoration), linear-gradient(180deg, var(--color-background) 0%, #c8e6f0 100%);
+  background-size: auto, auto, 100% 100%;
+}
+
+[data-theme="retro-gui"] .az-letter-page,
+[data-theme="retro-gui"] .az-full-page {
+  background-image: var(--gradient-decoration), linear-gradient(180deg, var(--color-background) 0%, #d4ebf2 100%);
+  background-size: auto, auto, 100% 100%;
+}
+
+/* ---------- 封面：米色/青绿窗口风格，深褐字 ---------- */
+[data-theme="retro-gui"] .az-cover__badge,
+[data-theme="retro-gui"] .az-cover__title,
+[data-theme="retro-gui"] .az-cover__subtitle,
+[data-theme="retro-gui"] .az-cover__author {
+  color: #5c4a3d;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.8);
+}
+
+[data-theme="retro-gui"] .az-cover::before {
+  opacity: 0.85;
+}
+
+[data-theme="retro-gui"] .az-cover::after,
+[data-theme="retro-gui"] .az-cover .az-cover__deco {
+  border-color: #8b735f;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.5);
+}
+
+/* ---------- 卡片：凿刻边框 + 顶部色条 ---------- */
+[data-theme="retro-gui"] .az-letter-page__card,
+[data-theme="retro-gui"] .az-full-page__item {
+  border: 2px solid var(--color-border);
+  box-shadow: 2px 2px 0 rgba(91, 115, 95, 0.3), inset 1px 1px 0 rgba(255,255,255,0.65);
+  background: var(--color-surface);
+}
+
+[data-theme="retro-gui"] .az-letter-page__header {
+  border-bottom: 2px solid var(--color-border);
+  border-image: none;
+}
+
+[data-theme="retro-gui"] .az-letter-page__card::after {
+  height: var(--card-topbar-height);
+  background: linear-gradient(90deg, #7a9b8e 0%, #6b8a9e 100%);
+  box-shadow: none;
+}
+
+[data-theme="retro-gui"] .az-full-page__item::before {
+  width: var(--full-item-bar-width);
+  background: linear-gradient(180deg, #7a9b8e 0%, #6b8a9e 100%);
+}
+
+/* ---------- 导出框凿刻感 ---------- */
+[data-theme="retro-gui"] .az-export-frame--cover,
+[data-theme="retro-gui"] .az-export-frame--letter {
+  box-shadow: 3px 3px 0 rgba(91, 115, 95, 0.35), inset 1px 1px 0 rgba(255,255,255,0.5);
+  border: 2px solid var(--color-border);
+}
+
+/* ---------- 标题/字母强调色（灰绿-灰蓝，与顶条一致） ---------- */
+[data-theme="retro-gui"] .az-letter-page__letter,
+[data-theme="retro-gui"] .az-full-page__letter {
+  background: linear-gradient(135deg, #5c7a6e 0%, #526d7d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+[data-theme="retro-gui"] .az-full-page__title {
+  background: linear-gradient(135deg, #5c7a6e 0%, #526d7d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

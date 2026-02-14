@@ -1,0 +1,319 @@
+/* ============================================
+   日系主题 (Nippon / Ancient Time 风)
+   参考：米白底 + 朱红强调 + 柔和圆角 + 轻阴影
+   字体：干净无衬线，易读克制
+   ============================================ */
+
+/* ---------- 主题变量 ---------- */
+[data-theme="nippon"] {
+  --color-primary: #2c2c2c;
+  --color-background: #f5f2ed;
+  --color-surface: #faf8f5;
+  --color-text: #2c2c2c;
+  --color-text-secondary: #6b6560;
+  --color-accent: #c93c3a;
+  --color-accent-2: #a83230;
+  --color-border: rgba(0, 0, 0, 0.08);
+
+  /* 封面：米白渐变，无强烈色块 */
+  --gradient-cover: linear-gradient(180deg, #faf8f5 0%, #f5f2ed 50%, #efece6 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.02) 100%);
+  --gradient-accent: linear-gradient(135deg, #c93c3a 0%, #a83230 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(201,60,58,0.1) 0%, rgba(168,50,48,0.06) 100%);
+  --gradient-text: #2c2c2c;
+  /* 极淡背景纹理感 */
+  --gradient-decoration: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(201,60,58,0.03) 0%, transparent 50%);
+
+  /* 仿宋：汇文仿宋（Huiwen-Fangsong）ReiFonts，免费商用 */
+  --font-family: "Huiwen-Fangsong", "Source Han Serif SC VF", "Source Han Serif SC", "Noto Serif SC", "FangSong", "仿宋", "SimSun", serif;
+  --font-size-title: 1.75rem;
+  --font-size-subtitle: 1rem;
+  --font-size-body: 0.9375rem;
+  --font-size-small: 0.8125rem;
+  --line-height-body: 1.8;
+  --line-height-title: 1.35;
+
+  /* 柔和圆角 + 轻阴影（卡片浮起感） */
+  --radius-card: 16px;
+  --radius-badge: 10px;
+  --radius-full: 9999px;
+  --spacing-page: 1.5rem;
+  --spacing-card: 1.5rem;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-cover: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-glow: none;
+
+  --cover-deco-tl-size: 2rem;
+  --cover-deco-tl-shape: 50%;
+  --cover-deco-tl-border: 1px solid rgba(201, 60, 58, 0.35);
+  --cover-deco-br-size: 2rem;
+  --cover-deco-br-radius: 50%;
+  --cover-deco-br-border: 1px solid rgba(201, 60, 58, 0.35);
+  --card-border: 1px solid rgba(0, 0, 0, 0.06);
+  --card-topbar-height: 0;
+  --full-item-bar-width: 4px;
+  --export-frame-border: 1px solid rgba(0, 0, 0, 0.08);
+
+  /* 封面：居左靠下（头图在上） */
+  --cover-justify: flex-end;
+  --cover-align: flex-start;
+  --cover-text-order: 1;
+  --cover-image-order: 0;
+  --cover-text-align: left;
+  --cover-title-max-width: 22ch;
+  --cover-padding-top: var(--spacing-page);
+  --cover-padding-bottom: 7rem;
+}
+
+/* ---------- 封面：深灰字 + 标题侧朱红竖线装饰 + 朱红细框 ---------- */
+[data-theme="nippon"] .az-cover__badge,
+[data-theme="nippon"] .az-cover__title,
+[data-theme="nippon"] .az-cover__subtitle,
+[data-theme="nippon"] .az-cover__author {
+  color: #2c2c2c;
+  text-shadow: none;
+}
+
+[data-theme="nippon"] .az-cover .az-cover__inner {
+  position: relative;
+  padding-left: 1.1rem;
+}
+[data-theme="nippon"] .az-cover .az-cover__inner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-accent);
+  border-radius: 1px;
+  opacity: 0.75;
+}
+
+[data-theme="nippon"] .az-cover__badge {
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+[data-theme="nippon"] .az-cover::before {
+  opacity: 0.8;
+}
+
+[data-theme="nippon"] .az-cover::after,
+[data-theme="nippon"] .az-cover .az-cover__deco {
+  border-color: rgba(201, 60, 58, 0.4);
+  opacity: 0.9;
+}
+
+/* ---------- 卡片：圆角 + 轻阴影；左右排布；文本框边缘红色菱形装饰 ---------- */
+[data-theme="nippon"] .az-letter-page__card,
+[data-theme="nippon"] .az-full-page__item {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
+  position: relative;
+}
+
+[data-theme="nippon"] .az-letter-page__card::after {
+  display: none;
+}
+
+/* 单字母页卡片边缘：仅右下红色菱形（右上已去掉） */
+[data-theme="nippon"] .az-letter-page__card::before {
+  display: none;
+}
+
+[data-theme="nippon"] .az-letter-page__card::after {
+  content: "";
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 6px;
+  height: 6px;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+  z-index: 1;
+  display: block;
+}
+
+/* 整本页条目边缘：仅右下红色菱形（右上已去掉） */
+[data-theme="nippon"] .az-full-page__item::after {
+  content: "";
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 5px;
+  height: 5px;
+  background: var(--color-accent);
+  transform: rotate(45deg);
+  z-index: 1;
+}
+
+[data-theme="nippon"] .az-full-page__body::before {
+  display: none;
+}
+
+/* 单字母页：单词区在左且上下居中、正文在右；单词两侧菱形 */
+[data-theme="nippon"] .az-letter-page__card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+[data-theme="nippon"] .az-letter-page__header {
+  order: 1;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  gap: 0.25rem;
+  max-width: 11em;
+}
+
+[data-theme="nippon"] .az-letter-page__body {
+  order: 2;
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+[data-theme="nippon"] .az-letter-page__letter,
+[data-theme="nippon"] .az-letter-page__translation {
+  text-align: center;
+}
+
+/* 单词两侧小菱形：  ◆  APPLE  ◆  保持行距 */
+[data-theme="nippon"] .az-letter-page__word {
+  position: relative;
+  padding: 0.35rem 1rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+  text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-theme="nippon"] .az-letter-page__word::before {
+  content: "";
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 5px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="nippon"] .az-letter-page__word::after {
+  content: "";
+  position: absolute;
+  right: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 5px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* 整本页：单词区在左且上下居中、正文在右；文本与竖线左右居中 */
+[data-theme="nippon"] .az-full-page__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+  padding-left: calc(var(--spacing-card) + var(--full-item-bar-width));
+}
+
+[data-theme="nippon"] .az-full-page__header {
+  order: 1;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+  gap: 0.25rem;
+  max-width: 11em;
+}
+
+[data-theme="nippon"] .az-full-page__body {
+  order: 2;
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+  position: relative;
+}
+
+[data-theme="nippon"] .az-full-page__letter,
+[data-theme="nippon"] .az-full-page__translation {
+  text-align: center;
+}
+
+[data-theme="nippon"] .az-full-page__word {
+  position: relative;
+  padding: 0.3rem 0.85rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+  text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-theme="nippon"] .az-full-page__word::before {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 4px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="nippon"] .az-full-page__word::after {
+  content: "";
+  position: absolute;
+  right: 0.2rem;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 4px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="nippon"] .az-full-page__item::before {
+  width: var(--full-item-bar-width);
+  background: var(--gradient-accent);
+  border-radius: 2px 0 0 2px;
+}
+
+/* ---------- 字母与标题用朱红 ---------- */
+[data-theme="nippon"] .az-letter-page__letter,
+[data-theme="nippon"] .az-full-page__letter {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+[data-theme="nippon"] .az-full-page__title {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+[data-theme="nippon"] .az-export-frame--cover,
+[data-theme="nippon"] .az-export-frame--letter {
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-cover);
+}

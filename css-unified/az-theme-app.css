@@ -1,0 +1,123 @@
+/* ============================================
+   简约 App 主题 — 变量绑定版
+   颜色统一使用 --color-*，便于生成器覆盖
+   ============================================ */
+
+[data-theme="app"] {
+  --color-primary: #1a1a1a;
+  --color-background: #f8f6f1;
+  --color-surface: #fdfcfa;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #4a4a4a;
+  --color-accent: #e67e22;
+  --color-accent-2: #d35400;
+  --color-border: #1a1a1a;
+
+  --gradient-cover: linear-gradient(180deg, #f4e283 0%, #f0dc6e 18%, #f8f6f1 22%, #f8f6f1 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(0,0,0,0.02) 100%);
+  --gradient-accent: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(230,126,34,0.12) 0%, rgba(211,84,0,0.08) 100%);
+  --gradient-text: #1a1a1a;
+  --gradient-decoration: none;
+
+  --font-family: "ZCOOL KuaiLe", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-size-title: 1.5rem;
+  --font-size-subtitle: 0.9375rem;
+  --font-size-body: 0.875rem;
+  --font-size-small: 0.8125rem;
+  --line-height-body: 1.75;
+  --line-height-title: 1.35;
+
+  --radius-card: 0;
+  --radius-badge: 0;
+  --radius-full: 0;
+  --spacing-page: 1.25rem;
+  --spacing-card: 1.25rem;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-cover: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-glow: none;
+
+  --cover-deco-tl-size: 2rem;
+  --cover-deco-tl-shape: 0;
+  --cover-deco-tl-border: 1px solid var(--color-border);
+  --cover-deco-br-size: 2rem;
+  --cover-deco-br-radius: 0;
+  --cover-deco-br-border: 1px solid var(--color-border);
+  --card-border: 1px solid rgba(0, 0, 0, 0.12);
+  --card-topbar-height: 4px;
+  --full-item-bar-width: 4px;
+  --export-frame-border: 1px solid rgba(0, 0, 0, 0.15);
+
+  --cover-justify: flex-end;
+  --cover-align: center;
+  --cover-text-order: 1;
+  --cover-image-order: 0;
+  --cover-text-align: center;
+  --cover-padding-top: var(--spacing-page);
+  --cover-padding-bottom: 7rem;
+}
+
+[data-theme="app"] .az-cover__badge {
+  color: var(--color-primary);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-shadow: none;
+}
+[data-theme="app"] .az-cover__title,
+[data-theme="app"] .az-cover__subtitle,
+[data-theme="app"] .az-cover__author {
+  color: var(--color-primary);
+  text-shadow: none;
+}
+[data-theme="app"] .az-cover__title { font-weight: 700; }
+[data-theme="app"] .az-cover::before { opacity: 0.85; }
+[data-theme="app"] .az-cover::after,
+[data-theme="app"] .az-cover .az-cover__deco {
+  border-color: var(--color-border);
+  opacity: 0.9;
+}
+
+[data-theme="app"] .az-letter-page__card,
+[data-theme="app"] .az-full-page__item {
+  border: 1px solid var(--card-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  border-radius: 0;
+}
+[data-theme="app"] .az-letter-page__card::after {
+  height: var(--card-topbar-height);
+  background: var(--gradient-accent);
+  box-shadow: none;
+  border-radius: 0;
+}
+[data-theme="app"] .az-letter-page__header {
+  border-bottom: 1px solid var(--card-border);
+  border-image: none;
+  padding-bottom: 0.65rem;
+}
+[data-theme="app"] .az-full-page__item::before {
+  width: var(--full-item-bar-width);
+  background: var(--gradient-accent);
+  border-radius: 0;
+}
+
+[data-theme="app"] .az-letter-page__letter,
+[data-theme="app"] .az-full-page__letter {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+[data-theme="app"] .az-full-page__title {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+[data-theme="app"] .az-export-frame--cover,
+[data-theme="app"] .az-export-frame--letter {
+  border-radius: 0;
+  border: 1px solid var(--card-border);
+}

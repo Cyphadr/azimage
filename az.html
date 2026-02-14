@@ -1,0 +1,1576 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A–Z 单词主题小说生成器（封面+目录导出 Demo）</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#eaf2ff;
+      --muted:#a9b6cc;
+      --accent:#7aa8ff;
+
+      --titleSize:28px;
+      --bodySize:16px;
+      --lineHeight:1.7;
+      --radius:18px;
+
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --bd: rgba(255,255,255,.08);
+
+      --fontTitle: ui-serif, Georgia, "Times New Roman", serif;
+      --fontBody: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--fontBody);
+      background: radial-gradient(1200px 700px at 10% 0%, rgba(122,168,255,.12), transparent 55%),
+                  radial-gradient(900px 600px at 90% 20%, rgba(255,122,176,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr; }
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--bd);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHeader{
+      padding: 12px 14px;
+      border-bottom:1px solid var(--bd);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      background: rgba(0,0,0,.12);
+    }
+    .cardHeader h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+      color: var(--text);
+      opacity:.92;
+    }
+    .muted{color:var(--muted)}
+    .cardBody{padding: 12px 14px;}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    label{font-size:12px; color:var(--muted)}
+    input[type="text"], textarea, select{
+      width:100%;
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      padding: 10px 10px;
+      outline:none;
+    }
+    textarea{min-height: 120px; resize: vertical; line-height:1.6}
+    input[type="text"]:focus, textarea:focus, select:focus{
+      border-color: rgba(122,168,255,.55);
+      box-shadow: 0 0 0 3px rgba(122,168,255,.15);
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 9px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:13px;
+      transition:.15s transform, .15s background;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    .btn:active{transform: translateY(1px)}
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(122,168,255,.35), rgba(255,122,176,.18));
+      border-color: rgba(122,168,255,.35);
+    }
+    .btnDanger{border-color: rgba(255,140,140,.35)}
+    .pill{
+      font-size:12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+    }
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    .grid3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;}
+    @media (max-width: 980px){
+      .grid2,.grid3{grid-template-columns:1fr;}
+    }
+    .azList{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 980px){
+      .azList{grid-template-columns: repeat(8, 1fr);}
+    }
+    .azBtn{
+      padding: 10px 0;
+      text-align:center;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      cursor:pointer;
+      font-weight: 650;
+      letter-spacing:.6px;
+      color: rgba(234,242,255,.92);
+      position:relative;
+    }
+    .azBtn:hover{background: rgba(255,255,255,.06)}
+    .azBtn.active{
+      background: linear-gradient(135deg, rgba(122,168,255,.28), rgba(0,0,0,.18));
+      border-color: rgba(122,168,255,.45);
+      box-shadow: 0 0 0 3px rgba(122,168,255,.14);
+    }
+    .lockDot{
+      position:absolute;
+      right: 7px;
+      top: 7px;
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.22);
+    }
+    .azBtn.locked .lockDot{ background: rgba(255,122,176,.75); }
+
+    .help{
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.55;
+    }
+
+    .previewWrap{
+      padding: 16px;
+      display:flex;
+      gap: 14px;
+      align-items:flex-start;
+      flex-wrap:wrap;
+    }
+    .previewStage{
+      flex: 1 1 520px;
+      min-width: 320px;
+    }
+    .previewCard{
+      width:100%;
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--bg);
+      padding: 18px;
+      border-radius: calc(var(--radius) + 6px);
+    }
+    .previewInner{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 22px 22px 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .cornerGlow{
+      position:absolute; inset:-40% -40% auto auto;
+      width: 360px; height: 360px;
+      background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 65%);
+      filter: blur(2px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .letterBadge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 32%, transparent), rgba(0,0,0,.10));
+      border:1px solid color-mix(in srgb, var(--accent) 40%, rgba(255,255,255,.10));
+      font-family: var(--fontTitle);
+      font-size: 28px;
+      letter-spacing:.5px;
+      color: var(--text);
+    }
+    .titleLine{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .metaRight{
+      text-align:right;
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+    .word{
+      font-family: var(--fontTitle);
+      font-size: var(--titleSize);
+      line-height: 1.2;
+      margin: 2px 0 4px;
+      letter-spacing:.2px;
+    }
+    .trans{
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0 0 12px;
+    }
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0 14px;
+    }
+    .para{
+      font-size: var(--bodySize);
+      line-height: var(--lineHeight);
+      color: color-mix(in srgb, var(--text) 92%, var(--muted));
+      white-space: pre-wrap;
+    }
+    .footer{
+      margin-top: 14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:12px;
+      color: var(--muted);
+      opacity:.95;
+    }
+
+    .control{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+    .control input[type="range"]{width: 220px; max-width: 52vw;}
+    .control input[type="color"]{
+      width: 40px; height: 30px;
+      padding:0; border:0;
+      background: transparent;
+      cursor:pointer;
+    }
+    .small{font-size:12px; color: var(--muted)}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+    .toast{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-size:12px;
+      color:var(--muted);
+      display:none;
+    }
+    .toast.show{display:block;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- LEFT -->
+    <section class="card">
+      <div class="cardHeader">
+        <h2>项目与生成</h2>
+        <span class="pill" id="progressPill">完成度 0/26</span>
+      </div>
+      <div class="cardBody">
+
+        <div class="grid2">
+          <div>
+            <label>项目标题（可选）</label>
+            <input id="projectTitle" type="text" placeholder="例如：A–Z 主题短篇集 / 霓虹雨夜 / 温柔日常" />
+          </div>
+          <div>
+            <label>作者（可选）</label>
+            <input id="projectAuthor" type="text" placeholder="作者名" />
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="grid3">
+          <div>
+            <label>风格主题</label>
+            <select id="styleSelect">
+              <option value="gothic">哥特 / 暗色文学</option>
+              <option value="cyber">赛博 / 霓虹科幻</option>
+              <option value="cozy">温柔日常 / 手账感</option>
+            </select>
+          </div>
+          <div>
+            <label>主题皮肤</label>
+            <select id="themeSelect">
+              <option value="noir">Noir Dark（暗色电影感）</option>
+              <option value="magazine">Minimal Magazine（极简杂志）</option>
+              <option value="notebook">Cozy Notebook（手账卡片）</option>
+            </select>
+          </div>
+          <div>
+            <label>导出尺寸预设</label>
+            <select id="sizePreset">
+              <option value="1080x1920">手机竖图 1080×1920</option>
+              <option value="1440x2560">手机竖图 1440×2560</option>
+              <option value="1080x1080">方图 1080×1080</option>
+              <option value="2048x2048">方图 2048×2048</option>
+              <option value="1920x1080">横图 1920×1080</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="row">
+          <button class="btn btnPrimary" id="genBtn">随机生成 A–Z（未锁定项）</button>
+          <button class="btn" id="fillDemoBtn">填入示例段落（未写项）</button>
+          <button class="btn btnDanger" id="clearAllBtn">清空全部段落</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div class="small">选择字母进入编辑。右上小点表示“锁定”。</div>
+          <div class="row">
+            <button class="btn" id="lockAllBtn">全锁定</button>
+            <button class="btn" id="unlockAllBtn">全解锁</button>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="azList" id="azList"></div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div>
+            <label>当前字母：<span id="curLetter" class="muted">A</span></label>
+            <div class="row" style="justify-content:space-between; margin-top:6px">
+              <button class="btn" id="toggleLockBtn">切换锁定</button>
+              <span class="pill" id="lockPill">未锁定</span>
+            </div>
+          </div>
+          <div>
+            <label>快捷操作</label>
+            <div class="row" style="margin-top:6px">
+              <button class="btn" id="prevBtn">← 上一个</button>
+              <button class="btn" id="nextBtn">下一个 →</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="grid2">
+          <div>
+            <label>英文单词</label>
+            <input id="wordEn" type="text" placeholder="例如：Abyss" />
+          </div>
+          <div>
+            <label>中文翻译</label>
+            <input id="wordZh" type="text" placeholder="例如：深渊" />
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div>
+          <label>该单词对应的文段（纯文本）</label>
+          <textarea id="entryText" placeholder="围绕该单词写一段（会出现在导出的卡片上）"></textarea>
+          <div class="row" style="justify-content:space-between; margin-top:8px">
+            <span class="small" id="countInfo">字数：0</span>
+            <span class="small">导出为 PNG：封面 / 目录 / A–Z 正文。</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="card">
+      <div class="cardHeader">
+        <h2>预览与导出</h2>
+        <div class="row">
+          <button class="btn" id="exportCoverBtn">导出封面</button>
+          <button class="btn" id="exportTocBtn">导出目录</button>
+          <button class="btn btnPrimary" id="exportFullBtn">导出整套（封面+目录+A–Z）</button>
+          <button class="btn" id="exportOneBtn">导出当前字母</button>
+        </div>
+      </div>
+
+      <div class="previewWrap">
+        <div class="previewStage">
+          <div class="previewCard">
+            <div class="previewInner">
+              <div class="cornerGlow"></div>
+              <div class="titleLine">
+                <div class="letterBadge" id="pvLetter">A</div>
+                <div class="metaRight">
+                  <div id="pvTitle" style="font-weight:650; color:rgba(234,242,255,.92)">A–Z 主题短篇集</div>
+                  <div id="pvAuthor" class="muted">作者：—</div>
+                </div>
+              </div>
+
+              <div class="word" id="pvWord">Abyss</div>
+              <div class="trans" id="pvTrans">深渊</div>
+
+              <div class="divider"></div>
+
+              <div class="para" id="pvPara">（在左侧输入你的段落）</div>
+
+              <div class="footer">
+                <div id="pvFooterLeft">Style: Gothic</div>
+                <div id="pvFooterRight">A / Z</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="toast" id="toast"></div>
+        </div>
+
+        <div style="flex: 0 0 340px; min-width: 300px">
+          <div class="card" style="background: rgba(0,0,0,.10); border-radius: var(--radius); border:1px solid rgba(255,255,255,.10); box-shadow:none;">
+            <div class="cardHeader" style="background: rgba(0,0,0,.12);">
+              <h2>样式变量面板</h2>
+              <span class="pill">实时作用于预览</span>
+            </div>
+            <div class="cardBody">
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">背景色</div>
+                  <div style="font-size:12px;opacity:.9">--bg</div>
+                </div>
+                <input type="color" id="bgColor" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">卡片色</div>
+                  <div style="font-size:12px;opacity:.9">--card</div>
+                </div>
+                <input type="color" id="cardColor" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">文字色</div>
+                  <div style="font-size:12px;opacity:.9">--text</div>
+                </div>
+                <input type="color" id="textColor" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">强调色</div>
+                  <div style="font-size:12px;opacity:.9">--accent</div>
+                </div>
+                <input type="color" id="accentColor" />
+              </div>
+
+              <div style="height:12px"></div>
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">标题字号</div>
+                  <div style="font-size:12px;opacity:.9" id="titleSizeLabel">28px</div>
+                </div>
+                <input type="range" id="titleSize" min="18" max="44" value="28" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">正文字号</div>
+                  <div style="font-size:12px;opacity:.9" id="bodySizeLabel">16px</div>
+                </div>
+                <input type="range" id="bodySize" min="12" max="24" value="16" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">圆角</div>
+                  <div style="font-size:12px;opacity:.9" id="radiusLabel">18px</div>
+                </div>
+                <input type="range" id="radius" min="10" max="34" value="18" />
+              </div>
+
+              <div style="height:12px"></div>
+
+              <div class="row">
+                <button class="btn" id="resetVarsBtn">重置变量（按主题默认）</button>
+                <button class="btn" id="saveLocalBtn">保存到本地</button>
+                <button class="btn" id="loadLocalBtn">从本地载入</button>
+              </div>
+
+              <div class="help" style="margin-top:10px">
+                “导出整套”会连续下载 28 张 PNG（封面+目录+26 正文）。<br>
+                若浏览器拦截多次下载，请用“封面/目录/当前字母”分批导出。
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+<script>
+(function(){
+  const letters = Array.from({length:26}, (_,i)=>String.fromCharCode(65+i));
+
+  const THEMES = {
+    noir: {
+      "--bg":"#0b0f14",
+      "--card":"#111824",
+      "--text":"#eaf2ff",
+      "--muted":"#a9b6cc",
+      "--accent":"#7aa8ff",
+      "--titleSize":"28px",
+      "--bodySize":"16px",
+      "--radius":"18px",
+      "--lineHeight":"1.7",
+      "--fontTitle":"ui-serif, Georgia, 'Times New Roman', serif",
+      "--fontBody":"system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "--bd":"rgba(255,255,255,.08)",
+      "--shadow":"0 10px 30px rgba(0,0,0,.35)"
+    },
+    magazine: {
+      "--bg":"#f6f7fb",
+      "--card":"#ffffff",
+      "--text":"#101214",
+      "--muted":"#586171",
+      "--accent":"#2f6cff",
+      "--titleSize":"30px",
+      "--bodySize":"16px",
+      "--radius":"16px",
+      "--lineHeight":"1.75",
+      "--fontTitle":"ui-serif, Georgia, 'Times New Roman', serif",
+      "--fontBody":"system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "--bd":"rgba(16,18,20,.10)",
+      "--shadow":"0 10px 25px rgba(0,0,0,.10)"
+    },
+    notebook: {
+      "--bg":"#0f1720",
+      "--card":"#141f2b",
+      "--text":"#e9f5ea",
+      "--muted":"#a8c3ad",
+      "--accent":"#7fe29a",
+      "--titleSize":"28px",
+      "--bodySize":"16px",
+      "--radius":"22px",
+      "--lineHeight":"1.75",
+      "--fontTitle":"ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Arial",
+      "--fontBody":"system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+      "--bd":"rgba(255,255,255,.08)",
+      "--shadow":"0 10px 30px rgba(0,0,0,.35)"
+    }
+  };
+
+  const GENERIC = {
+    A:[["Abyss","深渊"],["Aurora","极光"],["Altar","祭坛"]],
+    B:[["Breathe","呼吸"],["Bloom","绽放"],["Bargain","交易"]],
+    C:[["Cinder","余烬"],["Cipher","密文"],["Cradle","摇篮"]],
+    D:[["Dawn","黎明"],["Dread","惧意"],["Drift","漂流"]],
+    E:[["Echo","回声"],["Ember","余火"],["Eclipse","食"]],
+    F:[["Fable","寓言"],["Fracture","裂隙"],["Frost","霜"]],
+    G:[["Gloom","阴翳"],["Glitch","故障"],["Garden","花园"]],
+    H:[["Hollow","空洞"],["Haven","避风港"],["Hush","寂声"]],
+    I:[["Ivory","象牙白"],["Impulse","冲动"],["Ink","墨"]],
+    J:[["Jade","玉"],["Jolt","震颤"],["Jubilee","庆典"]],
+    K:[["Knot","结"],["Karma","业"],["Kernel","核"]],
+    L:[["Lullaby","摇篮曲"],["Labyrinth","迷宫"],["Lumen","流明"]],
+    M:[["Murmur","呢喃"],["Mirage","海市蜃楼"],["Mercy","怜悯"]],
+    N:[["Nocturne","夜曲"],["Nexus","枢纽"],["Nest","巢"]],
+    O:[["Oath","誓言"],["Orbit","轨道"],["Omen","征兆"]],
+    P:[["Pulse","脉搏"],["Paradox","悖论"],["Petal","花瓣"]],
+    Q:[["Quiver","颤动"],["Quarry","猎物"],["Quill","羽笔"]],
+    R:[["Ruin","废墟"],["Rapture","狂喜"],["Ribbon","缎带"]],
+    S:[["Silhouette","剪影"],["Static","静电"],["Solace","慰藉"]],
+    T:[["Threshold","门槛"],["Tremor","震颤"],["Tea","茶"]],
+    U:[["Undertow","暗涌"],["Umbra","本影"],["Utopia","乌托邦"]],
+    V:[["Veil","面纱"],["Vector","向量"],["Velvet","天鹅绒"]],
+    W:[["Wander","漫游"],["Wound","伤口"],["Whisper","耳语"]],
+    X:[["Xenon","氙"],["Xylophone","木琴"],["Xylem","木质部"]],
+    Y:[["Yearning","渴望"],["Yonder","远方"],["Yield","让步"]],
+    Z:[["Zenith","天顶"],["Zephyr","和风"],["Zero","零"]],
+  };
+
+  const STYLE_OVERRIDES = {
+    gothic: {
+      A:[["Abyss","深渊"],["Ashen","灰烬色"],["Atonement","赎罪"]],
+      B:[["Banshee","女妖"],["Burial","葬礼"],["Bleak","萧瑟"]],
+      C:[["Crypt","地穴"],["Coffin","棺"],["Cinder","余烬"]],
+      D:[["Dirge","挽歌"],["Dusk","暮色"],["Dread","惧意"]],
+      E:[["Elegy","挽诗"],["Eclipse","食"],["Ember","余火"]],
+      F:[["Forsaken","遗弃"],["Frost","霜"],["Fable","寓言"]],
+      G:[["Grave","墓"],["Gloom","阴翳"],["Gothic","哥特"]],
+      H:[["Hollow","空洞"],["Heresy","异端"],["Hush","寂声"]],
+      I:[["Incantation","咒文"],["Ichor","神血"],["Ink","墨"]],
+      J:[["Judgement","审判"],["Jinx","厄运"],["Jade","玉"]],
+      K:[["Kneel","跪"],["Knot","结"],["Karma","业"]],
+      L:[["Lament","哀歌"],["Labyrinth","迷宫"],["Lullaby","摇篮曲"]],
+      M:[["Mourning","哀悼"],["Miasma","瘴气"],["Murmur","呢喃"]],
+      N:[["Nocturne","夜曲"],["Necropolis","亡城"],["Numb","麻木"]],
+      O:[["Omen","征兆"],["Oath","誓言"],["Oblivion","遗忘"]],
+      P:[["Phantom","幽影"],["Penance","苦修"],["Pulse","脉搏"]],
+      Q:[["Quill","羽笔"],["Quietus","寂灭"],["Quiver","颤动"]],
+      R:[["Ruin","废墟"],["Requiem","安魂曲"],["Raven","渡鸦"]],
+      S:[["Sepulcher","坟冢"],["Silhouette","剪影"],["Sable","乌黑"]],
+      T:[["Tomb","墓"],["Threshold","门槛"],["Tremor","震颤"]],
+      U:[["Umbra","本影"],["Undertow","暗涌"],["Unholy","不洁"]],
+      V:[["Veil","面纱"],["Vesper","晚祷"],["Venom","毒"]],
+      W:[["Wound","伤口"],["Whisper","耳语"],["Witch","女巫"]],
+      X:[["Xylem","木质部"],["Xenon","氙"],["Xiphoid","剑突"]],
+      Y:[["Yearning","渴望"],["Yew","紫杉"],["Yield","让步"]],
+      Z:[["Zephyr","和风"],["Zenith","天顶"],["Zero","零"]],
+    },
+    cyber: {
+      A:[["Algorithm","算法"],["Augment","增强"],["Avatar","化身"]],
+      B:[["Bandwidth","带宽"],["Backdoor","后门"],["Binary","二进制"]],
+      C:[["Cipher","密文"],["Circuit","电路"],["Core","内核"]],
+      D:[["Datastream","数据流"],["Drone","无人机"],["Debug","调试"]],
+      E:[["Encryption","加密"],["Echo","回声"],["Endpoint","端点"]],
+      F:[["Firewall","防火墙"],["Firmware","固件"],["Fragment","碎片"]],
+      G:[["Glitch","故障"],["Grid","网格"],["Ghost","幽灵进程"]],
+      H:[["Hologram","全息"],["Handshake","握手协议"],["Hub","枢纽"]],
+      I:[["Interface","接口"],["Implant","植入体"],["Index","索引"]],
+      J:[["Jitter","抖动"],["Junction","接点"],["Joystick","摇杆"]],
+      K:[["Kernel","内核"],["Keypair","密钥对"],["Kiosk","终端机"]],
+      L:[["Latency","延迟"],["Loop","循环"],["Lumen","流明"]],
+      M:[["Mainframe","主机"],["Mesh","网状"],["Mirage","幻象"]],
+      N:[["Nexus","中枢"],["Neon","霓虹"],["Node","节点"]],
+      O:[["Override","覆写"],["Orbit","轨道"],["Opcode","操作码"]],
+      P:[["Protocol","协议"],["Pulse","脉冲"],["Proxy","代理"]],
+      Q:[["Quantum","量子"],["Query","查询"],["Queue","队列"]],
+      R:[["Router","路由"],["Runtime","运行时"],["Rift","裂隙"]],
+      S:[["Subnet","子网"],["Signal","信号"],["Static","静电"]],
+      T:[["Terminal","终端"],["Token","令牌"],["Tether","系链"]],
+      U:[["Upload","上传"],["Uplink","上行"],["Userland","用户态"]],
+      V:[["Vector","向量"],["Virtual","虚拟"],["Voltage","电压"]],
+      W:[["Wavelength","波长"],["Worm","蠕虫"],["Workspace","工作区"]],
+      X:[["Xenon","氙"],["XOR","异或"],["XSS","跨站脚本"]],
+      Y:[["Yield","让步"],["Yottabyte","尧字节"],["Y-axis","Y轴"]],
+      Z:[["Zero-day","零日漏洞"],["Zone","区域"],["Zenith","天顶"]],
+    },
+    cozy: {
+      A:[["Afternoon","午后"],["Apricot","杏子"],["Almond","杏仁"]],
+      B:[["Blanket","毛毯"],["Bakery","面包店"],["Breeze","微风"]],
+      C:[["Cocoa","可可"],["Candle","蜡烛"],["Cottage","小屋"]],
+      D:[["Daisy","雏菊"],["Daydream","白日梦"],["Dawn","黎明"]],
+      E:[["Embrace","拥抱"],["Earlgrey","伯爵茶"],["Echo","回声"]],
+      F:[["Fireplace","壁炉"],["Fika","咖啡小憩"],["Flourish","绽放"]],
+      G:[["Garden","花园"],["Giggle","咯咯笑"],["Glow","微光"]],
+      H:[["Honey","蜂蜜"],["Haven","避风港"],["Hearth","炉边"]],
+      I:[["Ink","墨"],["Ivory","象牙白"],["Idle","悠闲"]],
+      J:[["Jam","果酱"],["Jasmine","茉莉"],["Joy","喜悦"]],
+      K:[["Kettle","水壶"],["Kindness","善意"],["Knit","编织"]],
+      L:[["Lullaby","摇篮曲"],["Lantern","灯笼"],["Lavender","薰衣草"]],
+      M:[["Mug","马克杯"],["Meadow","草地"],["Murmur","呢喃"]],
+      N:[["Nest","巢"],["Notebook","笔记本"],["Nuzzle","依偎"]],
+      O:[["Oatmilk","燕麦奶"],["Origami","折纸"],["Oasis","绿洲"]],
+      P:[["Petal","花瓣"],["Porch","门廊"],["Pillow","枕头"]],
+      Q:[["Quilt","拼布被"],["Quiet","安静"],["Quill","羽笔"]],
+      R:[["Recipe","食谱"],["Ribbon","缎带"],["Rainlight","雨光"]],
+      S:[["Solace","慰藉"],["Sunbeam","日光束"],["Spoon","勺"]],
+      T:[["Tea","茶"],["Tender","温柔"],["Thimble","顶针"]],
+      U:[["Umbrella","伞"],["Utopia","乌托邦"],["Upbeat","轻快"]],
+      V:[["Velvet","天鹅绒"],["Vase","花瓶"],["Vanilla","香草"]],
+      W:[["Warmth","暖意"],["Wander","漫游"],["Whisper","耳语"]],
+      X:[["Xylophone","木琴"],["Xylem","木质部"],["Xenon","氙"]],
+      Y:[["Yearning","渴望"],["Yonder","远方"],["Yummy","好吃"]],
+      Z:[["Zephyr","和风"],["Zest","清新"],["Zen","禅意"]],
+    }
+  };
+
+  const state = {
+    projectTitle: "A–Z 主题短篇集",
+    projectAuthor: "",
+    style: "gothic",
+    theme: "noir",
+    vars: {...THEMES.noir},
+    items: {},
+    current: "A"
+  };
+
+  function initItems(){
+    letters.forEach(L=>{
+      state.items[L] = state.items[L] || { en:"", zh:"", text:"", locked:false };
+    });
+  }
+
+  const $ = (id)=>document.getElementById(id);
+
+  const azList = $("azList");
+  const curLetter = $("curLetter");
+  const lockPill = $("lockPill");
+
+  const wordEn = $("wordEn");
+  const wordZh = $("wordZh");
+  const entryText = $("entryText");
+
+  const pvLetter = $("pvLetter");
+  const pvWord = $("pvWord");
+  const pvTrans = $("pvTrans");
+  const pvPara = $("pvPara");
+  const pvTitle = $("pvTitle");
+  const pvAuthor = $("pvAuthor");
+  const pvFooterLeft = $("pvFooterLeft");
+  const pvFooterRight = $("pvFooterRight");
+
+  const progressPill = $("progressPill");
+  const toast = $("toast");
+
+  const bgColor = $("bgColor");
+  const cardColor = $("cardColor");
+  const textColor = $("textColor");
+  const accentColor = $("accentColor");
+  const titleSize = $("titleSize");
+  const bodySize = $("bodySize");
+  const radius = $("radius");
+  const titleSizeLabel = $("titleSizeLabel");
+  const bodySizeLabel = $("bodySizeLabel");
+  const radiusLabel = $("radiusLabel");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=>toast.classList.remove("show"), 2800);
+  }
+
+  function setCSSVars(vars){
+    const root = document.documentElement;
+    Object.entries(vars).forEach(([k,v])=> root.style.setProperty(k, v));
+  }
+
+  function hexToRgb(hex){
+    const h = hex.replace("#","").trim();
+    if(h.length !== 6) return {r:255,g:255,b:255};
+    return {r:parseInt(h.slice(0,2),16), g:parseInt(h.slice(2,4),16), b:parseInt(h.slice(4,6),16)};
+  }
+
+  function rgba(color, a){
+    if(color.startsWith("#")){
+      const {r,g,b} = hexToRgb(color);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+    if(color.startsWith("rgb(")){
+      return color.replace("rgb(", "rgba(").replace(")", `,${a})`);
+    }
+    if(color.startsWith("rgba(")) return color;
+    return `rgba(255,255,255,${a})`;
+  }
+
+  function normalizeColor(v){
+    if(/^#([0-9a-f]{6})$/i.test(v)) return v;
+    return "#000000";
+  }
+
+  function pickWord(style, letter){
+    const pool = (STYLE_OVERRIDES[style] && STYLE_OVERRIDES[style][letter]) || GENERIC[letter] || [["Word","单词"]];
+    const [en, zh] = pool[Math.floor(Math.random()*pool.length)];
+    return {en, zh};
+  }
+
+  function ensureDefaultsIfEmpty(){
+    const it = state.items[state.current];
+    if(!it.en && !it.zh){
+      const w = pickWord(state.style, state.current);
+      it.en = w.en; it.zh = w.zh;
+    }
+  }
+
+  function countDone(){
+    let done = 0;
+    letters.forEach(L=>{
+      if((state.items[L].text || "").trim().length > 0) done++;
+    });
+    return done;
+  }
+
+  function updateProgress(){
+    progressPill.textContent = `完成度 ${countDone()}/26`;
+  }
+
+  function renderAZ(){
+    azList.innerHTML = "";
+    letters.forEach(L=>{
+      const b = document.createElement("div");
+      b.className = "azBtn";
+      if(L === state.current) b.classList.add("active");
+      if(state.items[L].locked) b.classList.add("locked");
+      b.textContent = L;
+      const dot = document.createElement("span");
+      dot.className = "lockDot";
+      b.appendChild(dot);
+      b.addEventListener("click", ()=>{
+        saveCurrentEdits();
+        state.current = L;
+        loadCurrentEdits();
+        renderAZ();
+        renderPreview();
+      });
+      azList.appendChild(b);
+    });
+  }
+
+  function saveCurrentEdits(){
+    const it = state.items[state.current];
+    it.en = wordEn.value.trim();
+    it.zh = wordZh.value.trim();
+    it.text = entryText.value;
+  }
+
+  function loadCurrentEdits(){
+    const it = state.items[state.current];
+    curLetter.textContent = state.current;
+    wordEn.value = it.en || "";
+    wordZh.value = it.zh || "";
+    entryText.value = it.text || "";
+    lockPill.textContent = it.locked ? "已锁定" : "未锁定";
+    lockPill.style.borderColor = it.locked ? "rgba(255,122,176,.45)" : "rgba(255,255,255,.12)";
+    $("countInfo").textContent = `字数：${(it.text||"").replace(/\s/g,"").length}`;
+  }
+
+  function renderPreview(){
+    const it = state.items[state.current];
+    pvLetter.textContent = state.current;
+    pvWord.textContent = it.en || "（英文单词）";
+    pvTrans.textContent = it.zh || "（中文翻译）";
+    pvPara.textContent = (it.text && it.text.trim()) ? it.text : "（在左侧输入你的段落）";
+
+    const title = ($("projectTitle").value || "").trim() || state.projectTitle;
+    const author = ($("projectAuthor").value || "").trim();
+
+    pvTitle.textContent = title;
+    pvAuthor.textContent = author ? `作者：${author}` : "作者：—";
+    pvFooterLeft.textContent = `Style: ${state.style[0].toUpperCase()+state.style.slice(1)}`;
+    pvFooterRight.textContent = `${state.current} / Z`;
+
+    updateProgress();
+  }
+
+  function applyTheme(themeId){
+    state.theme = themeId;
+    const base = THEMES[themeId] || THEMES.noir;
+    state.vars = {...base};
+    setCSSVars(state.vars);
+
+    bgColor.value = normalizeColor(state.vars["--bg"]);
+    cardColor.value = normalizeColor(state.vars["--card"]);
+    textColor.value = normalizeColor(state.vars["--text"]);
+    accentColor.value = normalizeColor(state.vars["--accent"]);
+
+    titleSize.value = parseInt(state.vars["--titleSize"],10) || 28;
+    bodySize.value = parseInt(state.vars["--bodySize"],10) || 16;
+    radius.value = parseInt(state.vars["--radius"],10) || 18;
+
+    titleSizeLabel.textContent = `${titleSize.value}px`;
+    bodySizeLabel.textContent = `${bodySize.value}px`;
+    radiusLabel.textContent = `${radius.value}px`;
+    showToast("已切换主题，并重置变量为默认。");
+  }
+
+  function setVar(k, v){
+    state.vars[k] = v;
+    document.documentElement.style.setProperty(k, v);
+  }
+
+  function generateAZ(){
+    letters.forEach(L=>{
+      const it = state.items[L];
+      if(it.locked) return;
+      const w = pickWord(state.style, L);
+      it.en = w.en;
+      it.zh = w.zh;
+    });
+    loadCurrentEdits();
+    renderAZ();
+    renderPreview();
+    showToast("已为未锁定字母随机生成 A–Z 单词与翻译。");
+  }
+
+  function fillDemoText(){
+    letters.forEach(L=>{
+      const it = state.items[L];
+      if((it.text||"").trim()) return;
+      const en = it.en || L;
+      it.text = `围绕「${en}」写一段：\n\n他（她）在那一刻终于明白，所谓主题并不是束缚，而是一条能把碎片串起来的线。每一个字母都像一扇门，推开之后，是不同的光。`;
+    });
+    loadCurrentEdits();
+    renderPreview();
+    showToast("已为未写段落填入示例文本（可随时改）。");
+  }
+
+  function clearAllText(){
+    if(!confirm("确定要清空全部 26 段文本吗？（单词不清空）")) return;
+    letters.forEach(L=> state.items[L].text = "");
+    loadCurrentEdits();
+    renderPreview();
+    updateProgress();
+    showToast("已清空全部段落。");
+  }
+
+  function toggleLockCurrent(){
+    state.items[state.current].locked = !state.items[state.current].locked;
+    renderAZ();
+    loadCurrentEdits();
+    showToast(state.items[state.current].locked ? "已锁定当前字母" : "已解锁当前字母");
+  }
+  function lockAll(v){
+    letters.forEach(L=> state.items[L].locked = v);
+    renderAZ();
+    loadCurrentEdits();
+    showToast(v ? "已全锁定" : "已全部解锁");
+  }
+
+  // ---------- Canvas helpers ----------
+  function roundRect(ctx, x, y, w, h, r){
+    const rr = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr, y);
+    ctx.arcTo(x+w, y, x+w, y+h, rr);
+    ctx.arcTo(x+w, y+h, x, y+h, rr);
+    ctx.arcTo(x, y+h, x, y, rr);
+    ctx.arcTo(x, y, x+w, y, rr);
+    ctx.closePath();
+  }
+
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+    const lines = [];
+    const paragraphs = String(text||"").split("\n");
+    paragraphs.forEach((p, idx)=>{
+      const tokens = p.split(/(\s+)/).filter(s=>s.length>0);
+      let line = "";
+      for(let i=0;i<tokens.length;i++){
+        const test = line + tokens[i];
+        const w = ctx.measureText(test).width;
+        if(w > maxWidth && line.trim().length>0){
+          lines.push(line.replace(/\s+$/,""));
+          line = tokens[i].trimStart();
+        }else{
+          line = test;
+        }
+      }
+      if(line.length) lines.push(line.replace(/\s+$/,""));
+      if(idx !== paragraphs.length-1) lines.push("");
+    });
+
+    let yy = y;
+    lines.forEach(ln=>{
+      if(ln==="") yy += lineHeight;
+      else { ctx.fillText(ln, x, yy); yy += lineHeight; }
+    });
+    return yy;
+  }
+
+  function getExportSpec(){
+    const [wStr,hStr] = $("sizePreset").value.split("x");
+    const W = parseInt(wStr,10), H = parseInt(hStr,10);
+    const css = getComputedStyle(document.documentElement);
+    return {
+      W,H,
+      bg: css.getPropertyValue("--bg").trim() || "#000000",
+      card: css.getPropertyValue("--card").trim() || "#111111",
+      text: css.getPropertyValue("--text").trim() || "#ffffff",
+      muted: css.getPropertyValue("--muted").trim() || "#aaaaaa",
+      accent: css.getPropertyValue("--accent").trim() || "#7aa8ff",
+      titleSizePx: parseInt(css.getPropertyValue("--titleSize"),10) || 28,
+      bodySizePx: parseInt(css.getPropertyValue("--bodySize"),10) || 16,
+      radiusPx: parseInt(css.getPropertyValue("--radius"),10) || 18,
+    };
+  }
+
+  function downloadCanvas(canvas, filename){
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function safeTitle(){
+    const t = ($("projectTitle").value || "").trim() || state.projectTitle || "AZ";
+    return t.replace(/[\\/:*?"<>|]+/g,"_").slice(0,40);
+  }
+
+  // ---------- Export: Cover ----------
+  function exportCoverPNG(){
+    saveCurrentEdits();
+
+    const {W,H,bg,card,text,muted,accent,radiusPx} = getExportSpec();
+    const title = ($("projectTitle").value || "").trim() || state.projectTitle;
+    const author = ($("projectAuthor").value || "").trim();
+    const styleName = state.style[0].toUpperCase()+state.style.slice(1);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+
+    // Background
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    // Big glow
+    const g1 = ctx.createRadialGradient(W*0.22, H*0.18, 0, W*0.22, H*0.18, Math.max(W,H)*0.60);
+    g1.addColorStop(0, rgba(accent, 0.22));
+    g1.addColorStop(1, rgba(accent, 0));
+    ctx.fillStyle = g1;
+    ctx.fillRect(0,0,W,H);
+
+    const g2 = ctx.createRadialGradient(W*0.82, H*0.35, 0, W*0.82, H*0.35, Math.max(W,H)*0.55);
+    g2.addColorStop(0, "rgba(255,122,176,.10)");
+    g2.addColorStop(1, "rgba(255,122,176,0)");
+    ctx.fillStyle = g2;
+    ctx.fillRect(0,0,W,H);
+
+    const pad = Math.round(W*0.07);
+    const cardX = pad, cardY = pad, cardW = W-pad*2, cardH = H-pad*2;
+
+    // Card with shadow
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.35)";
+    ctx.shadowBlur = Math.round(W*0.03);
+    ctx.shadowOffsetY = Math.round(W*0.008);
+    roundRect(ctx, cardX, cardY, cardW, cardH, radiusPx+10);
+    ctx.fillStyle = card;
+    ctx.fill();
+    ctx.restore();
+
+    // Border
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = Math.max(1, Math.round(W/1100));
+    roundRect(ctx, cardX, cardY, cardW, cardH, radiusPx+10);
+    ctx.stroke();
+
+    // Content
+    const x = cardX + Math.round(cardW*0.08);
+    let y = cardY + Math.round(cardH*0.18);
+
+    // Small tag
+    ctx.fillStyle = rgba(accent, 0.20);
+    const tagW = Math.round(cardW*0.22);
+    const tagH = Math.round(H*0.045);
+    roundRect(ctx, x, y, tagW, tagH, Math.round(tagH/2));
+    ctx.fill();
+    ctx.strokeStyle = rgba(accent, 0.35);
+    ctx.stroke();
+    ctx.fillStyle = rgba(text, 0.92);
+    ctx.font = `650 ${Math.round(H*0.020)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    ctx.fillText("A–Z STORY COLLECTION", x + Math.round(tagH*0.55), y + tagH/2);
+
+    y += tagH + Math.round(H*0.06);
+
+    // Title
+    ctx.fillStyle = rgba(text, 0.98);
+    ctx.font = `750 ${Math.round(H*0.060)}px ${getComputedStyle(document.documentElement).getPropertyValue("--fontTitle").trim() || "Georgia, serif"}`;
+    ctx.textBaseline = "top";
+    ctx.fillText(title || "A–Z 主题短篇集", x, y);
+
+    y += Math.round(H*0.10);
+
+    // Subtitle lines
+    ctx.fillStyle = muted;
+    ctx.font = `500 ${Math.round(H*0.024)}px system-ui, -apple-system, Segoe UI, Roboto, Arial, 'PingFang SC', 'Microsoft YaHei'`;
+    const dateStr = new Date().toLocaleDateString("zh-CN", {year:"numeric", month:"2-digit", day:"2-digit"});
+    const line1 = author ? `作者：${author}` : "作者：—";
+    const line2 = `风格：${styleName}  ·  完成度：${countDone()}/26`;
+    const line3 = `日期：${dateStr}`;
+
+    ctx.fillText(line1, x, y);
+    y += Math.round(H*0.040);
+    ctx.fillText(line2, x, y);
+    y += Math.round(H*0.040);
+    ctx.fillText(line3, x, y);
+
+    // Big A–Z mark
+    const mark = "A  •  B  •  C  •  …  •  Z";
+    ctx.textAlign = "left";
+    ctx.fillStyle = rgba(text, 0.18);
+    ctx.font = `700 ${Math.round(H*0.055)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.fillText(mark, x, cardY + cardH - Math.round(H*0.18));
+
+    // Footer
+    ctx.fillStyle = rgba(text, 0.70);
+    ctx.font = `600 ${Math.round(H*0.020)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.fillText("Generated by A–Z Word Writer", x, cardY + cardH - Math.round(H*0.10));
+
+    downloadCanvas(canvas, `${safeTitle()}-00-Cover.png`);
+    showToast("已开始下载封面 PNG。");
+  }
+
+  // ---------- Export: TOC ----------
+  function exportTOCPNG(){
+    saveCurrentEdits();
+
+    const {W,H,bg,card,text,muted,accent,radiusPx,bodySizePx} = getExportSpec();
+    const title = ($("projectTitle").value || "").trim() || state.projectTitle;
+    const author = ($("projectAuthor").value || "").trim();
+    const styleName = state.style[0].toUpperCase()+state.style.slice(1);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+
+    // Background
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    const glow = ctx.createRadialGradient(W*0.85, H*0.10, 0, W*0.85, H*0.10, Math.max(W,H)*0.55);
+    glow.addColorStop(0, rgba(accent, 0.18));
+    glow.addColorStop(1, rgba(accent, 0));
+    ctx.fillStyle = glow;
+    ctx.fillRect(0,0,W,H);
+
+    const pad = Math.round(W*0.07);
+    const cardX = pad, cardY = pad, cardW = W-pad*2, cardH = H-pad*2;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.30)";
+    ctx.shadowBlur = Math.round(W*0.02);
+    ctx.shadowOffsetY = Math.round(W*0.006);
+    roundRect(ctx, cardX, cardY, cardW, cardH, radiusPx+10);
+    ctx.fillStyle = card;
+    ctx.fill();
+    ctx.restore();
+
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = Math.max(1, Math.round(W/1100));
+    roundRect(ctx, cardX, cardY, cardW, cardH, radiusPx+10);
+    ctx.stroke();
+
+    const x0 = cardX + Math.round(cardW*0.08);
+    let y = cardY + Math.round(cardH*0.08);
+
+    // Header
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = rgba(text, 0.98);
+    ctx.font = `750 ${Math.round(H*0.050)}px ${getComputedStyle(document.documentElement).getPropertyValue("--fontTitle").trim() || "Georgia, serif"}`;
+    ctx.fillText("目录 / Table of Contents", x0, y);
+
+    y += Math.round(H*0.075);
+
+    ctx.fillStyle = muted;
+    ctx.font = `500 ${Math.round(H*0.022)}px system-ui, -apple-system, Segoe UI, Roboto, Arial, 'PingFang SC', 'Microsoft YaHei'`;
+    ctx.fillText(`${title}${author ? " · " + author : ""} · ${styleName}`, x0, y);
+
+    y += Math.round(H*0.050);
+
+    // Divider
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = Math.max(1, Math.round(W/1200));
+    ctx.beginPath();
+    ctx.moveTo(x0, y);
+    ctx.lineTo(cardX + cardW - Math.round(cardW*0.08), y);
+    ctx.stroke();
+
+    y += Math.round(H*0.040);
+
+    // Column layout (auto choose 2 or 3 columns)
+    const contentW = cardW - Math.round(cardW*0.16);
+    const contentH = cardH - (y - cardY) - Math.round(cardH*0.10);
+    const minCols = (W >= 1600 || (W > H)) ? 3 : 2;
+    const cols = minCols;
+
+    const colGap = Math.round(contentW * 0.05);
+    const colW = Math.floor((contentW - colGap*(cols-1)) / cols);
+
+    const lineH = Math.round(Math.max(18, bodySizePx*1.55));
+    const maxLinesPerCol = Math.floor(contentH / lineH);
+    const perCol = maxLinesPerCol; // one entry per line
+
+    // If overflow, shrink font a bit
+    let fontSize = Math.round(Math.max(14, bodySizePx));
+    const neededCols = Math.ceil(26 / perCol);
+    if(neededCols > cols){
+      fontSize = Math.round(fontSize * 0.90);
+    }
+
+    ctx.font = `500 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, 'PingFang SC', 'Microsoft YaHei'`;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+
+    const startX = x0;
+    const startY = y;
+
+    // Draw entries
+    for(let i=0;i<26;i++){
+      const L = letters[i];
+      const it = state.items[L] || {en:"", zh:""};
+      const en = it.en || "—";
+      const zh = it.zh || "—";
+
+      const colIndex = Math.floor(i / perCol);
+      const rowIndex = i % perCol;
+
+      const x = startX + colIndex * (colW + colGap);
+      const yy = startY + rowIndex * lineH;
+
+      // Letter pill
+      ctx.fillStyle = rgba(accent, 0.22);
+      const pillH = Math.round(fontSize*1.35);
+      const pillW = Math.round(pillH*1.25);
+      roundRect(ctx, x, yy+Math.round((lineH-pillH)/2), pillW, pillH, Math.round(pillH/2));
+      ctx.fill();
+      ctx.strokeStyle = rgba(accent, 0.32);
+      ctx.stroke();
+
+      ctx.fillStyle = rgba(text, 0.95);
+      ctx.font = `700 ${Math.round(fontSize*0.92)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      ctx.textBaseline = "middle";
+      ctx.fillText(L, x + Math.round(pillW*0.38), yy + Math.round(lineH/2));
+
+      // Text
+      ctx.textBaseline = "top";
+      ctx.font = `600 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      ctx.fillStyle = rgba(text, 0.92);
+      const mainX = x + pillW + Math.round(fontSize*0.7);
+      const mainY = yy + Math.round((lineH - fontSize)/2) - 1;
+      const line = `${en}  ·  ${zh}`;
+      // clip within col
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(mainX, yy, colW - (mainX - x), lineH);
+      ctx.clip();
+      ctx.fillText(line, mainX, mainY);
+      ctx.restore();
+
+      // restore baseline font for next iteration (will be overwritten anyway)
+    }
+
+    // Footer
+    ctx.textBaseline = "top";
+    ctx.fillStyle = muted;
+    ctx.font = `500 ${Math.round(H*0.018)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    const footerY = cardY + cardH - Math.round(cardH*0.08);
+    ctx.fillText(`Total: 26 entries · Completed: ${countDone()}/26`, x0, footerY);
+    ctx.textAlign = "right";
+    ctx.fillText("01 / TOC", cardX + cardW - Math.round(cardW*0.08), footerY);
+
+    downloadCanvas(canvas, `${safeTitle()}-01-TOC.png`);
+    showToast("已开始下载目录 PNG。");
+  }
+
+  // ---------- Export: Letter card ----------
+  function exportLetterPNG(letter){
+    saveCurrentEdits();
+    const spec = getExportSpec();
+    const {W,H,bg,card,text,muted,accent,titleSizePx,bodySizePx,radiusPx} = spec;
+
+    const it = state.items[letter];
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    const g = ctx.createRadialGradient(W*0.82, H*0.12, 0, W*0.82, H*0.12, Math.max(W,H)*0.45);
+    g.addColorStop(0, rgba(accent, 0.22));
+    g.addColorStop(1, rgba(accent, 0));
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+
+    const pad = Math.round(W * 0.06);
+    const cardPad = Math.round(W * 0.045);
+    const cardX = pad, cardY = pad, cardW = W - pad*2, cardH = H - pad*2;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.35)";
+    ctx.shadowBlur = Math.round(W*0.02);
+    ctx.shadowOffsetY = Math.round(W*0.006);
+    roundRect(ctx, cardX, cardY, cardW, cardH, radiusPx + 6);
+    ctx.fillStyle = card;
+    ctx.fill();
+    ctx.restore();
+
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = Math.max(1, Math.round(W/900));
+    roundRect(ctx, cardX, cardY, cardW, cardH, radiusPx + 6);
+    ctx.stroke();
+
+    let x = cardX + cardPad;
+    let y = cardY + cardPad;
+
+    // Badge
+    const badge = Math.round(W * 0.09);
+    const badgeR = Math.round(badge * 0.28);
+    ctx.fillStyle = rgba(accent, 0.25);
+    roundRect(ctx, x, y, badge, badge, badgeR);
+    ctx.fill();
+    ctx.strokeStyle = rgba(accent, 0.35);
+    ctx.stroke();
+
+    ctx.fillStyle = text;
+    ctx.font = `700 ${Math.round(badge*0.50)}px Georgia, serif`;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillText(letter, x + badge/2, y + badge/2 + 1);
+
+    const title = ($("projectTitle").value || "").trim() || state.projectTitle;
+    const author = ($("projectAuthor").value || "").trim();
+    ctx.textAlign = "right";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = rgba(text, 0.92);
+    ctx.font = `650 ${Math.round(W*0.022)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.fillText(title, cardX + cardW - cardPad, y);
+
+    ctx.fillStyle = muted;
+    ctx.font = `500 ${Math.round(W*0.017)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.fillText(author ? `作者：${author}` : `作者：—`, cardX + cardW - cardPad, y + Math.round(W*0.03));
+
+    y += badge + Math.round(W*0.02);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = rgba(text, 0.98);
+    ctx.font = `700 ${titleSizePx}px Georgia, 'Times New Roman', serif`;
+    ctx.textBaseline = "top";
+    ctx.fillText(it.en || "（英文单词）", x, y);
+    y += titleSizePx + Math.round(W*0.01);
+
+    ctx.fillStyle = muted;
+    ctx.font = `500 ${Math.round(bodySizePx*0.92)}px system-ui, -apple-system, Segoe UI, Roboto, Arial, 'PingFang SC', 'Microsoft YaHei'`;
+    ctx.fillText(it.zh || "（中文翻译）", x, y);
+    y += Math.round(bodySizePx*1.4);
+
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    ctx.lineWidth = Math.max(1, Math.round(W/1100));
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(cardX + cardW - cardPad, y);
+    ctx.stroke();
+    y += Math.round(bodySizePx*1.2);
+
+    const para = (it.text && it.text.trim()) ? it.text : "（在左侧输入你的段落）";
+    ctx.fillStyle = rgba(text, 0.92);
+    ctx.font = `400 ${bodySizePx}px system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'PingFang SC', 'Microsoft YaHei'`;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    const maxTextW = cardX + cardW - cardPad - x;
+    const lineH = Math.round(bodySizePx * 1.65);
+    wrapText(ctx, para, x, y, maxTextW, lineH);
+
+    // Footer
+    const footerY = cardY + cardH - cardPad - Math.round(W*0.022);
+    ctx.fillStyle = muted;
+    ctx.font = `500 ${Math.round(W*0.016)}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+    const styleName = state.style[0].toUpperCase()+state.style.slice(1);
+    ctx.fillText(`Style: ${styleName}`, x, footerY);
+    ctx.textAlign = "right";
+    ctx.fillText(`${letter} / Z`, cardX + cardW - cardPad, footerY);
+
+    downloadCanvas(canvas, `${safeTitle()}-${letter}.png`);
+  }
+
+  // ---------- Export: Full set ----------
+  function exportFull(){
+    saveCurrentEdits();
+    showToast("将导出 28 张 PNG（封面+目录+26 正文）。若被拦截请分批导出。");
+
+    const tasks = [];
+    tasks.push(()=>exportCoverPNG());
+    tasks.push(()=>exportTOCPNG());
+    letters.forEach(L=> tasks.push(()=>exportLetterPNG(L)));
+
+    let i = 0;
+    function step(){
+      if(i >= tasks.length) return;
+      tasks[i]();
+      i++;
+      setTimeout(step, 260);
+    }
+    step();
+  }
+
+  // ---------- Local save/load ----------
+  const STORAGE_KEY = "az_writer_demo_v2_cover_toc";
+  function saveLocal(){
+    saveCurrentEdits();
+    const payload = {
+      projectTitle: $("projectTitle").value,
+      projectAuthor: $("projectAuthor").value,
+      style: state.style,
+      theme: state.theme,
+      vars: state.vars,
+      items: state.items,
+      current: state.current
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    showToast("已保存到本地（localStorage）。");
+  }
+  function loadLocal(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){ showToast("本地没有存档。"); return; }
+    try{
+      const p = JSON.parse(raw);
+      state.style = p.style || state.style;
+      state.theme = p.theme || state.theme;
+      state.vars = p.vars || state.vars;
+      state.items = p.items || state.items;
+      state.current = p.current || "A";
+
+      $("styleSelect").value = state.style;
+      $("themeSelect").value = state.theme;
+      $("projectTitle").value = p.projectTitle || "";
+      $("projectAuthor").value = p.projectAuthor || "";
+
+      setCSSVars(state.vars);
+
+      bgColor.value = normalizeColor(state.vars["--bg"] || "#000000");
+      cardColor.value = normalizeColor(state.vars["--card"] || "#000000");
+      textColor.value = normalizeColor(state.vars["--text"] || "#ffffff");
+      accentColor.value = normalizeColor(state.vars["--accent"] || "#7aa8ff");
+      titleSize.value = parseInt(state.vars["--titleSize"],10) || 28;
+      bodySize.value = parseInt(state.vars["--bodySize"],10) || 16;
+      radius.value = parseInt(state.vars["--radius"],10) || 18;
+      titleSizeLabel.textContent = `${titleSize.value}px`;
+      bodySizeLabel.textContent = `${bodySize.value}px`;
+      radiusLabel.textContent = `${radius.value}px`;
+
+      renderAZ();
+      loadCurrentEdits();
+      renderPreview();
+      showToast("已从本地载入。");
+    }catch(e){
+      console.error(e);
+      showToast("载入失败：存档损坏。");
+    }
+  }
+
+  // ---------- Events ----------
+  $("styleSelect").addEventListener("change", (e)=>{
+    saveCurrentEdits();
+    state.style = e.target.value;
+    ensureDefaultsIfEmpty();
+    renderPreview();
+    showToast("已切换风格。你可以重新随机生成未锁定项。");
+  });
+
+  $("themeSelect").addEventListener("change", (e)=>{
+    applyTheme(e.target.value);
+    renderPreview();
+  });
+
+  $("projectTitle").addEventListener("input", renderPreview);
+  $("projectAuthor").addEventListener("input", renderPreview);
+
+  wordEn.addEventListener("input", ()=>{ saveCurrentEdits(); renderPreview(); });
+  wordZh.addEventListener("input", ()=>{ saveCurrentEdits(); renderPreview(); });
+
+  entryText.addEventListener("input", ()=>{
+    saveCurrentEdits();
+    $("countInfo").textContent = `字数：${(entryText.value||"").replace(/\s/g,"").length}`;
+    renderPreview();
+  });
+
+  $("genBtn").addEventListener("click", ()=>{ saveCurrentEdits(); generateAZ(); });
+  $("fillDemoBtn").addEventListener("click", ()=>{ saveCurrentEdits(); fillDemoText(); });
+  $("clearAllBtn").addEventListener("click", clearAllText);
+
+  $("toggleLockBtn").addEventListener("click", toggleLockCurrent);
+  $("lockAllBtn").addEventListener("click", ()=>lockAll(true));
+  $("unlockAllBtn").addEventListener("click", ()=>lockAll(false));
+
+  $("prevBtn").addEventListener("click", ()=>{
+    saveCurrentEdits();
+    let idx = letters.indexOf(state.current);
+    idx = (idx - 1 + 26) % 26;
+    state.current = letters[idx];
+    loadCurrentEdits();
+    renderAZ();
+    renderPreview();
+  });
+
+  $("nextBtn").addEventListener("click", ()=>{
+    saveCurrentEdits();
+    let idx = letters.indexOf(state.current);
+    idx = (idx + 1) % 26;
+    state.current = letters[idx];
+    loadCurrentEdits();
+    renderAZ();
+    renderPreview();
+  });
+
+  bgColor.addEventListener("input", ()=> setVar("--bg", bgColor.value));
+  cardColor.addEventListener("input", ()=> setVar("--card", cardColor.value));
+  textColor.addEventListener("input", ()=> setVar("--text", textColor.value));
+  accentColor.addEventListener("input", ()=> setVar("--accent", accentColor.value));
+
+  titleSize.addEventListener("input", ()=>{
+    titleSizeLabel.textContent = `${titleSize.value}px`;
+    setVar("--titleSize", `${titleSize.value}px`);
+  });
+  bodySize.addEventListener("input", ()=>{
+    bodySizeLabel.textContent = `${bodySize.value}px`;
+    setVar("--bodySize", `${bodySize.value}px`);
+  });
+  radius.addEventListener("input", ()=>{
+    radiusLabel.textContent = `${radius.value}px`;
+    setVar("--radius", `${radius.value}px`);
+  });
+
+  $("resetVarsBtn").addEventListener("click", ()=> applyTheme(state.theme));
+  $("saveLocalBtn").addEventListener("click", saveLocal);
+  $("loadLocalBtn").addEventListener("click", loadLocal);
+
+  $("exportCoverBtn").addEventListener("click", exportCoverPNG);
+  $("exportTocBtn").addEventListener("click", exportTOCPNG);
+  $("exportFullBtn").addEventListener("click", exportFull);
+  $("exportOneBtn").addEventListener("click", ()=>{ exportLetterPNG(state.current); showToast("已开始下载当前字母 PNG。"); });
+
+  // ---------- Init ----------
+  initItems();
+  applyTheme(state.theme);
+
+  // Seed A
+  const wA = pickWord(state.style, "A");
+  state.items["A"].en = wA.en;
+  state.items["A"].zh = wA.zh;
+
+  renderAZ();
+  loadCurrentEdits();
+  renderPreview();
+})();
+</script>
+</body>
+</html>

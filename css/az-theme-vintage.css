@@ -1,0 +1,171 @@
+/* ============================================
+   复古凸版主题 (Vintage Letterpress / 信纸风)
+   参考：泛黄纸底 + 深褐墨字 + 双线装饰 + 经典衬线
+   字体：传统衬线，易读且带书卷气
+   ============================================ */
+
+/* ---------- 主题变量 ---------- */
+[data-theme="vintage"] {
+  --color-primary: #2c2419;
+  --color-background: #f0ebe3;
+  --color-surface: #faf8f5;
+  --color-text: #2c2419;
+  --color-text-secondary: #5c5348;
+  --color-accent: #6b4423;
+  --color-accent-2: #8b5a2b;
+  --color-border: #c4b5a0;
+
+  /* 封面：统一泛黄纸色，由浅到略深 */
+  --gradient-cover: linear-gradient(180deg, #f5f0e8 0%, #ebe4d9 50%, #e4dccf 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(44,36,25,0.02) 100%);
+  --gradient-accent: linear-gradient(135deg, #6b4423 0%, #8b5a2b 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(107,68,35,0.08) 0%, rgba(139,90,43,0.06) 100%);
+  --gradient-text: #2c2419;
+  /* 极淡纸纹/亚麻纹理感 */
+  --gradient-decoration: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(44, 36, 25, 0.015) 2px,
+    rgba(44, 36, 25, 0.015) 3px
+  ), repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(44, 36, 25, 0.015) 2px,
+    rgba(44, 36, 25, 0.015) 3px
+  );
+
+  /* 经典衬线：与中式复古共用宋体栈，凸版/信纸感 */
+  --font-family: "Zhuque Fangsong", "朱雀仿宋", "Source Han Serif SC VF", "Source Han Serif SC", "Noto Serif SC", "SimSun", "宋体", serif;
+  --font-size-title: 1.75rem;
+  --font-size-subtitle: 1.1rem;
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+  --line-height-body: 1.9;
+  --line-height-title: 1.35;
+
+  /* 柔和圆角，留白较多 */
+  --radius-card: 2px;
+  --radius-badge: 2px;
+  --radius-full: 2px;
+  --spacing-page: 1.75rem;
+  --spacing-card: 1.75rem;
+  --shadow-card: 0 1px 4px rgba(44, 36, 25, 0.06);
+  --shadow-cover: 0 2px 16px rgba(44, 36, 25, 0.08);
+  --shadow-glow: none;
+
+  --cover-deco-tl-size: 2.5rem;
+  --cover-deco-tl-shape: 0;
+  --cover-deco-tl-border: 1px solid #6b4423;
+  --cover-deco-br-size: 2.5rem;
+  --cover-deco-br-radius: 0;
+  --cover-deco-br-border: 1px solid #6b4423;
+  --card-border: 1px solid var(--color-border);
+  --card-topbar-height: 0;
+  --full-item-bar-width: 3px;
+  --export-frame-border: 1px solid var(--color-border);
+
+  /* 封面：居中靠上（头图在下） */
+  --cover-justify: flex-start;
+  --cover-align: center;
+  --cover-text-order: 0;
+  --cover-image-order: 1;
+  --cover-text-align: center;
+  --cover-padding-top: 12vh;
+  --cover-padding-bottom: var(--spacing-page);
+}
+
+/* ---------- 封面：深褐字 + 标题上方复古装饰 + 双线感 ---------- */
+[data-theme="vintage"] .az-cover__badge,
+[data-theme="vintage"] .az-cover__title,
+[data-theme="vintage"] .az-cover__subtitle,
+[data-theme="vintage"] .az-cover__author {
+  color: #2c2419;
+  text-shadow: none;
+}
+
+[data-theme="vintage"] .az-cover__badge {
+  position: relative;
+  margin-bottom: 0;
+}
+[data-theme="vintage"] .az-cover__badge::after {
+  content: "\2014\00a0\2042\00a0\2014";
+  display: block;
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  color: #6b4423;
+  line-height: 1;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+  opacity: 0.9;
+}
+
+[data-theme="vintage"] .az-cover::before {
+  opacity: 0.6;
+}
+
+[data-theme="vintage"] .az-cover::after,
+[data-theme="vintage"] .az-cover .az-cover__deco {
+  border-color: #6b4423;
+  opacity: 0.85;
+}
+
+/* 封面副标题下增加双线装饰（凸版风格分隔线） */
+[data-theme="vintage"] .az-cover__subtitle {
+  position: relative;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid #c4b5a0;
+}
+
+[data-theme="vintage"] .az-cover__subtitle::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 1px;
+  background: #c4b5a0;
+}
+
+/* ---------- 卡片：无顶条，用双线分隔标题与正文 ---------- */
+[data-theme="vintage"] .az-letter-page__card,
+[data-theme="vintage"] .az-full-page__item {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="vintage"] .az-letter-page__card::after {
+  display: none;
+}
+
+[data-theme="vintage"] .az-letter-page__header {
+  border-bottom: 3px double var(--color-border);
+  border-image: none;
+  padding-bottom: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+[data-theme="vintage"] .az-full-page__item::before {
+  width: var(--full-item-bar-width);
+  background: var(--gradient-accent);
+}
+
+/* ---------- 字母/标题用深褐强调 ---------- */
+[data-theme="vintage"] .az-letter-page__letter,
+[data-theme="vintage"] .az-full-page__letter {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+[data-theme="vintage"] .az-full-page__title {
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

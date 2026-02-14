@@ -1,0 +1,281 @@
+/* ============================================
+   编辑/印刷风主题 (Editorial / 黑白网格)
+   参考：纯黑白、左框右文、网格分栏、留白清晰
+   字体：全无衬线
+   ============================================ */
+
+/* ---------- 主题变量 ---------- */
+[data-theme="editorial"] {
+  --color-primary: #000;
+  --color-background: #fff;
+  --color-surface: #fff;
+  --color-text: #000;
+  --color-text-secondary: #333;
+  --color-accent: #000;
+  --color-accent-2: #000;
+  --color-border: #000;
+
+  --gradient-cover: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+  --gradient-cover-overlay: none;
+  --gradient-accent: #000;
+  --gradient-accent-soft: rgba(0, 0, 0, 0.06);
+  --gradient-text: #000;
+  --gradient-decoration: none;
+
+  /* 英文 Anonymous Pro，中文思源黑体 ExtraLight 200 */
+  --font-family: "Anonymous Pro", "Source Han Sans SC VF", "Source Han Sans SC", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  --font-weight-title: 200;
+  --font-weight-strong: 200;
+  font-weight: 200;
+  --font-size-title: 1.65rem;
+  --font-size-subtitle: 0.9375rem;
+  --font-size-body: 0.9375rem;
+  --font-size-small: 0.8125rem;
+  --line-height-body: 1.75;
+  --line-height-title: 1.3;
+
+  --radius-card: 0;
+  --radius-badge: 0;
+  --radius-full: 0;
+  --spacing-page: 1.5rem;
+  --spacing-card: 1.5rem;
+  --shadow-card: none;
+  --shadow-cover: none;
+  --shadow-glow: none;
+
+  --cover-deco-tl-size: 2rem;
+  --cover-deco-tl-shape: 0;
+  --cover-deco-tl-border: 1px solid #000;
+  --cover-deco-br-size: 2rem;
+  --cover-deco-br-radius: 0;
+  --cover-deco-br-border: 1px solid #000;
+  --card-border: 1px solid #000;
+  --card-topbar-height: 0;
+  --full-item-bar-width: 3px;
+  --export-frame-border: 1px solid #000;
+
+  /* 封面：居左靠上（头图在下） */
+  --cover-justify: flex-start;
+  --cover-align: flex-start;
+  --cover-text-order: 0;
+  --cover-image-order: 1;
+  --cover-text-align: left;
+  --cover-title-max-width: 22ch;
+  --cover-padding-top: 12vh;
+  --cover-padding-bottom: var(--spacing-page);
+}
+
+/* ---------- 封面：白底黑字 + 标题侧黑线装饰 + 黑框（轻字重） ---------- */
+[data-theme="editorial"] .az-cover__badge,
+[data-theme="editorial"] .az-cover__title,
+[data-theme="editorial"] .az-cover__subtitle,
+[data-theme="editorial"] .az-cover__author {
+  color: #000;
+  text-shadow: none;
+}
+[data-theme="editorial"] .az-cover .az-cover__inner {
+  position: relative;
+  padding-left: 1.1rem;
+}
+[data-theme="editorial"] .az-cover .az-cover__inner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #000;
+  opacity: 0.85;
+}
+[data-theme="editorial"] .az-cover__title {
+  font-weight: var(--font-weight-title, 200);
+}
+[data-theme="editorial"] .az-cover__subtitle,
+[data-theme="editorial"] .az-cover__author {
+  font-weight: 200;
+}
+
+[data-theme="editorial"] .az-cover::before {
+  opacity: 0;
+}
+
+[data-theme="editorial"] .az-cover::after,
+[data-theme="editorial"] .az-cover .az-cover__deco {
+  border-color: #000;
+}
+
+/* 头图容器：黑色错位叠放作阴影 */
+[data-theme="editorial"] .az-cover__image {
+  overflow: visible;
+}
+[data-theme="editorial"] .az-cover__image::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: -1;
+  border-radius: 0;
+}
+[data-theme="editorial"] .az-cover__image-preview {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- 卡片：黑白线框；左栏单词框、右栏正文 ---------- */
+[data-theme="editorial"] .az-letter-page__card,
+[data-theme="editorial"] .az-full-page__item {
+  border: 1px solid #000;
+  background: #fff;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+[data-theme="editorial"] .az-letter-page__card::after {
+  display: none;
+}
+
+/* 单字母页：左单词区（加框）、右正文；左区上下居中 */
+[data-theme="editorial"] .az-letter-page__card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+[data-theme="editorial"] .az-letter-page__header {
+  order: 1;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  gap: 0.25rem;
+  max-width: 11em;
+  padding: 0.75rem 1rem;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+[data-theme="editorial"] .az-letter-page__body {
+  order: 2;
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+[data-theme="editorial"] .az-letter-page__letter,
+[data-theme="editorial"] .az-letter-page__translation {
+  text-align: center;
+  color: #000;
+}
+
+[data-theme="editorial"] .az-letter-page__word {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+  margin: 0.1rem 0;
+  text-align: center;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
+  color: #000;
+  font-weight: var(--font-weight-strong, 200);
+}
+
+[data-theme="editorial"] .az-letter-page__word::before,
+[data-theme="editorial"] .az-letter-page__word::after {
+  display: none;
+}
+
+/* 整本页：左单词框、右正文 */
+[data-theme="editorial"] .az-full-page__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+  padding-left: calc(var(--spacing-card) + var(--full-item-bar-width));
+}
+
+[data-theme="editorial"] .az-full-page__header {
+  order: 1;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+  gap: 0.25rem;
+  max-width: 11em;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+[data-theme="editorial"] .az-full-page__body {
+  order: 2;
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+[data-theme="editorial"] .az-full-page__letter,
+[data-theme="editorial"] .az-full-page__translation {
+  text-align: center;
+  color: #000;
+}
+
+[data-theme="editorial"] .az-full-page__word {
+  padding: 0.25rem 0.5rem;
+  margin: 0.05rem 0;
+  text-align: center;
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
+  color: #000;
+  font-weight: var(--font-weight-strong, 200);
+}
+
+[data-theme="editorial"] .az-full-page__word::before,
+[data-theme="editorial"] .az-full-page__word::after {
+  display: none;
+}
+
+[data-theme="editorial"] .az-full-page__item::before {
+  width: var(--full-item-bar-width);
+  background: #000;
+  border-radius: 0;
+}
+
+/* 字母与标题用黑色 */
+[data-theme="editorial"] .az-letter-page__letter,
+[data-theme="editorial"] .az-full-page__letter {
+  background: none;
+  color: #000;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  font-weight: var(--font-weight-strong, 200);
+}
+
+[data-theme="editorial"] .az-full-page__title {
+  background: none;
+  color: #000;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  font-weight: var(--font-weight-strong, 200);
+}
+
+[data-theme="editorial"] .az-export-frame--cover,
+[data-theme="editorial"] .az-export-frame--letter {
+  border-radius: 0;
+  border: 1px solid #000;
+  box-shadow: none;
+}

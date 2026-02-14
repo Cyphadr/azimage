@@ -1,0 +1,784 @@
+/* ============================================
+   A–Z 小说主题生成器 — 主题与排版样式（变量绑定版）
+   导出：1 封面图 | 26 张单字母图 | 颜色与字号均绑定自定义变量
+   ============================================ */
+
+/* ---------- 1. 主题变量 (默认 light) ---------- */
+:root,
+[data-theme="light"] {
+  --color-primary: #1a2a3a;
+  --color-background: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #5c5c5c;
+  --color-accent: #2563eb;
+  --color-accent-2: #7c3aed;
+  --color-border: #e2e8f0;
+
+  /* 渐变（可被其他主题覆盖） */
+  --gradient-cover: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0.08) 100%);
+  --gradient-accent: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(124,58,237,0.15) 100%);
+  --gradient-text: linear-gradient(135deg, #1a2a3a 0%, #334155 100%);
+  --gradient-decoration: radial-gradient(circle at 30% 20%, rgba(124,58,237,0.2) 0%, transparent 50%);
+
+  --font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-size-title: 2rem;
+  --font-size-subtitle: 1.25rem;
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+  --line-height-body: 1.75;
+  --line-height-title: 1.3;
+
+  --radius-card: 16px;
+  --radius-badge: 8px;
+  --radius-full: 9999px;
+  --spacing-page: 1.5rem;
+  --spacing-card: 1.5rem;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-cover: 0 12px 40px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 40px rgba(37, 99, 235, 0.15);
+
+  --background-image: none;
+  --background-size: cover;
+  --background-position: center;
+
+  --export-width: 390px;
+  --export-width-wide: 820px;
+  --export-aspect-cover: 9 / 16;
+  --export-aspect-letter: 9 / 16;
+
+  --cover-justify: flex-start;
+  --cover-align: center;
+  --cover-text-order: 0;
+  --cover-image-order: 1;
+  --cover-text-align: center;
+  --cover-padding-top: 12vh;
+  --cover-padding-bottom: var(--spacing-page);
+
+  --cover-deco-tl-size: 3rem;
+  --cover-deco-tl-shape: 50%;
+  --cover-deco-tl-border: 2px solid rgba(255,255,255,0.4);
+  --cover-deco-br-size: 4rem;
+  --cover-deco-br-radius: 0 0 0 0.5rem;
+  --cover-deco-br-border: 2px solid rgba(255,255,255,0.25);
+  --card-border: 1px solid var(--color-border);
+  --card-topbar-height: 4px;
+  --full-item-bar-width: 4px;
+  --export-frame-border: 1px solid var(--color-border);
+
+  /* 封面文字颜色/阴影、字号扩展（生成器可覆盖） */
+  --color-cover-badge: rgba(255,255,255,0.9);
+  --color-cover-title: #fff;
+  --color-cover-title-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  --color-cover-subtitle: rgba(255,255,255,0.88);
+  --color-cover-author: rgba(255,255,255,0.75);
+  --font-size-letter-badge: 2.25rem;
+  --font-size-letter-bg: clamp(8rem, 25vw, 14rem);
+  --font-size-full-letter: 1.35rem;
+  --font-size-full-word: 1.1rem;
+}
+
+/* Light：左上为开口弧线（右侧透明） */
+[data-theme="light"] .az-cover::after {
+  border-right-color: transparent;
+}
+
+[data-theme="dark"] {
+  --color-primary: #f1f5f9;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-text: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-accent: #818cf8;
+  --color-accent-2: #c084fc;
+  --color-border: #334155;
+  --gradient-cover: linear-gradient(135deg, #312e81 0%, #4c1d95 50%, #5b21b6 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.2) 100%);
+  --gradient-accent: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(129,140,248,0.2) 0%, rgba(192,132,252,0.2) 100%);
+  --gradient-text: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%);
+  --gradient-decoration: radial-gradient(circle at 70% 80%, rgba(129,140,248,0.25) 0%, transparent 50%);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-cover: 0 12px 40px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 40px rgba(129,140,248,0.2);
+
+  --cover-deco-tl-size: 3.5rem;
+  --cover-deco-tl-shape: 50%;
+  --cover-deco-tl-border: 2px solid rgba(255,255,255,0.35);
+  --cover-deco-br-size: 4rem;
+  --cover-deco-br-radius: 0 0 0 0.5rem;
+  --cover-deco-br-border: 2px solid rgba(255,255,255,0.2);
+  --card-border: 1px solid rgba(129,140,248,0.4);
+  --card-topbar-height: 4px;
+  --full-item-bar-width: 4px;
+  --export-frame-border: 1px solid rgba(129,140,248,0.3);
+
+  --cover-justify: flex-end;
+  --cover-align: center;
+  --cover-text-order: 1;
+  --cover-image-order: 0;
+  --cover-text-align: center;
+  --cover-padding-top: var(--spacing-page);
+  --cover-padding-bottom: 7rem;
+
+  --color-deco-border-light: rgba(255,255,255,0.35);
+  --color-deco-border-soft: rgba(255,255,255,0.2);
+  --color-card-border-accent: rgba(129,140,248,0.5);
+  --color-card-glow: rgba(192,132,252,0.15);
+  --color-full-item-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  --color-full-item-inset: rgba(129,140,248,0.2);
+}
+
+/* ---------- 像素复古主题 ---------- */
+[data-theme="pixel"] {
+  --color-primary: #2c2c2c;
+  --color-background: #5a6b2e;
+  --color-surface: #e8e4d9;
+  --color-text: #2c2c2c;
+  --color-text-secondary: #4a4a4a;
+  --color-accent: #2c2c2c;
+  --color-accent-2: #3d3d3d;
+  --color-border: #3d3d3d;
+
+  --gradient-cover: linear-gradient(180deg, #5a6b2e 0%, #5a6b2e 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, transparent 40%);
+  --gradient-accent: #2c2c2c;
+  --gradient-accent-soft: rgba(44, 44, 44, 0.12);
+  --gradient-text: #2c2c2c;
+  --gradient-decoration: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.04) 3px,
+    rgba(0, 0, 0, 0.04) 4px
+  ), repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.04) 3px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+
+  --font-family: "quan", "全小素", "Cubic 11", "Cubic", "俐方體11號", "BoutiqueBitmap9x9 1.6", "BoutiqueBitmap9x9_1_6", "Boutique Bitmap 9x9", "Zpix", monospace;
+  --font-size-title: 1.5rem;
+  --font-size-subtitle: 1rem;
+  --font-size-body: 0.875rem;
+  --font-size-small: 0.75rem;
+  --line-height-body: 1.65;
+  --line-height-title: 1.35;
+
+  --radius-card: 0;
+  --radius-badge: 0;
+  --radius-full: 0;
+  --spacing-page: 1rem;
+  --spacing-card: 1.25rem;
+  --shadow-card: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  --shadow-cover: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  --shadow-glow: none;
+
+  --cover-deco-tl-size: 2.5rem;
+  --cover-deco-tl-shape: 0;
+  --cover-deco-tl-border: 2px solid rgba(232,228,217,0.5);
+  --cover-deco-br-size: 3rem;
+  --cover-deco-br-radius: 0;
+  --cover-deco-br-border: 2px solid rgba(232,228,217,0.5);
+  --card-border: 3px solid var(--color-border);
+  --card-topbar-height: 4px;
+  --full-item-bar-width: 4px;
+  --export-frame-border: 2px solid var(--color-border);
+
+  --pixel-band-color: rgba(168, 184, 122, 0.5);
+
+  --cover-justify: flex-start;
+  --cover-align: flex-start;
+  --cover-text-order: 0;
+  --cover-image-order: 1;
+  --cover-text-align: left;
+  --cover-title-max-width: 22ch;
+  --cover-padding-top: 12vh;
+  --cover-padding-bottom: var(--spacing-page);
+
+  --color-meta-watermark: #c5d4a4;
+  --color-meta-watermark-border: rgba(197, 212, 164, 0.8);
+  --color-cover-text-on-dark: #e8e4d9;
+  --color-cover-deco-muted: rgba(232, 228, 217, 0.5);
+  --color-shadow-block: #2c2c2c;
+}
+
+/* ---------- 中式复古主题 ---------- */
+[data-theme="chinese-retro"] {
+  --color-primary: #4a4038;
+  --color-background: #f5f0e8;
+  --color-surface: #faf8f5;
+  --color-text: #3d3630;
+  --color-text-secondary: #5c5348;
+  --color-accent: #a63d2e;
+  --color-accent-2: #8b3626;
+  --color-border: #c4a77d;
+
+  --gradient-cover: linear-gradient(180deg, #f2ebe2 0%, #e8dfd4 100%);
+  --gradient-cover-overlay: linear-gradient(180deg, rgba(166, 61, 46, 0.03) 0%, transparent 50%);
+  --gradient-accent: linear-gradient(135deg, #a63d2e 0%, #8b3626 100%);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(166, 61, 46, 0.12) 0%, rgba(139, 54, 38, 0.08) 100%);
+  --gradient-text: #3d3630;
+  --gradient-decoration: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 1px,
+    rgba(61, 54, 48, 0.02) 1px,
+    rgba(61, 54, 48, 0.02) 2px
+  );
+
+  --font-family: "Huiwen-MinchoGBK", "Source Han Serif SC VF", "Source Han Serif SC", "Noto Serif SC", "SimSun", "宋体", serif;
+  --font-size-title: 1.85rem;
+  --font-size-subtitle: 1.1rem;
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+  --line-height-body: 1.85;
+  --line-height-title: 1.35;
+
+  --radius-card: 2px;
+  --radius-badge: 2px;
+  --radius-full: 2px;
+  --spacing-page: 1.5rem;
+  --spacing-card: 1.5rem;
+  --shadow-card: 0 1px 3px rgba(61, 54, 48, 0.08);
+  --shadow-cover: 0 2px 12px rgba(61, 54, 48, 0.1);
+  --shadow-glow: none;
+
+  --cover-deco-tl-size: 2.5rem;
+  --cover-deco-tl-shape: 0;
+  --cover-deco-tl-border: 1px solid var(--color-accent);
+  --cover-deco-br-size: 2.5rem;
+  --cover-deco-br-radius: 0;
+  --cover-deco-br-border: 1px solid var(--color-accent);
+  --card-border: 1px solid var(--color-border);
+  --card-topbar-height: 2px;
+  --full-item-bar-width: 3px;
+  --export-frame-border: 1px solid var(--color-accent);
+
+  --cover-justify: flex-end;
+  --cover-align: flex-start;
+  --cover-text-order: 1;
+  --cover-image-order: 0;
+  --cover-text-align: left;
+  --cover-title-max-width: 22ch;
+  --cover-padding-top: var(--spacing-page);
+  --cover-padding-bottom: 7rem;
+}
+
+[data-theme="chinese-retro"] .az-cover__badge,
+[data-theme="chinese-retro"] .az-cover__title,
+[data-theme="chinese-retro"] .az-cover__subtitle,
+[data-theme="chinese-retro"] .az-cover__author {
+  color: var(--color-text);
+  text-shadow: none;
+}
+[data-theme="chinese-retro"] .az-cover::before { opacity: 0.5; }
+[data-theme="chinese-retro"] .az-cover .az-cover__inner { position: relative; padding-left: 1.25rem; }
+[data-theme="chinese-retro"] .az-cover .az-cover__inner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-accent);
+  border-radius: 1px;
+  opacity: 0.85;
+}
+[data-theme="chinese-retro"] .az-cover::after,
+[data-theme="chinese-retro"] .az-cover .az-cover__deco {
+  border-color: var(--color-accent);
+  opacity: 0.9;
+}
+[data-theme="chinese-retro"] .az-letter-page__card,
+[data-theme="chinese-retro"] .az-full-page__item {
+  border-color: var(--color-border);
+  border-left-color: var(--color-accent);
+}
+[data-theme="chinese-retro"] .az-letter-page__card::after {
+  background: var(--gradient-accent);
+  height: 2px;
+}
+[data-theme="chinese-retro"] .az-full-page__item::before {
+  width: 3px;
+  background: var(--color-accent);
+}
+
+/* 像素主题：背景装饰 */
+[data-theme="pixel"] .az-cover {
+  background-image:
+    linear-gradient(180deg, var(--pixel-band-color) 0, var(--pixel-band-color) 18px, var(--pixel-line-color) 18px, var(--pixel-line-color) 20px, transparent 20px),
+    linear-gradient(0deg, var(--pixel-band-color) 0, var(--pixel-band-color) 18px, var(--pixel-line-color) 18px, var(--pixel-line-color) 20px, transparent 20px),
+    var(--gradient-cover), var(--background-image);
+  background-size: 100% var(--pixel-band-height), 100% var(--pixel-band-height), 100% 100%, var(--background-size);
+  background-position: 0 0, 0 100%, 0 0, var(--background-position);
+  background-repeat: no-repeat;
+}
+[data-theme="pixel"] .az-cover::after { display: none; }
+[data-theme="pixel"] .az-cover .az-cover__deco { bottom: calc(1rem + var(--pixel-band-height)); }
+[data-theme="pixel"] .az-letter-page,
+[data-theme="pixel"] .az-full-page {
+  background-image:
+    linear-gradient(180deg, var(--pixel-band-color) 0, var(--pixel-band-color) 18px, var(--pixel-line-color) 18px, var(--pixel-line-color) 20px, transparent 20px),
+    linear-gradient(0deg, var(--pixel-band-color) 0, var(--pixel-band-color) 18px, var(--pixel-line-color) 18px, var(--pixel-line-color) 20px, transparent 20px),
+    var(--gradient-decoration), var(--background-image);
+  background-size: 100% var(--pixel-band-height), 100% var(--pixel-band-height), 100% 100%, var(--background-size);
+  background-position: 0 0, 0 100%, 0 0, var(--background-position);
+  background-repeat: no-repeat;
+}
+
+[data-theme="pixel"] .az-cover__badge,
+[data-theme="pixel"] .az-cover__title,
+[data-theme="pixel"] .az-cover__subtitle,
+[data-theme="pixel"] .az-cover__author {
+  color: var(--color-cover-text-on-dark);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+[data-theme="pixel"] .az-cover .az-cover__deco {
+  border-color: var(--color-cover-deco-muted);
+}
+[data-theme="pixel"] .az-cover__image { overflow: visible; }
+[data-theme="pixel"] .az-cover__image::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 100%;
+  height: 100%;
+  background: var(--color-shadow-block);
+  z-index: -1;
+  border: 2px solid var(--color-border);
+}
+[data-theme="pixel"] .az-cover__image-preview { position: relative; z-index: 1; }
+
+[data-theme="dark"] .az-cover::after { border-right-color: var(--color-deco-border-light); }
+[data-theme="dark"] .az-cover .az-cover__deco {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-deco-border-soft);
+  border-top-color: transparent;
+  border-left-color: transparent;
+}
+[data-theme="dark"] .az-letter-page__card {
+  border: 1px solid var(--color-card-border-accent);
+  box-shadow: var(--shadow-card), var(--shadow-glow), inset 0 0 0 1px var(--color-card-glow);
+}
+[data-theme="dark"] .az-full-page__item {
+  box-shadow: var(--color-full-item-shadow), inset 0 0 0 1px var(--color-full-item-inset);
+}
+
+[data-theme="pixel"] .az-letter-page__header {
+  border-bottom: 2px solid var(--color-border);
+  border-image: none;
+}
+[data-theme="pixel"] .az-letter-page__card::after {
+  height: 4px;
+  background: var(--color-accent);
+}
+[data-theme="pixel"] .az-full-page__item::before {
+  width: 4px;
+  background: var(--color-accent);
+}
+[data-theme="pixel"] .az-body-page-meta__title,
+[data-theme="pixel"] .az-body-page-meta__author,
+[data-theme="pixel"] .az-body-page-watermark__input {
+  color: var(--color-meta-watermark);
+  border-bottom-color: var(--color-meta-watermark-border);
+}
+[data-theme="pixel"] .az-body-page-meta__title::placeholder,
+[data-theme="pixel"] .az-body-page-meta__author::placeholder,
+[data-theme="pixel"] .az-body-page-watermark__input::placeholder {
+  color: var(--color-meta-watermark);
+  opacity: 0.85;
+}
+
+/* ---------- 2. 导出画布 ---------- */
+.az-export-frame {
+  width: 100%;
+  max-width: var(--export-width);
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  overflow: hidden;
+}
+.az-export-frame--cover {
+  aspect-ratio: var(--export-aspect-cover);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-cover);
+  border: var(--export-frame-border);
+}
+.az-export-frame--letter {
+  aspect-ratio: var(--export-aspect-letter);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-cover);
+  border: var(--export-frame-border);
+  overflow: visible;
+}
+
+/* ---------- 3. 通用页面容器 ---------- */
+.az-page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: var(--spacing-page);
+  background-color: var(--color-background);
+  background-image: var(--background-image);
+  background-size: var(--background-size);
+  background-position: var(--background-position);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+.az-page *,
+.az-page *::before,
+.az-page *::after { box-sizing: inherit; }
+
+/* ---------- 4. 封面 ---------- */
+.az-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: var(--cover-align);
+  justify-content: var(--cover-justify);
+  min-height: 100%;
+  padding: var(--spacing-page);
+  padding-top: var(--cover-padding-top, var(--spacing-page));
+  padding-bottom: var(--cover-padding-bottom, var(--spacing-page));
+  position: relative;
+  background: var(--gradient-cover);
+  background-image: var(--gradient-cover), var(--background-image);
+  background-size: 100% 100%, var(--background-size);
+  background-position: 0 0, var(--background-position);
+  gap: 1rem;
+}
+.az-cover:not(.az-cover--has-image) .az-cover__image { display: none; }
+.az-cover__image {
+  order: var(--cover-image-order);
+  position: relative;
+  z-index: 1;
+  align-self: var(--cover-align);
+  width: 28em;
+  max-width: 100%;
+  height: 14em;
+  flex-shrink: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+}
+.az-cover__image-preview {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.az-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-cover-overlay);
+  pointer-events: none;
+}
+.az-cover::after {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: var(--cover-deco-tl-size);
+  height: var(--cover-deco-tl-size);
+  border: var(--cover-deco-tl-border);
+  border-radius: var(--cover-deco-tl-shape);
+  pointer-events: none;
+}
+.az-cover .az-cover__inner {
+  order: var(--cover-text-order);
+  position: relative;
+  z-index: 1;
+  align-self: var(--cover-align);
+  width: 28em;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: var(--cover-align);
+  text-align: var(--cover-text-align);
+}
+.az-cover__badge {
+  font-size: var(--font-size-small);
+  color: var(--color-cover-badge);
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+}
+.az-cover__title {
+  font-size: var(--font-size-title);
+  font-weight: 700;
+  line-height: var(--line-height-title);
+  color: var(--color-cover-title);
+  margin: 0 0 0.5rem;
+  max-width: var(--cover-title-max-width, 12ch);
+  text-shadow: var(--color-cover-title-shadow);
+  text-align: inherit;
+}
+.az-cover__subtitle {
+  font-size: var(--font-size-subtitle);
+  color: var(--color-cover-subtitle);
+  margin: 0 0 1.5rem;
+  font-weight: 400;
+}
+.az-cover__author {
+  font-size: var(--font-size-body);
+  color: var(--color-cover-author);
+  margin: 0;
+}
+.az-cover .az-cover__deco {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  width: var(--cover-deco-br-size);
+  height: var(--cover-deco-br-size);
+  border: var(--cover-deco-br-border);
+  border-top-color: transparent;
+  border-left-color: transparent;
+  border-radius: var(--cover-deco-br-radius);
+  pointer-events: none;
+}
+
+/* ---------- 5. 单字母正文页 ---------- */
+.az-letter-page {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--color-background);
+  background-image: var(--gradient-decoration), var(--background-image);
+  background-size: 100% 100%, var(--background-size);
+  background-position: 0 0, var(--background-position);
+}
+.az-letter-page__card-wrap {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--spacing-page);
+}
+.az-letter-page__card-wrap::before {
+  content: attr(data-letter);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--font-size-letter-bg);
+  font-weight: 900;
+  color: var(--color-surface);
+  background: var(--gradient-accent-soft);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+.az-letter-page__card {
+  position: relative;
+  z-index: 1;
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+  padding: var(--spacing-card);
+  width: 100%;
+  border: var(--card-border);
+  overflow: hidden;
+}
+.az-letter-page__card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--card-topbar-height);
+  background: var(--gradient-accent);
+}
+.az-letter-page__header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid transparent;
+  border-image: var(--gradient-accent-soft) 1;
+}
+.az-letter-page__letter {
+  font-size: var(--font-size-letter-badge);
+  font-weight: 800;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1;
+}
+.az-letter-page__word {
+  font-size: var(--font-size-subtitle);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.az-letter-page__translation {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+}
+.az-letter-page__body {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+  margin: 0;
+}
+
+/* 正文页 meta / 水印 */
+.az-body-page-meta {
+  position: absolute;
+  top: var(--spacing-page);
+  right: var(--spacing-page);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+.az-body-page-meta__title,
+.az-body-page-meta__author {
+  font-family: inherit;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.2rem 0.35rem;
+  min-width: 8em;
+  text-align: right;
+}
+.az-body-page-meta__title::placeholder,
+.az-body-page-meta__author::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+.az-body-page-watermark {
+  position: absolute;
+  bottom: var(--spacing-page);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+.az-body-page-watermark__input {
+  font-family: inherit;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.2rem 0.5rem;
+  min-width: 10em;
+  text-align: center;
+}
+.az-body-page-watermark__input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+.az-letter-page > .az-body-page-meta {
+  position: static;
+  padding: 0.75rem var(--spacing-page) 0;
+  align-self: flex-end;
+}
+.az-letter-page > .az-body-page-watermark {
+  position: static;
+  transform: none;
+  padding: 0 var(--spacing-page) 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+}
+
+/* ---------- 6. 整本正文页 ---------- */
+.az-full-page {
+  position: relative;
+  min-height: 100vh;
+  padding: var(--spacing-page);
+  background: var(--color-background);
+  background-image: var(--gradient-decoration), var(--background-image);
+  background-size: 100% 100%, var(--background-size);
+}
+.az-full-page__title {
+  font-size: var(--font-size-title);
+  font-weight: 700;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+.az-full-page__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: var(--export-width-wide);
+  margin: 0 auto;
+}
+.az-full-page__item {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-card);
+  position: relative;
+  overflow: hidden;
+  padding-left: calc(var(--spacing-card) + 4px);
+}
+.az-full-page__item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--full-item-bar-width);
+  height: 100%;
+  background: var(--gradient-accent);
+}
+.az-full-page__header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.az-full-page__letter {
+  font-size: var(--font-size-full-letter);
+  font-weight: 800;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  min-width: 2rem;
+}
+.az-full-page__word {
+  font-size: var(--font-size-full-word);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.az-full-page__translation {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+.az-full-page__body {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+  margin: 0;
+}

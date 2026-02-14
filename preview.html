@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A–Z 小说主题生成器 — 排版预览</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+  <!-- Editorial：思源黑体简体可变字体（轻字重） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-source-han-sans-sc-vf@1.0.10/font.css" crossorigin="anonymous" />
+  <!-- 像素主题中文字体：Cubic（俐方體）+ 精品點陣體。若 deno.dev 跨域失败可改用下方 jsDelivr -->
+  <link rel="preconnect" href="https://chinese-fonts-cdn.deno.dev" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/cubic/dist/Cubic/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/jpdzt/dist/BoutiqueBitmap9x9_1_6/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/qxs/dist/quan/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/cubic@3.0.0/dist/Cubic/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/jpdzt@3.0.0/dist/BoutiqueBitmap9x9_1_6/result.css" crossorigin="anonymous" />
+  <!-- 仿宋（日系）：汇文仿宋 ReiFonts（jsDelivr gh） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/eterfinal/ReiFonts/HuiwenFangsong/result.css" crossorigin="anonymous" />
+  <!-- 仿宋备选：方正仿宋 CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-fz-fang-song-z-02-s-regular@1.1.0/font.css" crossorigin="anonymous" />
+  <!-- 复古海报：霞鹜文楷屏幕阅读版（jsDelivr） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-lxgw-wen-kai-screen-r@1.0.6/font.css" crossorigin="anonymous" />
+  <!-- 中式复古主题：汇文明朝体 GBK（ReiFonts jsDelivr gh） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/eterfinal/ReiFonts/HuiwenMinchoGBK/result.css" crossorigin="anonymous" />
+  <!-- 复古 GUI：寒蝉半圆体 ChillRoundM（ReiFonts jsDelivr gh） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/eterfinal/ReiFonts/ChillRoundM/result.css" crossorigin="anonymous" />
+  <!-- 中式复古备选：朱雀仿宋 + 思源宋体（本地/CDN） -->
+  <link rel="stylesheet" href="css/az-theme-retro-fonts.css" />
+  <link rel="stylesheet" href="css/az-theme-pixel-fonts.css" />
+  <link rel="stylesheet" href="css/az-theme.css" />
+  <link rel="stylesheet" href="css/az-theme-retro-gui.css" />
+  <link rel="stylesheet" href="css/az-theme-vintage.css" />
+  <link rel="stylesheet" href="css/az-theme-poster.css" />
+  <link rel="stylesheet" href="css/az-theme-app.css" />
+  <link rel="stylesheet" href="css/az-theme-nippon.css" />
+  <link rel="stylesheet" href="css/az-theme-editorial.css" />
+  <style>
+    /* 预览用：页面之间用分隔线区分，便于滚动查看 */
+    .preview-section {
+      border-bottom: 3px dashed var(--color-border);
+    }
+    .preview-section:last-child {
+      border-bottom: none;
+    }
+    .preview-nav {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .preview-nav a {
+      padding: 0.4rem 0.8rem;
+      background: var(--color-surface);
+      color: var(--color-accent);
+      text-decoration: none;
+      border-radius: var(--radius-badge);
+      font-size: var(--font-size-small);
+      box-shadow: var(--shadow-card);
+    }
+    .preview-nav a:hover {
+      background: var(--color-accent);
+      color: var(--color-surface);
+    }
+    .preview-nav button {
+      padding: 0.4rem 0.8rem;
+      background: var(--color-surface);
+      color: var(--color-accent);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-badge);
+      font-size: var(--font-size-small);
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+    }
+    .preview-nav button:hover {
+      background: var(--color-accent);
+      color: var(--color-surface);
+      border-color: var(--color-accent);
+    }
+    .preview-nav__cover-image {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.8rem;
+      font-size: var(--font-size-small);
+      cursor: pointer;
+      color: var(--color-accent);
+    }
+    .preview-nav__cover-image input {
+      cursor: pointer;
+    }
+    .preview-nav__upload-cover {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.8rem;
+      font-size: var(--font-size-small);
+      cursor: pointer;
+      color: var(--color-accent);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-badge);
+      box-shadow: var(--shadow-card);
+    }
+    .preview-nav__upload-cover:hover {
+      background: var(--color-accent);
+      color: var(--color-surface);
+      border-color: var(--color-accent);
+    }
+    .preview-nav__upload-cover input[type="file"] {
+      font-size: 0.85em;
+      max-width: 12em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="az-page" data-theme="light">
+  <nav class="preview-nav" aria-label="预览导航">
+    <a href="#cover">标题页</a>
+    <a href="#letter-a">单字母页 A</a>
+    <a href="#letter-b">单字母页 B</a>
+    <a href="#full">整本正文</a>
+    <label class="preview-nav__cover-image">
+      <input type="checkbox" id="cover-use-image" aria-label="使用头图" />
+      <span>使用头图</span>
+    </label>
+    <label class="preview-nav__upload-cover">
+      <span>上传头图</span>
+      <input type="file" id="cover-image-file" accept="image/*" aria-label="上传头图" />
+    </label>
+    <button type="button" id="theme-toggle" aria-label="切换主题">深色主题</button>
+  </nav>
+  <script>
+    (function() {
+      var themes = ['light', 'dark', 'pixel', 'chinese-retro', 'retro-gui', 'vintage', 'poster', 'app', 'nippon', 'editorial'];
+      var labels = { light: '深色主题', dark: '像素主题', pixel: '中式复古', 'chinese-retro': '复古GUI', 'retro-gui': '凸版信纸', 'vintage': '复古海报', 'poster': '简约App', 'app': '日系', 'nippon': '黑白编辑', 'editorial': '浅色主题' };
+      var el = document.getElementById('theme-toggle');
+      var body = document.body;
+      el.addEventListener('click', function() {
+        var current = body.getAttribute('data-theme') || 'light';
+        var i = themes.indexOf(current);
+        var next = themes[(i + 1) % themes.length];
+        body.setAttribute('data-theme', next);
+        el.textContent = labels[next];
+      });
+    })();
+  </script>
+  <!-- 导出说明：1 封面图 | 26 张单字母图；每块 .az-export-frame 为一张图 -->
+  <!-- ========== 1. 封面（导出 1 张） ========== -->
+  <section id="cover" class="preview-section" aria-label="标题页">
+    <div class="az-export-frame az-export-frame--cover az-cover" id="cover-frame">
+      <div class="az-cover__image" aria-label="头图">
+        <img class="az-cover__image-preview" id="cover-image-preview" src="" alt="" hidden />
+      </div>
+      <div class="az-cover__inner">
+        <p class="az-cover__badge">A–Z 短篇合集</p>
+        <h1 class="az-cover__title">从 Apple 到 Zenith</h1>
+        <p class="az-cover__subtitle">二十六封信</p>
+        <p class="az-cover__author">作者 / 佚名</p>
+      </div>
+      <div class="az-cover__deco" aria-hidden="true"></div>
+    </div>
+  </section>
+  <script>
+    (function() {
+      var coverFrame = document.getElementById('cover-frame');
+      var useImage = document.getElementById('cover-use-image');
+      var fileInput = document.getElementById('cover-image-file');
+      var preview = document.getElementById('cover-image-preview');
+      if (coverFrame && useImage) {
+        useImage.addEventListener('change', function() {
+          coverFrame.classList.toggle('az-cover--has-image', useImage.checked);
+        });
+      }
+      if (fileInput && preview) {
+        fileInput.addEventListener('change', function() {
+          var f = fileInput.files && fileInput.files[0];
+          if (f) {
+            if (useImage) {
+              useImage.checked = true;
+              coverFrame && coverFrame.classList.add('az-cover--has-image');
+            }
+            var r = new FileReader();
+            r.onload = function() {
+              preview.src = r.result;
+              preview.removeAttribute('hidden');
+              preview.alt = '头图';
+            };
+            r.readAsDataURL(f);
+          } else {
+            preview.src = '';
+            preview.setAttribute('hidden', '');
+          }
+        });
+      }
+    })();
+  </script>
+
+  <!-- ========== 2. 单字母正文页（每页导出 1 张，共 26 张） — A ========== -->
+  <section id="letter-a" class="preview-section" aria-label="字母 A 正文页">
+    <div class="az-export-frame az-export-frame--letter az-letter-page">
+      <div class="az-body-page-meta" aria-label="正文页标题与作者">
+        <input type="text" class="az-body-page-meta__title" placeholder="标题" />
+        <input type="text" class="az-body-page-meta__author" placeholder="作者" />
+      </div>
+      <div class="az-letter-page__card-wrap" data-letter="A">
+        <div class="az-letter-page__card">
+          <header class="az-letter-page__header">
+            <span class="az-letter-page__letter">A</span>
+            <span class="az-letter-page__word">Apple</span>
+            <span class="az-letter-page__translation">苹果</span>
+          </header>
+          <p class="az-letter-page__body">
+            她总在午后削一只苹果，皮连成长长的一条，从不间断。他说那是她留给他看的耐心。后来他去了很远的地方，她仍每天削一只，皮依旧不断，只是再没人坐在对面，笑着看她把果肉切成小块，一块一块递过来。窗台上的苹果渐渐堆成小山，有的烂了，她也不扔，仿佛烂掉的不是苹果，是那些再也不会回来的下午。
+          </p>
+        </div>
+      </div>
+      <div class="az-body-page-watermark" aria-label="水印">
+        <input type="text" class="az-body-page-watermark__input" placeholder="水印" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 3. 单字母正文页 — B ========== -->
+  <section id="letter-b" class="preview-section" aria-label="字母 B 正文页">
+    <div class="az-export-frame az-export-frame--letter az-letter-page">
+      <div class="az-body-page-meta" aria-label="正文页标题与作者">
+        <input type="text" class="az-body-page-meta__title" placeholder="标题" />
+        <input type="text" class="az-body-page-meta__author" placeholder="作者" />
+      </div>
+      <div class="az-letter-page__card-wrap" data-letter="B">
+        <div class="az-letter-page__card">
+          <header class="az-letter-page__header">
+            <span class="az-letter-page__letter">B</span>
+            <span class="az-letter-page__word">Blossom</span>
+            <span class="az-letter-page__translation">花开</span>
+          </header>
+          <p class="az-letter-page__body">
+            树是去年移来的，都说活不成，她却天天浇水，从不说话。今年春天，枝头忽然爆出花苞，一夜之间全开了。她站在树下看了很久，然后转身进屋，把一封没寄出的信撕碎，撒进花根。信里写的是：等花开的时候，我就去找你。如今花开了，她哪儿也没去，只是再也没提过那个名字。后来她又在树下种了一棵新的，说是给以后的谁留的。邻居问，以后的谁？她笑而不答。再后来，那棵新树也开了花，比头一棵还要繁密。她依然每天浇水，依然不说话，只是偶尔会对着两棵树发一会儿呆。有人说她是在等一个不会回来的人，她听见了，既不承认也不否认。花落了又开，开了又落，几年过去，两棵树都长得很高了。有一年冬天特别冷，她给树根裹了厚厚的草席，自己却病了一场。病好后第一件事就是去看树，看见枝头已经冒出细小的芽苞，她才松了一口气。她开始给那个从未寄出的地址写信，写花开了、花落了、树长高了、自己病了又好了，写很多琐碎的事，写「如果你回来，两棵树都在」。信写了很多封，一封也没有寄出，都收在抽屉里，和当年那封撕碎又撒进花根的信，仿佛隔着时光对望。她不知道的是，在很远的地方，也有人种了两棵树，也在等花开，也在写永远不会寄出的信。他们像两棵背对背的树，根须在看不见的泥土里，或许曾有过一瞬的相接，却从未知道。花又开了，她站在两棵树下，忽然觉得，有些等待本身就已经是答案了。不必等谁回来，不必等信寄出，花开过了，字写过了，剩下的只是继续浇水、继续活着。她弯腰拾起一片花瓣，夹进那叠信里，合上抽屉。窗外的树在风里轻轻摇，像在点头，又像在告别。很多年后，有人路过那座小院，看见两棵老树还在，花开得比记忆里还要安静。院门虚掩，桌上有一叠发黄的信，最上面一封没有署名，只写着一行字：两棵树都还在，我也没有走远。那人没有进去，只是在门外站了一会儿，然后转身离开。风吹过，花瓣落了一地，像很多年前被撕碎又撒进土里的那封信，终于以另一种方式，被读懂了。她后来不再数信有多少封，也不再去想那个人会不会回来。她只是每天清晨提一桶水，从左边的树浇到右边的树，再在树下坐一会儿。有时会有一只鸟落在枝头，叫两声又飞走；有时会有一片云飘过，把影子投在花瓣上。她学会了在漫长的等待里，把日子过成一种平静的仪式：浇水、看花、写信、收好。抽屉里的信越叠越高，两棵树也越来越粗壮，树皮上有了裂纹，像时间刻下的字。她偶尔会想，若有一天那个人真的回来了，会不会认得这两棵树，会不会问起那封被撕碎的信。但她从不去假设答案。她只知道，花还会再开，信还可以再写，而等待这件事，本身就已经是她能给的全部了。
+          </p>
+        </div>
+      </div>
+      <div class="az-body-page-watermark" aria-label="水印">
+        <input type="text" class="az-body-page-watermark__input" placeholder="水印" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 4. 整本字母正文页（所有单词与文段） ========== -->
+  <section id="full" class="az-full-page preview-section" aria-label="整本正文">
+    <div class="az-body-page-meta" aria-label="正文页标题与作者">
+      <input type="text" class="az-body-page-meta__title" placeholder="标题" />
+      <input type="text" class="az-body-page-meta__author" placeholder="作者" />
+    </div>
+    <div class="az-body-page-watermark" aria-label="水印">
+      <input type="text" class="az-body-page-watermark__input" placeholder="水印" />
+    </div>
+    <h2 class="az-full-page__title">正文</h2>
+    <ul class="az-full-page__list">
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">A</span>
+          <span class="az-full-page__word">Apple</span>
+          <span class="az-full-page__translation">苹果</span>
+        </div>
+        <p class="az-full-page__body">她总在午后削一只苹果，皮连成长长的一条，从不间断。他说那是她留给他看的耐心。后来他去了很远的地方，她仍每天削一只，皮依旧不断，只是再没人坐在对面，笑着看她把果肉切成小块，一块一块递过来。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">B</span>
+          <span class="az-full-page__word">Blossom</span>
+          <span class="az-full-page__translation">花开</span>
+        </div>
+        <p class="az-full-page__body">树是去年移来的，都说活不成，她却天天浇水，从不说话。今年春天，枝头忽然爆出花苞，一夜之间全开了。她站在树下看了很久，然后转身进屋，把一封没寄出的信撕碎，撒进花根。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">C</span>
+          <span class="az-full-page__word">Cloud</span>
+          <span class="az-full-page__translation">云</span>
+        </div>
+        <p class="az-full-page__body">他指着天边说，那朵云像一只船。她说，像一顶帽子。两人争了一下午，直到云散开，什么也不像了。他们沉默地走回家，再也没一起看过云。很多年后她路过旧街，抬头看见满天云朵，忽然想起，他们从未说过那朵云像「再见」。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">D</span>
+          <span class="az-full-page__word">Dawn</span>
+          <span class="az-full-page__translation">黎明</span>
+        </div>
+        <p class="az-full-page__body">她总在黎明前醒来，说是梦会在这时碎掉。他问，碎掉之后呢？她说，碎掉之后就可以起床了。后来他也在那个时刻醒来，发现窗外灰蓝一片，分不清是夜是昼，才明白她说的「碎掉」是什么意思。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">E</span>
+          <span class="az-full-page__word">Echo</span>
+          <span class="az-full-page__translation">回声</span>
+        </div>
+        <p class="az-full-page__body">山谷里他喊她的名字，回声一遍遍荡回来。她笑着说，连山都记得我。后来她走了，他再也没去过那座山。多年后故地重游，他对着空谷喊了一声，回声里竟像有她的笑声。他知道那是幻觉，却在那座山前站到日落。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">F</span>
+          <span class="az-full-page__word">Forest</span>
+          <span class="az-full-page__translation">森林</span>
+        </div>
+        <p class="az-full-page__body">他们约定在森林入口见面，谁先到就等。她先到了，等了一整天，他没来。她走进森林，迷了路，被搜救队带出来时已经三天后。她没怪他，只说，森林太大了，我们可能只是走岔了。他后来才知道，那天他记错了入口。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">G</span>
+          <span class="az-full-page__word">Garden</span>
+          <span class="az-full-page__translation">花园</span>
+        </div>
+        <p class="az-full-page__body">花园是两人一起垦的，种过玫瑰、薄荷、番茄。他离开后，她任由野草长满，再也没踏进一步。邻居问起，她说，花园是两个人的，一个人进去，就只剩荒草了。直到某天她在信箱里收到一包种子，没有署名，她认得出是他从前最爱的那种花。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">H</span>
+          <span class="az-full-page__word">Horizon</span>
+          <span class="az-full-page__translation">地平线</span>
+        </div>
+        <p class="az-full-page__body">他说要走到地平线那边看看。她问，看什么？他说，看看那边是不是还有地平线。他走的那天，她送他到路口，没有挽留。她后来也常看地平线，终于明白：有些人注定要一直走，有些人注定只能站在原地看着那条线，永远不变，也永远够不着。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">I</span>
+          <span class="az-full-page__word">Island</span>
+          <span class="az-full-page__translation">岛屿</span>
+        </div>
+        <p class="az-full-page__body">他们计划过去一座小岛生活，地图画了又画，却从未成行。后来她真的搬去了一座岛，一个人。信里写：这里和当年画的不一样，没有椰树，只有礁石。但每天睁眼看见海，就会想起我们画地图的那个下午。他回信：我还在陆地上，替你看着你没能来的那一半世界。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">J</span>
+          <span class="az-full-page__word">Journey</span>
+          <span class="az-full-page__translation">旅程</span>
+        </div>
+        <p class="az-full-page__body">她说，人生是一场旅程。他问，终点在哪？她说，没有终点，只有下一站。他在下一站下了车，她继续往前。很多年后他们在另一列车上重逢，她问，你还记得「没有终点」吗？他点头。她说，我骗你的，我的终点就是你下车的那一站，只是车一直开，我下不去。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">K</span>
+          <span class="az-full-page__word">Kite</span>
+          <span class="az-full-page__translation">风筝</span>
+        </div>
+        <p class="az-full-page__body">风筝断线的那天，他们追了很远，最后看着它消失在云里。她说，它会飞到哪里？他说，不知道，但总有一个地方会接住它。后来他们再也没放过风筝。她偶尔会想，那只风筝是否真的被某处接住，还是像很多承诺一样，只是飘着飘着就没了。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">L</span>
+          <span class="az-full-page__word">Light</span>
+          <span class="az-full-page__translation">光</span>
+        </div>
+        <p class="az-full-page__body">她怕黑，他总在床头留一盏小灯。他搬走后，她试过关灯睡，却整夜失眠。后来她习惯开灯，甚至白天也开着。有人说她浪费，她不说理由。只有她自己知道，那盏灯照亮的不是房间，是「曾经有人愿意为你留一盏灯」的那段日子。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">M</span>
+          <span class="az-full-page__word">Moon</span>
+          <span class="az-full-page__translation">月亮</span>
+        </div>
+        <p class="az-full-page__body">他们曾约定，想对方的时候就看月亮。后来一个在东半球，一个在西半球，月亮总有一个先看到。她写信：我这里的月亮升起来了，你那边还是白天吧。他回：我这里的月亮刚落下，你那边该是清晨。他们终于明白，同一轮月亮，却永远照不到同一个瞬间。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">N</span>
+          <span class="az-full-page__word">Night</span>
+          <span class="az-full-page__translation">夜</span>
+        </div>
+        <p class="az-full-page__body">他总在夜里给她发消息，说一些白天不敢说的话。她总在清晨回复，说夜里睡着了。后来他不再在夜里发，她也不再在清晨回。某天她翻旧聊天记录，发现那些夜里的句子还在，像星星一样，只是再也不会亮起来了。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">O</span>
+          <span class="az-full-page__word">Ocean</span>
+          <span class="az-full-page__translation">海洋</span>
+        </div>
+        <p class="az-full-page__body">她第一次看海是和他一起。她说，海好大，我们好小。他说，所以我们才要在一起，这样就不怕了。后来她一个人看过很多次海，每次都会想起这句话。海还是那么大，她依然那么小，只是「我们」变成了「我」。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">P</span>
+          <span class="az-full-page__word">Promise</span>
+          <span class="az-full-page__translation">承诺</span>
+        </div>
+        <p class="az-full-page__body">他承诺过带她去北方看雪。每年冬天她都会问，今年去吗？他总说，明年。后来北方下了很多场雪，她一次也没去过。再后来他去了，发来照片，说替你看了。她回复：谢谢。没有说出口的是：承诺是你给的，雪是你替我看的，那「我们」呢？</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">Q</span>
+          <span class="az-full-page__word">Quiet</span>
+          <span class="az-full-page__translation">寂静</span>
+        </div>
+        <p class="az-full-page__body">他们曾可以一起沉默很久而不尴尬。他说，和你在一起，连安静都是对的。分开后，她最怕的就是安静——一静下来就会想起那些对的安静。她开始听播客、听音乐、听白噪音，用声音填满房间，却填不满心里那个只属于两个人的寂静。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">R</span>
+          <span class="az-full-page__word">Rain</span>
+          <span class="az-full-page__translation">雨</span>
+        </div>
+        <p class="az-full-page__body">下雨天他们总窝在沙发里，听雨声，什么都不做。他走后，她仍喜欢雨天，却不再窝在沙发里——那里空了一半，雨声再大也填不满。她改在窗边站着，看雨打在玻璃上，一道一道流下去，像没写完的信。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">S</span>
+          <span class="az-full-page__word">Star</span>
+          <span class="az-full-page__translation">星</span>
+        </div>
+        <p class="az-full-page__body">他教她认星座，说那颗最亮的是金星，其实不是星。她问，那是什么？他说，是行星，但我们都叫它启明星。她后来总在黎明前看那颗「星」，想起他说「我们」时的语气。原来有些东西不是星，我们却愿意当它是；有些人已经走远，我们却还在用旧名字称呼他。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">T</span>
+          <span class="az-full-page__word">Time</span>
+          <span class="az-full-page__translation">时间</span>
+        </div>
+        <p class="az-full-page__body">她说时间会冲淡一切。他问，要多久？她说，不知道，可能很久。后来很久过去了，她发现时间没有冲淡什么，只是把那些事推得远了，远到像别人的故事。可某天一首歌、一阵风，又把她拉回那个「很久」之前，原来时间只是把一切藏起来，从没真正带走。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">U</span>
+          <span class="az-full-page__word">Umbrella</span>
+          <span class="az-full-page__translation">伞</span>
+        </div>
+        <p class="az-full-page__body">他们共用过一把伞，总是他撑着，她挽着他。后来她一个人撑伞，总习惯把伞往左边倾——那边曾经有一个人。路人奇怪地看着她，她才发现左边是空的。伞还是那把伞，只是再也没人需要她留出一半天空。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">V</span>
+          <span class="az-full-page__word">Voice</span>
+          <span class="az-full-page__translation">声音</span>
+        </div>
+        <p class="az-full-page__body">她存过他的一条语音，只有三秒，是一声「喂」。换了几次手机，那条语音一直在。朋友问，为什么不删？她说，删了，就真的什么也没有了。她从不点开听，怕听一次就磨损一次。有些东西，留着比用过更让人安心。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">W</span>
+          <span class="az-full-page__word">Wind</span>
+          <span class="az-full-page__translation">风</span>
+        </div>
+        <p class="az-full-page__body">他说喜欢风，因为抓不住。她说，抓不住有什么好喜欢的？他说，抓不住的才值得一直想。后来他像风一样走了，她终于明白：有些人你留不住，只能一遍遍回想他吹过时的温度。风不会为谁停留，但被吹过的人，会永远记得那种凉。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">X</span>
+          <span class="az-full-page__word">Xanadu</span>
+          <span class="az-full-page__translation">世外桃源</span>
+        </div>
+        <p class="az-full-page__body">他们曾把一个小镇当作世外桃源，说老了就搬去那里。后来她一个人去了，发现小镇还在，只是没有「我们」。她在河边坐了一下午，想：世外桃源大概不是某个地方，而是某个人在的地方。那个人不在了，再美的风景也只是地图上的一个名字。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">Y</span>
+          <span class="az-full-page__word">Yearning</span>
+          <span class="az-full-page__translation">渴望</span>
+        </div>
+        <p class="az-full-page__body">她不再渴望重逢，只渴望某天能不再渴望。有人说时间会治好一切，她等了很多年，渴望却像慢性病，时好时坏。某天她忽然想：也许治不好的不是渴望，而是「曾经被填满过」的记忆。肚子饿的人可以习惯饥饿，吃过盛宴的人，才会一直怀念那种饱。</p>
+      </li>
+      <li class="az-full-page__item">
+        <div class="az-full-page__header">
+          <span class="az-full-page__letter">Z</span>
+          <span class="az-full-page__word">Zenith</span>
+          <span class="az-full-page__translation">顶点</span>
+        </div>
+        <p class="az-full-page__body">他们曾以为在一起就是人生的顶点，后来才懂，顶点之后都是下坡。他先下了坡，她还在坡上站了很久，看夕阳把影子拉得很长。最后她也转身往下走，没有回头。她知道，有些路只能走一次，顶点过了，就再也回不去了。</p>
+      </li>
+    </ul>
+  </section>
+</body>
+</html>

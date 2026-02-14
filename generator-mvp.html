@@ -1,0 +1,3466 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A–Z 单词主题小说生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:ital,wght@0,400;0,700;1,400&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-source-han-sans-sc-vf@1.0.10/font.css" crossorigin="anonymous" />
+  <link rel="preconnect" href="https://chinese-fonts-cdn.deno.dev" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/cubic/dist/Cubic/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/jpdzt/dist/BoutiqueBitmap9x9_1_6/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/qxs/dist/quan/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/cubic@3.0.0/dist/Cubic/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/jpdzt@3.0.0/dist/BoutiqueBitmap9x9_1_6/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/eterfinal/ReiFonts/HuiwenFangsong/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-fz-fang-song-z-02-s-regular@1.1.0/font.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-lxgw-wen-kai-screen-r@1.0.6/font.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/eterfinal/ReiFonts/HuiwenMinchoGBK/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/eterfinal/ReiFonts/ChillRoundM/result.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="css-unified/az-theme-retro-fonts.css" />
+  <link rel="stylesheet" href="css-unified/az-theme-pixel-fonts.css" />
+  <link rel="stylesheet" href="css-unified/az-theme.css" />
+  <link rel="stylesheet" href="css-unified/az-theme-retro-gui.css" />
+  <link rel="stylesheet" href="css-unified/az-theme-vintage.css" />
+  <link rel="stylesheet" href="css-unified/az-theme-poster.css" />
+  <link rel="stylesheet" href="css-unified/az-theme-app.css" />
+  <link rel="stylesheet" href="css-unified/az-theme-nippon.css" />
+  <link rel="stylesheet" href="css-unified/az-theme-editorial.css" />
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#111824;
+      --text:#eaf2ff;
+      --muted:#a9b6cc;
+      --accent:#7aa8ff;
+
+      --titleSize:28px;
+      --bodySize:16px;
+      --lineHeight:1.7;
+      --radius:18px;
+
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --bd: rgba(255,255,255,.08);
+
+      --fontTitle: ui-serif, Georgia, "Times New Roman", serif;
+      --fontBody: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--fontBody);
+      background: radial-gradient(1200px 700px at 10% 0%, rgba(122,168,255,.12), transparent 55%),
+                  radial-gradient(900px 600px at 90% 20%, rgba(255,122,176,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: 1700px;
+      margin: 0 auto;
+      padding: 16px;
+      display:grid;
+      grid-template-columns: minmax(360px, 420px) minmax(250px, 320px) minmax(520px, 1fr);
+      gap: 14px;
+      align-items:start;
+    }
+    .layoutProject{min-width:0;}
+    .layoutWords{min-width:0;}
+    .layoutPreview{min-width:0;}
+    @media (max-width: 1320px){
+      .wrap{
+        grid-template-columns: minmax(340px, 420px) minmax(240px, 1fr);
+      }
+      .layoutPreview{grid-column: 1 / -1;}
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr;}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--bd);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHeader{
+      padding: 12px 14px;
+      border-bottom:1px solid var(--bd);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      background: rgba(0,0,0,.12);
+    }
+    .cardHeader h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+      color: var(--text);
+      opacity:.92;
+    }
+    .muted{color:var(--muted)}
+    .cardBody{padding: 12px 14px;}
+    .fold{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      background: rgba(0,0,0,.12);
+      margin-top: 10px;
+      overflow:hidden;
+    }
+    .fold summary{
+      cursor:pointer;
+      list-style:none;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid transparent;
+    }
+    .fold summary::-webkit-details-marker{display:none}
+    .fold summary::after{
+      content:"▾";
+      font-size: 12px;
+      color: var(--muted);
+      transform: rotate(-90deg);
+      transition: transform .16s ease;
+    }
+    .fold[open] summary{
+      border-bottom-color: rgba(255,255,255,.08);
+    }
+    .fold[open] summary::after{
+      transform: rotate(0deg);
+    }
+    .foldBody{
+      padding: 10px 12px 12px;
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    label{font-size:12px; color:var(--muted)}
+    input[type="text"], textarea, select{
+      width:100%;
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      padding: 10px 10px;
+      outline:none;
+    }
+    textarea{min-height: 120px; resize: vertical; line-height:1.6}
+    input[type="text"]:focus, textarea:focus, select:focus{
+      border-color: rgba(122,168,255,.55);
+      box-shadow: 0 0 0 3px rgba(122,168,255,.15);
+    }
+    .richEditor{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      background: rgba(0,0,0,.22);
+      overflow: hidden;
+    }
+    .richToolbar{
+      display:flex;
+      flex-wrap: wrap;
+      gap:6px;
+      padding: 8px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .richBtn{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 1.2;
+    }
+    .richBtn:hover{ background: rgba(255,255,255,.12); }
+    .richInput{
+      min-height: 140px;
+      padding: 10px;
+      outline: none;
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+    .richInput:empty::before{
+      content: attr(data-placeholder);
+      color: rgba(169,182,204,.78);
+      pointer-events: none;
+    }
+    .richInput p{
+      margin: 0 0 .62em;
+    }
+    .richInput p:last-child{ margin-bottom: 0; }
+    .richInput img,
+    #previewScope .az-letter-page__body img{
+      display: block;
+      max-width: min(100%, 520px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+      margin: .55em 0;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 9px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-size:13px;
+      transition:.15s transform, .15s background;
+      user-select:none;
+    }
+    .btn:hover{background: rgba(255,255,255,.10)}
+    .btn:active{transform: translateY(1px)}
+    .btn:disabled{
+      opacity:.58;
+      cursor:not-allowed;
+      transform:none;
+      filter: saturate(.7);
+    }
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(122,168,255,.35), rgba(255,122,176,.18));
+      border-color: rgba(122,168,255,.35);
+    }
+    .btnDanger{border-color: rgba(255,140,140,.35)}
+    .pill{
+      font-size:12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+    }
+    .exportStatus{
+      min-width: 156px;
+      text-align:center;
+      transition: all .16s ease;
+    }
+    .exportStatus.busy{
+      border-color: rgba(122,168,255,.62);
+      background: rgba(122,168,255,.22);
+      color: #e6efff;
+    }
+    .exportStatus.success{
+      border-color: rgba(89,214,142,.55);
+      background: rgba(89,214,142,.18);
+      color: #dfffea;
+    }
+    .exportStatus.error{
+      border-color: rgba(255,119,119,.58);
+      background: rgba(255,119,119,.18);
+      color: #ffe3e3;
+    }
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    .grid3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;}
+    @media (max-width: 980px){
+      .grid2,.grid3{grid-template-columns:1fr;}
+    }
+    .azList{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 980px){
+      .azList{grid-template-columns: repeat(8, 1fr);}
+    }
+    .azBtn{
+      padding: 10px 0;
+      text-align:center;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      cursor:pointer;
+      font-weight: 650;
+      letter-spacing:.6px;
+      color: rgba(234,242,255,.92);
+      position:relative;
+    }
+    .azBtn:hover{background: rgba(255,255,255,.06)}
+    .azBtn.active{
+      background: linear-gradient(135deg, rgba(122,168,255,.28), rgba(0,0,0,.18));
+      border-color: rgba(122,168,255,.45);
+      box-shadow: 0 0 0 3px rgba(122,168,255,.14);
+    }
+    .lockDot{
+      position:absolute;
+      right: 7px;
+      top: 7px;
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.22);
+    }
+    .azBtn.locked .lockDot{ background: rgba(255,122,176,.75); }
+    .wordList{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height: calc(100vh - 130px);
+      overflow:auto;
+      padding-right: 2px;
+    }
+    .wordRow{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 10px;
+      background: rgba(0,0,0,.16);
+      padding: 8px 9px;
+      cursor:pointer;
+      transition: border-color .14s ease, background .14s ease;
+    }
+    .wordRow:hover{
+      border-color: rgba(122,168,255,.45);
+      background: rgba(122,168,255,.10);
+    }
+    .wordRow.active{
+      border-color: rgba(122,168,255,.58);
+      box-shadow: 0 0 0 2px rgba(122,168,255,.18) inset;
+    }
+    .wordRowTop{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:8px;
+    }
+    .wordRowLetter{
+      font-weight:700;
+      color: var(--accent);
+      letter-spacing:.4px;
+      min-width: 20px;
+    }
+    .wordRowEn{
+      flex:1;
+      font-size: 13px;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .wordRowZh{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      word-break: break-word;
+    }
+    .wordRowEmpty{
+      font-size:12px;
+      color: var(--muted);
+      padding: 8px 2px;
+    }
+    #themeVarsPanel{
+      display: none;
+      flex: 1 1 auto !important;
+      min-width: 0 !important;
+    }
+    #themeVarsMount #themeVarsPanel{
+      display:block;
+    }
+    #themeVarsPanel > .card{
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    #themeVarsPanel > .card > .cardHeader{
+      display:none !important;
+    }
+    #themeVarsPanel > .card > .cardBody{
+      padding: 0 !important;
+    }
+
+    .help{
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.55;
+    }
+    .aiResultBadge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 124px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing:.2px;
+      transition: all .16s ease;
+    }
+    .aiResultBadge.success{
+      border-color: rgba(89,214,142,.55);
+      background: rgba(89,214,142,.18);
+      color: #dfffea;
+    }
+    .aiResultBadge.fallback{
+      border-color: rgba(255,198,93,.58);
+      background: rgba(255,198,93,.20);
+      color: #fff3d4;
+    }
+    .aiResultBadge.error{
+      border-color: rgba(255,119,119,.58);
+      background: rgba(255,119,119,.18);
+      color: #ffe3e3;
+    }
+    .aiResultBadge.busy{
+      border-color: rgba(122,168,255,.62);
+      background: rgba(122,168,255,.22);
+      color: #e6efff;
+    }
+
+    .previewWrap{
+      padding: 10px;
+    }
+    .previewStage{
+      min-width: 0;
+      min-height: 0;
+    }
+    .previewSticky{
+      position: sticky;
+      top: 12px;
+      max-height: calc(100vh - 24px);
+      overflow:auto;
+    }
+    .previewStage.az-page{
+      min-height: 0;
+      padding: 10px;
+      border-radius: calc(var(--radius) + 4px);
+      background: transparent !important;
+      background-image: none !important;
+    }
+    .dualPreview{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items:start;
+    }
+    .dualItem{
+      min-width: 0;
+    }
+    .dualLabel{
+      font-size:12px;
+      color: var(--muted);
+      margin: 0 0 8px;
+      padding-left: 2px;
+    }
+    .dualPreview .az-export-frame{
+      max-width: none;
+    }
+    .dualPreview .az-letter-page__body{
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    #previewScope .az-letter-page__body p{
+      margin: 0 0 .7em;
+    }
+    #previewScope .az-letter-page__body p:last-child{
+      margin-bottom: 0;
+    }
+    #previewScope .az-letter-page__body .entryPlaceholder{
+      color: var(--custom-body-color, var(--color-text));
+      opacity: .6;
+    }
+    .dualPreview .az-body-page-meta__title,
+    .dualPreview .az-body-page-meta__author,
+    .dualPreview .az-body-page-watermark__input{
+      pointer-events:auto;
+      background: transparent !important;
+      border: none !important;
+      border-bottom: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+      padding: 0 !important;
+      min-width: 0 !important;
+      width: auto !important;
+      caret-color: currentColor;
+      cursor: text;
+    }
+    @media (max-width: 1050px){
+      .dualPreview{
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 1320px){
+      .previewSticky{
+        position: static;
+        max-height: none;
+        overflow: visible;
+      }
+    }
+
+    .control{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.14);
+    }
+    .control.uploadControl{
+      grid-template-columns: 1fr;
+      align-items:stretch;
+      gap: 6px;
+    }
+    .control.uploadControl input[type="file"]{
+      width: 100%;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .panelGroupTitle{
+      font-size: 12px;
+      color: var(--text);
+      opacity: .92;
+      letter-spacing: .2px;
+      margin: 0 0 6px;
+    }
+    .compact2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .compact2 .control{
+      grid-template-columns: 1fr;
+      align-items:stretch;
+    }
+    .compact2 .control input[type="range"]{
+      width: 100%;
+      max-width: none;
+    }
+    .compact2 .control input[type="color"]{
+      justify-self: start;
+    }
+    .compact2 .control.controlFull{
+      grid-column: 1 / -1;
+    }
+    @media (max-width: 980px){
+      .compact2{grid-template-columns: 1fr;}
+    }
+    .control input[type="range"]{
+      width: 220px;
+      max-width: 52vw;
+      accent-color: var(--accent, #2f76ff);
+    }
+    .control input[type="color"]{
+      width: 40px; height: 30px;
+      padding:0; border:0;
+      background: transparent;
+      cursor:pointer;
+    }
+    .compact2 .control input[type="range"]{
+      width: 100% !important;
+      max-width: none !important;
+    }
+    .small{font-size:12px; color: var(--muted)}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+    .toast{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-size:12px;
+      color:var(--muted);
+      display:none;
+    }
+    .toast.show{display:block;}
+
+    /* Fine-grained preview bindings */
+    #previewScope .az-cover__title{
+      color: var(--custom-cover-title-color, var(--color-cover-title)) !important;
+      font-size: calc(var(--custom-cover-title-size, var(--font-size-title)) * var(--custom-cover-scale, 1)) !important;
+    }
+    #previewScope .az-cover__badge{
+      color: var(--custom-cover-badge-color, var(--color-cover-badge)) !important;
+      font-size: calc(var(--custom-cover-badge-size, var(--font-size-small)) * var(--custom-cover-scale, 1)) !important;
+    }
+    #previewScope .az-cover__author{
+      color: var(--custom-cover-author-color, var(--color-cover-author)) !important;
+      font-size: calc(var(--custom-cover-author-size, var(--font-size-body)) * var(--custom-cover-scale, 1)) !important;
+    }
+    #previewScope .az-cover__image-preview{
+      opacity: var(--custom-cover-image-opacity, 1);
+    }
+    #previewScope .az-body-page-meta__title,
+    #previewScope .az-body-page-meta__author,
+    #previewScope .az-body-page-watermark__input{
+      color: var(--custom-meta-color, var(--color-text-secondary)) !important;
+      font-size: var(--custom-meta-size, var(--font-size-small)) !important;
+    }
+    #previewScope .az-letter-page__card{
+      background: var(--custom-card-box-bg, var(--color-surface)) !important;
+      border-color: var(--custom-deco-color, var(--color-border)) !important;
+    }
+    #previewScope .az-letter-page__card::after{
+      background: var(--custom-deco-color, var(--gradient-accent)) !important;
+    }
+    #previewScope .az-cover::after,
+    #previewScope .az-cover .az-cover__deco{
+      border-color: var(--custom-deco-color, var(--color-border)) !important;
+    }
+    #previewScope .az-letter-page__letter{
+      color: var(--custom-letter-color, var(--color-accent)) !important;
+      font-size: var(--custom-letter-size, var(--font-size-letter-badge)) !important;
+      background: none !important;
+      -webkit-background-clip: initial !important;
+      background-clip: initial !important;
+      -webkit-text-fill-color: var(--custom-letter-color, var(--color-accent));
+    }
+    #previewScope .az-letter-page__word{
+      color: var(--custom-word-color, var(--color-primary)) !important;
+      font-size: var(--custom-word-size, var(--font-size-subtitle)) !important;
+    }
+    #previewScope .az-letter-page__translation{
+      color: var(--custom-trans-color, var(--color-text-secondary)) !important;
+      font-size: var(--custom-trans-size, var(--font-size-body)) !important;
+    }
+    #previewScope .az-letter-page__body{
+      color: var(--custom-body-color, var(--color-text)) !important;
+      font-size: var(--custom-body-size, var(--font-size-body)) !important;
+    }
+    #previewScope[data-export-shape="square"] .az-cover{
+      justify-content: center !important;
+      padding-top: max(1rem, calc(var(--spacing-page) * .78)) !important;
+      padding-bottom: max(1rem, calc(var(--spacing-page) * .78)) !important;
+      gap: .65rem;
+    }
+    #previewScope[data-export-shape="square"] .az-cover .az-cover__inner{
+      width: min(84%, 30em);
+    }
+    #previewScope[data-export-shape="square"] .az-cover__title{
+      max-width: 15ch !important;
+      line-height: 1.2 !important;
+      margin-bottom: .35rem !important;
+    }
+    #previewScope[data-export-shape="square"] .az-cover__badge{
+      margin-bottom: .6rem !important;
+      letter-spacing: .16em !important;
+    }
+    #previewScope[data-export-shape="square"] .az-cover__image{
+      width: min(76%, 24em) !important;
+      height: auto !important;
+      aspect-ratio: 2 / 1;
+    }
+    #previewScope[data-export-shape="square"] .az-cover .az-cover__deco{
+      bottom: .75rem;
+      right: .75rem;
+      transform: scale(.9);
+      transform-origin: bottom right;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover{
+      justify-content: center !important;
+      align-items: center !important;
+      padding-top: max(.75rem, calc(var(--spacing-page) * .62)) !important;
+      padding-bottom: max(.75rem, calc(var(--spacing-page) * .62)) !important;
+      gap: .75rem;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover.az-cover--has-image{
+      display: grid !important;
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr);
+      column-gap: clamp(.75rem, 2vw, 1.2rem);
+      align-items: center;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover.az-cover--has-image .az-cover__inner,
+    #previewScope[data-export-shape="landscape"] .az-cover.az-cover--has-image .az-cover__image{
+      width: 100% !important;
+      max-width: none !important;
+      align-self: stretch !important;
+      justify-self: stretch;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover.az-cover--has-image .az-cover__image{
+      height: auto !important;
+      aspect-ratio: 16 / 10;
+      min-height: 0;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover.az-cover--has-image .az-cover__inner{
+      min-width: 0;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover__title{
+      max-width: 18ch !important;
+      line-height: 1.16 !important;
+      margin-bottom: .28rem !important;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover__badge{
+      margin-bottom: .45rem !important;
+      letter-spacing: .14em !important;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover__author{
+      margin-top: .2rem;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover::after{
+      transform: scale(.82);
+      transform-origin: top left;
+    }
+    #previewScope[data-export-shape="landscape"] .az-cover .az-cover__deco{
+      transform: scale(.78);
+      transform-origin: bottom right;
+      right: .6rem;
+      bottom: .55rem;
+    }
+
+    .mobileDock{
+      display:none;
+    }
+    .introOverlay{
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(8, 13, 22, .72);
+      backdrop-filter: blur(3px);
+    }
+    .introOverlay.show{
+      display:flex;
+    }
+    .introCard{
+      width: min(520px, 100%);
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(17,24,36,.96), rgba(10,16,25,.96));
+      box-shadow: 0 18px 40px rgba(0,0,0,.45);
+      overflow: hidden;
+    }
+    .introCard__head{
+      padding: 14px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .introCard__body{
+      padding: 12px 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .introCard__body p{
+      margin: 0 0 8px;
+    }
+    .introCard__body p:last-child{
+      margin-bottom: 0;
+    }
+    .introCard__foot{
+      padding: 12px 16px 16px;
+      border-top:1px solid rgba(255,255,255,.08);
+      display:flex;
+      justify-content:flex-end;
+    }
+    .introCard__enter{
+      min-width: 168px;
+    }
+    body.introOpen{
+      overflow: hidden;
+    }
+    @media (max-width: 980px){
+      body{
+        padding-bottom: 70px;
+      }
+      .mobileDock{
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 95;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap: 8px;
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+        border-top:1px solid rgba(255,255,255,.12);
+        background: linear-gradient(180deg, rgba(9,13,20,.95), rgba(13,18,27,.97));
+        backdrop-filter: blur(4px);
+      }
+      .mobileDock__hint{
+        flex:1;
+        min-width: 0;
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .mobileDock__actions{
+        display:flex;
+        gap: 6px;
+        flex-wrap: nowrap;
+      }
+      .mobileDock__actions .btn{
+        padding: 7px 9px;
+        border-radius: 10px;
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- LEFT -->
+    <section class="card layoutProject" id="projectSection">
+      <div class="cardHeader">
+        <h2>项目与生成</h2>
+        <span class="pill" id="progressPill">完成度 0/26</span>
+      </div>
+      <div class="cardBody">
+
+        <div class="grid2">
+          <div>
+            <label>项目标题（可选）</label>
+            <input id="projectTitle" type="text" placeholder="例如：A–Z 主题短篇集 / 霓虹雨夜 / 温柔日常" />
+          </div>
+          <div>
+            <label>作者（可选）</label>
+            <input id="projectAuthor" type="text" placeholder="作者名" />
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="grid2">
+          <div>
+            <label>副标题（封面小字）</label>
+            <input id="projectSubtitle" type="text" placeholder="可填副标题 / OC 姓名 / CP 等" />
+            <div class="small" style="margin-top:6px">用于封面左上小字，并自动同步到卡片右上第一行。</div>
+          </div>
+          <div>
+            <label>水印</label>
+            <input id="projectWatermark" type="text" placeholder="可自由填写" />
+            <div class="small" style="margin-top:6px">显示在卡片下方居中位置，可自由填写。</div>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="grid2">
+          <div>
+            <label>主题皮肤</label>
+            <select id="themeSelect">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="pixel">Pixel</option>
+              <option value="chinese-retro">Chinese Retro</option>
+              <option value="retro-gui">Retro GUI</option>
+              <option value="vintage">Vintage</option>
+              <option value="poster">Poster</option>
+              <option value="app">App</option>
+              <option value="nippon">Nippon</option>
+              <option value="editorial">Editorial</option>
+            </select>
+          </div>
+          <div>
+            <label>导出尺寸预设</label>
+            <select id="sizePreset">
+              <option value="1080x1920">手机竖图 1080×1920</option>
+              <option value="1440x2560">手机竖图 1440×2560</option>
+              <option value="1080x1080">方图 1080×1080</option>
+              <option value="2048x2048">方图 2048×2048</option>
+              <option value="1920x1080">横图 1920×1080</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="panelGroupTitle">AI 词表生成</div>
+        <div class="grid2">
+          <div>
+            <label>风格关键词（可多项）</label>
+            <input id="aiKeywords" type="text" placeholder="例如：赛博, 雨夜, 侦探, 冷色霓虹" />
+          </div>
+          <div>
+            <label>补充说明（可选）</label>
+            <input id="aiStyleHint" type="text" placeholder="例如：偏抒情，避免过于技术术语" />
+          </div>
+        </div>
+        <div style="height:8px"></div>
+        <div class="row">
+          <button class="btn btnPrimary" id="genAiBtn">试试手气</button>
+          <span class="aiResultBadge" id="aiResultBadge">本次成功 0 个</span>
+        </div>
+        <div class="small" id="aiGenInfo" style="margin-top:6px">AI 会根据关键词生成一组词语；即使关键词不变，再次点击也会重抽同主题新词。</div>
+
+        <div style="height:10px"></div>
+
+        <div class="row">
+          <button class="btn" id="fillDemoBtn">填入示例段落（未写项）</button>
+          <button class="btn btnDanger" id="clearAllBtn">清空全部段落</button>
+        </div>
+        <div style="height:8px"></div>
+        <div class="row" id="projectSaveLoadMount">
+          <button class="btn" id="saveLocalBtn">保存本地</button>
+          <button class="btn" id="loadLocalBtn">导入进度</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div class="small">选择字母进入编辑。右上小点表示“锁定”。</div>
+          <div class="row">
+            <button class="btn" id="lockAllBtn">全锁定</button>
+            <button class="btn" id="unlockAllBtn">全解锁</button>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="azList" id="azList"></div>
+
+        <details class="fold" open>
+          <summary>基础编辑区</summary>
+          <div class="foldBody">
+            <div class="grid2">
+              <div>
+                <label>当前字母：<span id="curLetter" class="muted">A</span></label>
+                <div class="row" style="justify-content:space-between; margin-top:6px">
+                  <button class="btn" id="toggleLockBtn">切换锁定</button>
+                  <span class="pill" id="lockPill">未锁定</span>
+                </div>
+              </div>
+              <div>
+                <label>快捷操作</label>
+                <div class="row" style="margin-top:6px">
+                  <button class="btn" id="prevBtn">← 上一个</button>
+                  <button class="btn" id="nextBtn">下一个 →</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="height:10px"></div>
+
+            <div class="grid2">
+              <div>
+                <label>英文单词</label>
+                <input id="wordEn" type="text" placeholder="例如：Abyss" />
+              </div>
+              <div>
+                <label>中文翻译</label>
+                <input id="wordZh" type="text" placeholder="例如：深渊" />
+              </div>
+            </div>
+
+            <div style="height:10px"></div>
+
+            <div>
+              <label>该单词对应的文段（富文本，可插图）</label>
+              <div class="richEditor">
+                <div class="richToolbar">
+                  <button class="richBtn" type="button" data-rich-cmd="bold">加粗</button>
+                  <button class="richBtn" type="button" data-rich-cmd="italic">斜体</button>
+                  <button class="richBtn" type="button" data-rich-cmd="underline">下划线</button>
+                  <button class="richBtn" type="button" data-rich-cmd="insertUnorderedList">项目符号</button>
+                  <button class="richBtn" type="button" data-rich-cmd="insertOrderedList">编号</button>
+                  <button class="richBtn" type="button" id="entryImageBtn">插入图片</button>
+                </div>
+                <div id="entryText" class="richInput" contenteditable="true" data-placeholder="围绕该单词写一段（会出现在导出的卡片上）"></div>
+              </div>
+              <input id="entryImageInput" type="file" accept="image/*" hidden />
+              <div class="small" style="margin-top:6px">支持加粗/斜体/列表与插图；插入图片会自动按卡片宽度适配显示。</div>
+              <div class="row" style="justify-content:space-between; margin-top:8px">
+                <span class="small" id="countInfo">字数：0</span>
+                <span class="small">导出：封面 / 当前字母 / 封面+26字母 ZIP / 正文长图。</span>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="fold" open>
+          <summary>主题变量区</summary>
+          <div class="foldBody" id="themeVarsMount"></div>
+        </details>
+
+      </div>
+    </section>
+
+    <section class="card layoutWords" id="wordsSection">
+      <div class="cardHeader">
+        <h2>单词列表</h2>
+        <span class="pill">当前词表</span>
+      </div>
+      <div class="cardBody">
+        <div class="small" style="margin-bottom:8px">点击任意字母可快速切换到该条目编辑。</div>
+        <div class="wordList" id="wordList"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="card layoutPreview previewSticky" id="previewSection">
+      <div class="cardHeader">
+        <h2>预览与导出</h2>
+        <div class="row">
+          <button class="btn" id="exportCoverBtn">导出封面</button>
+          <button class="btn" id="exportOneBtn">导出当前字母</button>
+          <button class="btn btnPrimary" id="exportZipBtn">导出封面+26字母 ZIP</button>
+          <button class="btn" id="exportLongBtn">导出正文长图</button>
+          <span class="pill exportStatus idle" id="exportStatusPill">导出状态：待机</span>
+        </div>
+      </div>
+
+        <div class="previewWrap">
+          <div class="previewStage az-page" id="previewScope" data-theme="light">
+            <div class="dualPreview">
+              <div class="dualItem">
+                <div class="dualLabel">标题页预览</div>
+                <div class="az-export-frame az-export-frame--cover az-cover" id="coverFrame">
+                  <div class="az-cover__image" aria-label="头图">
+                    <img class="az-cover__image-preview" id="coverImagePreview" src="" alt="" hidden />
+                  </div>
+                  <div class="az-cover__inner">
+                    <p class="az-cover__badge" id="pvBadge">A–Z 短篇合集</p>
+                    <h1 class="az-cover__title" id="pvTitle">A–Z 主题短篇集</h1>
+                    <p class="az-cover__subtitle" id="pvCoverSubtitle"></p>
+                    <p class="az-cover__author" id="pvAuthor">作者：—</p>
+                  </div>
+                  <div class="az-cover__deco" aria-hidden="true"></div>
+                </div>
+              </div>
+
+              <div class="dualItem">
+                <div class="dualLabel">当前字母卡片预览</div>
+                <div class="az-export-frame az-export-frame--letter az-letter-page" id="letterFrame">
+                  <div class="az-body-page-meta" aria-label="正文页标题与作者">
+                    <input type="text" class="az-body-page-meta__title" id="pvMetaTitle" placeholder="副标题" readonly />
+                    <input type="text" class="az-body-page-meta__author" id="pvMetaAuthor" placeholder="作者" readonly />
+                  </div>
+                  <div class="az-letter-page__card-wrap" id="pvCardWrap" data-letter="A">
+                    <div class="az-letter-page__card">
+                      <header class="az-letter-page__header">
+                        <span class="az-letter-page__letter" id="pvLetter">A</span>
+                        <span class="az-letter-page__word" id="pvWord">Abyss</span>
+                        <span class="az-letter-page__translation" id="pvTrans">深渊</span>
+                      </header>
+                      <div class="az-letter-page__body" id="pvPara"><p class="entryPlaceholder">（在左侧输入你的段落）</p></div>
+                    </div>
+                  </div>
+                  <div class="az-body-page-watermark" aria-label="水印">
+                    <input type="text" class="az-body-page-watermark__input" id="pvWatermark" placeholder="水印" readonly />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="toast" id="toast"></div>
+          </div>
+
+        <div id="themeVarsPanel" style="flex: 0 0 340px; min-width: 300px">
+          <div class="card" style="background: rgba(0,0,0,.10); border-radius: var(--radius); border:1px solid rgba(255,255,255,.10); box-shadow:none;">
+            <div class="cardHeader" style="background: rgba(0,0,0,.12);">
+              <h2>样式变量面板</h2>
+              <span class="pill">仅作用导出预览与导出图</span>
+            </div>
+            <div class="cardBody">
+
+              <div class="panelGroupTitle">背景与基础排版</div>
+              <div class="compact2">
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">封面背景色</div>
+                  </div>
+                  <input type="color" id="coverBgColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">卡片页背景色</div>
+                  </div>
+                  <input type="color" id="letterBgColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">中文翻译颜色</div>
+                  </div>
+                  <input type="color" id="transColorFine" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">中文翻译字号</div>
+                    <div style="font-size:12px;opacity:.9" id="bodySizeLabel">16px</div>
+                  </div>
+                  <input type="range" id="bodySize" min="12" max="24" value="16" />
+                </div>
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">圆角</div>
+                  <div style="font-size:12px;opacity:.9" id="radiusLabel">18px</div>
+                </div>
+                <input type="range" id="radius" min="10" max="34" value="18" />
+              </div>
+
+              <div style="height:12px"></div>
+              <div class="panelGroupTitle">封面精细控制</div>
+
+              <div class="compact2">
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">标题颜色</div>
+                  </div>
+                  <input type="color" id="coverTitleColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">标题字号</div>
+                    <div style="font-size:12px;opacity:.9" id="coverTitleSizeLabel">42px</div>
+                  </div>
+                  <input type="range" id="coverTitleSize" min="18" max="80" value="42" />
+                </div>
+
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">副标题颜色</div>
+                  </div>
+                  <input type="color" id="coverBadgeColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">副标题字号</div>
+                    <div style="font-size:12px;opacity:.9" id="coverBadgeSizeLabel">14px</div>
+                  </div>
+                  <input type="range" id="coverBadgeSize" min="10" max="34" value="14" />
+                </div>
+
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">作者颜色</div>
+                  </div>
+                  <input type="color" id="coverAuthorColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">作者字号</div>
+                    <div style="font-size:12px;opacity:.9" id="coverAuthorSizeLabel">16px</div>
+                  </div>
+                  <input type="range" id="coverAuthorSize" min="10" max="34" value="16" />
+                </div>
+              </div>
+
+              <div style="height:8px"></div>
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">头图透明度</div>
+                  <div style="font-size:12px;opacity:.9" id="coverImageOpacityLabel">100%</div>
+                </div>
+                <input type="range" id="coverImageOpacity" min="0" max="100" value="100" />
+              </div>
+
+              <div style="height:12px"></div>
+              <div class="panelGroupTitle">卡片精细控制</div>
+              <div class="compact2">
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">右上小字/水印颜色</div>
+                  </div>
+                  <input type="color" id="metaColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">右上小字/水印字号</div>
+                    <div style="font-size:12px;opacity:.9" id="metaSizeLabel">13px</div>
+                  </div>
+                  <input type="range" id="metaSize" min="10" max="30" value="13" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">文本框底色</div>
+                  </div>
+                  <input type="color" id="cardBoxColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">文本框透明度</div>
+                    <div style="font-size:12px;opacity:.9" id="cardBoxOpacityLabel">100%</div>
+                  </div>
+                  <input type="range" id="cardBoxOpacity" min="0" max="100" value="100" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">字母颜色</div>
+                  </div>
+                  <input type="color" id="letterColor" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">字母字号</div>
+                    <div style="font-size:12px;opacity:.9" id="letterSizeLabel">44px</div>
+                  </div>
+                  <input type="range" id="letterSize" min="20" max="130" value="44" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">单词颜色</div>
+                  </div>
+                  <input type="color" id="wordColorFine" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">单词字号</div>
+                    <div style="font-size:12px;opacity:.9" id="wordSizeFineLabel">22px</div>
+                  </div>
+                  <input type="range" id="wordSizeFine" min="12" max="56" value="22" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">正文颜色</div>
+                  </div>
+                  <input type="color" id="bodyColorFine" />
+                </div>
+                <div class="control">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">正文字号</div>
+                    <div style="font-size:12px;opacity:.9" id="bodySizeFineLabel">16px</div>
+                  </div>
+                  <input type="range" id="bodySizeFine" min="12" max="36" value="16" />
+                </div>
+                <div class="control controlFull">
+                  <div>
+                    <div style="font-size:12px;color:var(--muted)">装饰/边框颜色</div>
+                  </div>
+                  <input type="color" id="decoColor" />
+                </div>
+              </div>
+
+              <div style="height:12px"></div>
+              <div class="panelGroupTitle">背景与头图上传</div>
+
+              <div class="control uploadControl">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">封面背景图</div>
+                  <div style="font-size:12px;opacity:.9">仅作用于标题页导出帧</div>
+                </div>
+                <input id="coverBgImageInput" type="file" accept="image/*" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control uploadControl">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">卡片页背景图</div>
+                  <div style="font-size:12px;opacity:.9">仅作用于字母卡片页导出帧</div>
+                </div>
+                <input id="letterBgImageInput" type="file" accept="image/*" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="row" style="justify-content:space-between">
+                <label style="display:flex;align-items:center;gap:6px">
+                  <input id="coverBgImageEnabled" type="checkbox" checked />
+                  启用封面背景图
+                </label>
+                <button class="btn" id="clearCoverBgImageBtn" type="button">清除封面背景图</button>
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="row" style="justify-content:space-between">
+                <label style="display:flex;align-items:center;gap:6px">
+                  <input id="letterBgImageEnabled" type="checkbox" checked />
+                  启用卡片页背景图
+                </label>
+                <button class="btn" id="clearLetterBgImageBtn" type="button">清除卡片页背景图</button>
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="control uploadControl">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">封面头图</div>
+                  <div style="font-size:12px;opacity:.9">保留装饰容器，独立于背景图</div>
+                </div>
+                <input id="coverImageInput" type="file" accept="image/*" />
+              </div>
+
+              <div style="height:8px"></div>
+
+              <div class="row" style="justify-content:space-between">
+                <label style="display:flex;align-items:center;gap:6px">
+                  <input id="coverImageEnabled" type="checkbox" checked />
+                  启用封面头图
+                </label>
+                <button class="btn" id="clearCoverImageBtn" type="button">清除头图</button>
+              </div>
+
+              <div style="height:12px"></div>
+
+              <div class="row">
+                <button class="btn" id="resetVarsBtn">重置变量（按主题默认）</button>
+              </div>
+
+              <div class="help" style="margin-top:10px">
+                导出基于右侧预览 DOM，封面与字母卡片会与预览视觉一致。<br>
+                支持：封面 PNG、当前字母 PNG、封面+26字母 ZIP、正文长图 PNG。
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+  <div class="mobileDock" id="mobileDock" aria-label="移动端底部快捷栏">
+    <div class="mobileDock__hint">移动端建议先在“项目与生成”编辑，再切到“预览与导出”。</div>
+    <div class="mobileDock__actions">
+      <button class="btn" id="mobileJumpProjectBtn" type="button">项目</button>
+      <button class="btn" id="mobileJumpWordsBtn" type="button">单词</button>
+      <button class="btn btnPrimary" id="mobileJumpPreviewBtn" type="button">预览</button>
+    </div>
+  </div>
+
+  <div class="introOverlay" id="introOverlay" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+    <div class="introCard">
+      <div class="introCard__head" id="introTitle">使用说明</div>
+      <div class="introCard__body">
+        <p>1. 先在左侧填写标题、作者、A–Z 单词与文段。</p>
+        <p>2. 可用 AI 生成未锁定词条，再逐个补全文段。</p>
+        <p>3. 右侧实时预览，支持导出封面、单卡、ZIP 与长图。</p>
+      </div>
+      <div class="introCard__foot">
+        <button class="btn btnPrimary introCard__enter" id="introConfirmBtn" type="button">确认并进入编辑</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="themeProbe" class="az-page" data-theme="light" style="position:fixed;left:-99999px;top:-99999px;width:1px;height:1px;overflow:hidden;pointer-events:none;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+(function(){
+  const letters = Array.from({length:26}, (_,i)=>String.fromCharCode(65+i));
+
+  const THEME_IDS = ["light","dark","pixel","chinese-retro","retro-gui","vintage","poster","app","nippon","editorial"];
+  const STYLE_PRESET_LABEL = {
+    gothic: "哥特 / 暗色文学",
+    cyber: "赛博 / 霓虹科幻",
+    cozy: "温柔日常 / 手账感"
+  };
+  const AI_API_ENDPOINT = "/api/az-generate-ai";
+  const AI_TIMEOUT_MS = 30000;
+  const FALLBACK_VARS = {
+    "--bg":"#0b0f14",
+    "--card":"#111824",
+    "--text":"#eaf2ff",
+    "--muted":"#a9b6cc",
+    "--accent":"#7aa8ff",
+    "--titleSize":"28px",
+    "--bodySize":"16px",
+    "--radius":"18px",
+    "--lineHeight":"1.7",
+    "--fontTitle":"ui-serif, Georgia, 'Times New Roman', serif",
+    "--fontBody":"system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif",
+    "--bd":"rgba(255,255,255,.08)",
+    "--shadow":"0 10px 30px rgba(0,0,0,.35)"
+  };
+
+  const GENERIC = {
+    A:[["Abyss","深渊"],["Aurora","极光"],["Altar","祭坛"]],
+    B:[["Breathe","呼吸"],["Bloom","绽放"],["Bargain","交易"]],
+    C:[["Cinder","余烬"],["Cipher","密文"],["Cradle","摇篮"]],
+    D:[["Dawn","黎明"],["Dread","惧意"],["Drift","漂流"]],
+    E:[["Echo","回声"],["Ember","余火"],["Eclipse","食"]],
+    F:[["Fable","寓言"],["Fracture","裂隙"],["Frost","霜"]],
+    G:[["Gloom","阴翳"],["Glitch","故障"],["Garden","花园"]],
+    H:[["Hollow","空洞"],["Haven","避风港"],["Hush","寂声"]],
+    I:[["Ivory","象牙白"],["Impulse","冲动"],["Ink","墨"]],
+    J:[["Jade","玉"],["Jolt","震颤"],["Jubilee","庆典"]],
+    K:[["Knot","结"],["Karma","业"],["Kernel","核"]],
+    L:[["Lullaby","摇篮曲"],["Labyrinth","迷宫"],["Lumen","流明"]],
+    M:[["Murmur","呢喃"],["Mirage","海市蜃楼"],["Mercy","怜悯"]],
+    N:[["Nocturne","夜曲"],["Nexus","枢纽"],["Nest","巢"]],
+    O:[["Oath","誓言"],["Orbit","轨道"],["Omen","征兆"]],
+    P:[["Pulse","脉搏"],["Paradox","悖论"],["Petal","花瓣"]],
+    Q:[["Quiver","颤动"],["Quarry","猎物"],["Quill","羽笔"]],
+    R:[["Ruin","废墟"],["Rapture","狂喜"],["Ribbon","缎带"]],
+    S:[["Silhouette","剪影"],["Static","静电"],["Solace","慰藉"]],
+    T:[["Threshold","门槛"],["Tremor","震颤"],["Tea","茶"]],
+    U:[["Undertow","暗涌"],["Umbra","本影"],["Utopia","乌托邦"]],
+    V:[["Veil","面纱"],["Vector","向量"],["Velvet","天鹅绒"]],
+    W:[["Wander","漫游"],["Wound","伤口"],["Whisper","耳语"]],
+    X:[["Xenon","氙"],["Xylophone","木琴"],["Xylem","木质部"]],
+    Y:[["Yearning","渴望"],["Yonder","远方"],["Yield","让步"]],
+    Z:[["Zenith","天顶"],["Zephyr","和风"],["Zero","零"]],
+  };
+
+  const STYLE_OVERRIDES = {
+    gothic: {
+      A:[["Abyss","深渊"],["Ashen","灰烬色"],["Atonement","赎罪"]],
+      B:[["Banshee","女妖"],["Burial","葬礼"],["Bleak","萧瑟"]],
+      C:[["Crypt","地穴"],["Coffin","棺"],["Cinder","余烬"]],
+      D:[["Dirge","挽歌"],["Dusk","暮色"],["Dread","惧意"]],
+      E:[["Elegy","挽诗"],["Eclipse","食"],["Ember","余火"]],
+      F:[["Forsaken","遗弃"],["Frost","霜"],["Fable","寓言"]],
+      G:[["Grave","墓"],["Gloom","阴翳"],["Gothic","哥特"]],
+      H:[["Hollow","空洞"],["Heresy","异端"],["Hush","寂声"]],
+      I:[["Incantation","咒文"],["Ichor","神血"],["Ink","墨"]],
+      J:[["Judgement","审判"],["Jinx","厄运"],["Jade","玉"]],
+      K:[["Kneel","跪"],["Knot","结"],["Karma","业"]],
+      L:[["Lament","哀歌"],["Labyrinth","迷宫"],["Lullaby","摇篮曲"]],
+      M:[["Mourning","哀悼"],["Miasma","瘴气"],["Murmur","呢喃"]],
+      N:[["Nocturne","夜曲"],["Necropolis","亡城"],["Numb","麻木"]],
+      O:[["Omen","征兆"],["Oath","誓言"],["Oblivion","遗忘"]],
+      P:[["Phantom","幽影"],["Penance","苦修"],["Pulse","脉搏"]],
+      Q:[["Quill","羽笔"],["Quietus","寂灭"],["Quiver","颤动"]],
+      R:[["Ruin","废墟"],["Requiem","安魂曲"],["Raven","渡鸦"]],
+      S:[["Sepulcher","坟冢"],["Silhouette","剪影"],["Sable","乌黑"]],
+      T:[["Tomb","墓"],["Threshold","门槛"],["Tremor","震颤"]],
+      U:[["Umbra","本影"],["Undertow","暗涌"],["Unholy","不洁"]],
+      V:[["Veil","面纱"],["Vesper","晚祷"],["Venom","毒"]],
+      W:[["Wound","伤口"],["Whisper","耳语"],["Witch","女巫"]],
+      X:[["Xylem","木质部"],["Xenon","氙"],["Xiphoid","剑突"]],
+      Y:[["Yearning","渴望"],["Yew","紫杉"],["Yield","让步"]],
+      Z:[["Zephyr","和风"],["Zenith","天顶"],["Zero","零"]],
+    },
+    cyber: {
+      A:[["Algorithm","算法"],["Augment","增强"],["Avatar","化身"]],
+      B:[["Bandwidth","带宽"],["Backdoor","后门"],["Binary","二进制"]],
+      C:[["Cipher","密文"],["Circuit","电路"],["Core","内核"]],
+      D:[["Datastream","数据流"],["Drone","无人机"],["Debug","调试"]],
+      E:[["Encryption","加密"],["Echo","回声"],["Endpoint","端点"]],
+      F:[["Firewall","防火墙"],["Firmware","固件"],["Fragment","碎片"]],
+      G:[["Glitch","故障"],["Grid","网格"],["Ghost","幽灵进程"]],
+      H:[["Hologram","全息"],["Handshake","握手协议"],["Hub","枢纽"]],
+      I:[["Interface","接口"],["Implant","植入体"],["Index","索引"]],
+      J:[["Jitter","抖动"],["Junction","接点"],["Joystick","摇杆"]],
+      K:[["Kernel","内核"],["Keypair","密钥对"],["Kiosk","终端机"]],
+      L:[["Latency","延迟"],["Loop","循环"],["Lumen","流明"]],
+      M:[["Mainframe","主机"],["Mesh","网状"],["Mirage","幻象"]],
+      N:[["Nexus","中枢"],["Neon","霓虹"],["Node","节点"]],
+      O:[["Override","覆写"],["Orbit","轨道"],["Opcode","操作码"]],
+      P:[["Protocol","协议"],["Pulse","脉冲"],["Proxy","代理"]],
+      Q:[["Quantum","量子"],["Query","查询"],["Queue","队列"]],
+      R:[["Router","路由"],["Runtime","运行时"],["Rift","裂隙"]],
+      S:[["Subnet","子网"],["Signal","信号"],["Static","静电"]],
+      T:[["Terminal","终端"],["Token","令牌"],["Tether","系链"]],
+      U:[["Upload","上传"],["Uplink","上行"],["Userland","用户态"]],
+      V:[["Vector","向量"],["Virtual","虚拟"],["Voltage","电压"]],
+      W:[["Wavelength","波长"],["Worm","蠕虫"],["Workspace","工作区"]],
+      X:[["Xenon","氙"],["XOR","异或"],["XSS","跨站脚本"]],
+      Y:[["Yield","让步"],["Yottabyte","尧字节"],["Y-axis","Y轴"]],
+      Z:[["Zero-day","零日漏洞"],["Zone","区域"],["Zenith","天顶"]],
+    },
+    cozy: {
+      A:[["Afternoon","午后"],["Apricot","杏子"],["Almond","杏仁"]],
+      B:[["Blanket","毛毯"],["Bakery","面包店"],["Breeze","微风"]],
+      C:[["Cocoa","可可"],["Candle","蜡烛"],["Cottage","小屋"]],
+      D:[["Daisy","雏菊"],["Daydream","白日梦"],["Dawn","黎明"]],
+      E:[["Embrace","拥抱"],["Earlgrey","伯爵茶"],["Echo","回声"]],
+      F:[["Fireplace","壁炉"],["Fika","咖啡小憩"],["Flourish","绽放"]],
+      G:[["Garden","花园"],["Giggle","咯咯笑"],["Glow","微光"]],
+      H:[["Honey","蜂蜜"],["Haven","避风港"],["Hearth","炉边"]],
+      I:[["Ink","墨"],["Ivory","象牙白"],["Idle","悠闲"]],
+      J:[["Jam","果酱"],["Jasmine","茉莉"],["Joy","喜悦"]],
+      K:[["Kettle","水壶"],["Kindness","善意"],["Knit","编织"]],
+      L:[["Lullaby","摇篮曲"],["Lantern","灯笼"],["Lavender","薰衣草"]],
+      M:[["Mug","马克杯"],["Meadow","草地"],["Murmur","呢喃"]],
+      N:[["Nest","巢"],["Notebook","笔记本"],["Nuzzle","依偎"]],
+      O:[["Oatmilk","燕麦奶"],["Origami","折纸"],["Oasis","绿洲"]],
+      P:[["Petal","花瓣"],["Porch","门廊"],["Pillow","枕头"]],
+      Q:[["Quilt","拼布被"],["Quiet","安静"],["Quill","羽笔"]],
+      R:[["Recipe","食谱"],["Ribbon","缎带"],["Rainlight","雨光"]],
+      S:[["Solace","慰藉"],["Sunbeam","日光束"],["Spoon","勺"]],
+      T:[["Tea","茶"],["Tender","温柔"],["Thimble","顶针"]],
+      U:[["Umbrella","伞"],["Utopia","乌托邦"],["Upbeat","轻快"]],
+      V:[["Velvet","天鹅绒"],["Vase","花瓶"],["Vanilla","香草"]],
+      W:[["Warmth","暖意"],["Wander","漫游"],["Whisper","耳语"]],
+      X:[["Xylophone","木琴"],["Xylem","木质部"],["Xenon","氙"]],
+      Y:[["Yearning","渴望"],["Yonder","远方"],["Yummy","好吃"]],
+      Z:[["Zephyr","和风"],["Zest","清新"],["Zen","禅意"]],
+    }
+  };
+
+  const state = {
+    projectTitle: "A–Z 主题短篇集",
+    projectAuthor: "",
+    projectSubtitle: "A–Z 短篇合集",
+    projectWatermark: "{letter} / Z",
+    aiKeywords: "",
+    aiStyleHint: "",
+    style: "gothic",
+    theme: "light",
+    vars: {...FALLBACK_VARS},
+    coverBgImageData: "",
+    coverBgImageRuntimeUrl: "",
+    coverBgImageObjectUrl: "",
+    coverBgImageEl: null,
+    coverBgImageEnabled: true,
+    letterBgImageData: "",
+    letterBgImageRuntimeUrl: "",
+    letterBgImageObjectUrl: "",
+    letterBgImageEl: null,
+    letterBgImageEnabled: true,
+    coverImageData: "",
+    coverImageEnabled: true,
+    items: {},
+    current: "A"
+  };
+
+  function initItems(){
+    letters.forEach(L=>{
+      state.items[L] = state.items[L] || { en:"", zh:"", text:"", locked:false };
+    });
+  }
+
+  const $ = (id)=>document.getElementById(id);
+
+  const azList = $("azList");
+  const wordList = $("wordList");
+  const curLetter = $("curLetter");
+  const lockPill = $("lockPill");
+  const themeVarsMount = $("themeVarsMount");
+  const themeVarsPanel = $("themeVarsPanel");
+
+  const wordEn = $("wordEn");
+  const wordZh = $("wordZh");
+  const entryText = $("entryText");
+  const entryImageBtn = $("entryImageBtn");
+  const entryImageInput = $("entryImageInput");
+  const aiKeywordsInput = $("aiKeywords");
+  const aiStyleHintInput = $("aiStyleHint");
+  const genAiBtn = $("genAiBtn");
+  const aiGenInfo = $("aiGenInfo");
+  const aiResultBadge = $("aiResultBadge");
+
+  const pvLetter = $("pvLetter");
+  const pvWord = $("pvWord");
+  const pvTrans = $("pvTrans");
+  const pvPara = $("pvPara");
+  const pvBadge = $("pvBadge");
+  const pvTitle = $("pvTitle");
+  const pvCoverSubtitle = $("pvCoverSubtitle");
+  const pvAuthor = $("pvAuthor");
+  const pvMetaTitle = $("pvMetaTitle");
+  const pvMetaAuthor = $("pvMetaAuthor");
+  const pvCardWrap = $("pvCardWrap");
+  const pvWatermark = $("pvWatermark");
+  const coverFrame = $("coverFrame");
+  const coverImagePreview = $("coverImagePreview");
+  const letterFrame = $("letterFrame");
+  const previewScope = $("previewScope");
+  const themeProbe = $("themeProbe");
+
+  const progressPill = $("progressPill");
+  const toast = $("toast");
+  const projectSection = $("projectSection");
+  const wordsSection = $("wordsSection");
+  const previewSection = $("previewSection");
+  const mobileJumpProjectBtn = $("mobileJumpProjectBtn");
+  const mobileJumpWordsBtn = $("mobileJumpWordsBtn");
+  const mobileJumpPreviewBtn = $("mobileJumpPreviewBtn");
+  const introOverlay = $("introOverlay");
+  const introConfirmBtn = $("introConfirmBtn");
+  const exportCoverBtn = $("exportCoverBtn");
+  const exportOneBtn = $("exportOneBtn");
+  const exportZipBtn = $("exportZipBtn");
+  const exportLongBtn = $("exportLongBtn");
+  const exportStatusPill = $("exportStatusPill");
+
+  const coverBgColor = $("coverBgColor");
+  const letterBgColor = $("letterBgColor");
+  const transColorFine = $("transColorFine");
+  const bodySize = $("bodySize");
+  const radius = $("radius");
+  const bodySizeLabel = $("bodySizeLabel");
+  const radiusLabel = $("radiusLabel");
+  const coverBgImageInput = $("coverBgImageInput");
+  const coverBgImageEnabled = $("coverBgImageEnabled");
+  const clearCoverBgImageBtn = $("clearCoverBgImageBtn");
+  const letterBgImageInput = $("letterBgImageInput");
+  const letterBgImageEnabled = $("letterBgImageEnabled");
+  const clearLetterBgImageBtn = $("clearLetterBgImageBtn");
+  const coverImageInput = $("coverImageInput");
+  const coverImageEnabled = $("coverImageEnabled");
+  const clearCoverImageBtn = $("clearCoverImageBtn");
+  const projectSubtitleInput = $("projectSubtitle");
+  const projectWatermarkInput = $("projectWatermark");
+  const coverTitleColor = $("coverTitleColor");
+  const coverTitleSize = $("coverTitleSize");
+  const coverTitleSizeLabel = $("coverTitleSizeLabel");
+  const coverBadgeColor = $("coverBadgeColor");
+  const coverBadgeSize = $("coverBadgeSize");
+  const coverBadgeSizeLabel = $("coverBadgeSizeLabel");
+  const coverAuthorColor = $("coverAuthorColor");
+  const coverAuthorSize = $("coverAuthorSize");
+  const coverAuthorSizeLabel = $("coverAuthorSizeLabel");
+  const coverImageOpacity = $("coverImageOpacity");
+  const coverImageOpacityLabel = $("coverImageOpacityLabel");
+  const metaColor = $("metaColor");
+  const metaSize = $("metaSize");
+  const metaSizeLabel = $("metaSizeLabel");
+  const cardBoxColor = $("cardBoxColor");
+  const cardBoxOpacity = $("cardBoxOpacity");
+  const cardBoxOpacityLabel = $("cardBoxOpacityLabel");
+  const decoColor = $("decoColor");
+  const letterColor = $("letterColor");
+  const letterSize = $("letterSize");
+  const letterSizeLabel = $("letterSizeLabel");
+  const wordColorFine = $("wordColorFine");
+  const wordSizeFine = $("wordSizeFine");
+  const wordSizeFineLabel = $("wordSizeFineLabel");
+  const bodyColorFine = $("bodyColorFine");
+  const bodySizeFine = $("bodySizeFine");
+  const bodySizeFineLabel = $("bodySizeFineLabel");
+
+  function mountThemeVarsPanel(){
+    if(!themeVarsMount || !themeVarsPanel) return;
+    if(themeVarsPanel.parentElement !== themeVarsMount){
+      themeVarsMount.appendChild(themeVarsPanel);
+    }
+    themeVarsPanel.style.flex = "1 1 auto";
+    themeVarsPanel.style.minWidth = "0";
+  }
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(()=>toast.classList.remove("show"), 2800);
+  }
+
+  const INTRO_SEEN_KEY = "az_writer_intro_seen_v1";
+  function safeReadLocal(k){
+    try{
+      return localStorage.getItem(k);
+    }catch(_){
+      return null;
+    }
+  }
+  function safeWriteLocal(k, v){
+    try{
+      localStorage.setItem(k, v);
+    }catch(_){}
+  }
+  function openIntro(){
+    if(!introOverlay) return;
+    introOverlay.classList.add("show");
+    document.body.classList.add("introOpen");
+  }
+  function closeIntro(){
+    if(!introOverlay) return;
+    introOverlay.classList.remove("show");
+    document.body.classList.remove("introOpen");
+  }
+  function maybeShowIntro(){
+    if(safeReadLocal(INTRO_SEEN_KEY) === "1") return;
+    openIntro();
+  }
+  function scrollToSection(el){
+    if(!el || typeof el.scrollIntoView !== "function") return;
+    el.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  let exportBusy = false;
+  function setExportButtonsDisabled(disabled){
+    [exportCoverBtn, exportOneBtn, exportZipBtn, exportLongBtn].forEach((btn)=>{
+      if(btn) btn.disabled = !!disabled;
+    });
+  }
+  function setExportStatus(kind, text){
+    if(!exportStatusPill) return;
+    exportStatusPill.classList.remove("busy", "success", "error");
+    if(kind && kind !== "idle"){
+      exportStatusPill.classList.add(kind);
+    }
+    exportStatusPill.textContent = text || "导出状态：待机";
+  }
+  async function runExportWithStatus(taskName, runner){
+    if(exportBusy){
+      setExportStatus("busy", "导出状态：正在导出中...");
+      showToast("已有导出任务进行中，请稍候。");
+      return;
+    }
+    exportBusy = true;
+    setExportButtonsDisabled(true);
+    setExportStatus("busy", `导出状态：${taskName}导出中...`);
+    try{
+      await runner();
+      setExportStatus("success", `导出状态：${taskName}成功`);
+    }catch(err){
+      console.error(err);
+      setExportStatus("error", `导出状态：${taskName}失败`);
+      showToast((err && err.message) ? err.message : `${taskName}导出失败，请重试。`);
+    }finally{
+      exportBusy = false;
+      setExportButtonsDisabled(false);
+    }
+  }
+
+  function escapeHtml(text){
+    return String(text || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function plainTextToEntryHtml(text){
+    const src = String(text || "").replace(/\r\n/g, "\n");
+    if(!src.trim()) return "";
+    return src
+      .split(/\n{2,}/)
+      .map((block)=> `<p>${escapeHtml(block).replace(/\n/g, "<br>")}</p>`)
+      .join("");
+  }
+
+  function toCandidateEntryHtml(raw){
+    const str = String(raw || "");
+    if(!str.trim()) return "";
+    if(/<\/?[a-z][\s\S]*>/i.test(str)) return str;
+    return plainTextToEntryHtml(str);
+  }
+
+  function sanitizeEntryHtml(raw){
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = String(raw || "");
+    wrapper.querySelectorAll("script,style,iframe,object,embed,link,meta,base").forEach((el)=>el.remove());
+    wrapper.querySelectorAll("*").forEach((el)=>{
+      [...el.attributes].forEach((attr)=>{
+        const name = attr.name.toLowerCase();
+        const val = String(attr.value || "");
+        if(name.startsWith("on")){
+          el.removeAttribute(attr.name);
+          return;
+        }
+        if((name === "src" || name === "href") && /^\s*javascript:/i.test(val)){
+          el.removeAttribute(attr.name);
+          return;
+        }
+        if(name === "style"){
+          const cleaned = val.replace(/url\(\s*['"]?\s*javascript:[^)]+\)/ig, "");
+          if(cleaned.trim()) el.setAttribute("style", cleaned);
+          else el.removeAttribute("style");
+        }
+      });
+      if(el.tagName === "IMG"){
+        const src = String(el.getAttribute("src") || "").trim();
+        const allowed = /^(data:image\/|blob:|https?:\/\/|\/)/i.test(src);
+        if(!allowed){
+          el.remove();
+          return;
+        }
+        if(!el.getAttribute("alt")) el.setAttribute("alt", "插图");
+        el.removeAttribute("width");
+        el.removeAttribute("height");
+      }
+    });
+    return wrapper.innerHTML.trim();
+  }
+
+  function hasEntryContent(raw){
+    const html = sanitizeEntryHtml(toCandidateEntryHtml(raw));
+    if(!html) return false;
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    if(tmp.querySelector("img")) return true;
+    return (tmp.textContent || "").replace(/\s/g, "").length > 0;
+  }
+
+  function getEntryHtmlFromEditor(){
+    if(!entryText) return "";
+    const html = sanitizeEntryHtml(entryText.innerHTML);
+    if(!hasEntryContent(html)) return "";
+    return html;
+  }
+
+  function setEntryHtmlToEditor(raw){
+    if(!entryText) return;
+    const html = sanitizeEntryHtml(toCandidateEntryHtml(raw));
+    entryText.innerHTML = hasEntryContent(html) ? html : "";
+  }
+
+  function getEntryPlainText(rawHtml){
+    if(typeof rawHtml === "string"){
+      const tmp = document.createElement("div");
+      tmp.innerHTML = sanitizeEntryHtml(toCandidateEntryHtml(rawHtml));
+      return (tmp.textContent || "").replace(/\u00a0/g, " ");
+    }
+    return (entryText ? (entryText.textContent || "") : "").replace(/\u00a0/g, " ");
+  }
+
+  function updateEntryCount(rawHtml){
+    const text = getEntryPlainText(rawHtml);
+    $("countInfo").textContent = `字数：${text.replace(/\s/g, "").length}`;
+  }
+
+  function focusEntryEditor(){
+    if(!entryText) return;
+    entryText.focus();
+  }
+
+  function insertHtmlAtCaret(html){
+    if(!entryText) return;
+    focusEntryEditor();
+    const sel = window.getSelection();
+    if(!sel || sel.rangeCount === 0){
+      entryText.insertAdjacentHTML("beforeend", html);
+      return;
+    }
+    let range = sel.getRangeAt(0);
+    if(!entryText.contains(range.commonAncestorContainer)){
+      entryText.insertAdjacentHTML("beforeend", html);
+      return;
+    }
+    range.deleteContents();
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    const frag = document.createDocumentFragment();
+    let node;
+    let lastNode = null;
+    while((node = temp.firstChild)){
+      lastNode = frag.appendChild(node);
+    }
+    range.insertNode(frag);
+    if(lastNode){
+      range = range.cloneRange();
+      range.setStartAfter(lastNode);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  }
+
+  function insertImageFromFile(file){
+    if(!file) return;
+    if(!/^image\//i.test(file.type || "")){
+      showToast("请选择图片文件。");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const src = String(reader.result || "");
+      if(!src) return;
+      insertHtmlAtCaret(`<p><img src="${src}" alt="插图" /></p>`);
+      saveCurrentEdits();
+      renderPreview();
+      updateEntryCount();
+      showToast("图片已插入文段。");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function applyRichCommand(cmd){
+    focusEntryEditor();
+    try{
+      document.execCommand(cmd, false, null);
+    }catch(_){}
+    saveCurrentEdits();
+    renderPreview();
+    updateEntryCount();
+  }
+
+  function setCSSVars(vars){
+    const target = previewScope || document.documentElement;
+    Object.entries(vars).forEach(([k,v])=> target.style.setProperty(k, v));
+    const map = {
+      "--bg":"--color-background",
+      "--card":"--color-surface",
+      "--text":"--color-text",
+      "--muted":"--color-text-secondary",
+      "--accent":"--color-accent",
+      "--radius":"--radius-card",
+      "--fontBody":"--font-family"
+    };
+    Object.entries(map).forEach(([from, to])=>{
+      if(vars[from]) target.style.setProperty(to, vars[from]);
+    });
+    if(vars["--lineHeight"]){
+      target.style.setProperty("--line-height-body", vars["--lineHeight"]);
+    }
+    applyPreviewBackground();
+  }
+
+  function hexToRgb(hex){
+    const h = hex.replace("#","").trim();
+    if(h.length !== 6) return {r:255,g:255,b:255};
+    return {r:parseInt(h.slice(0,2),16), g:parseInt(h.slice(2,4),16), b:parseInt(h.slice(4,6),16)};
+  }
+
+  function rgba(color, a){
+    if(color.startsWith("#")){
+      const {r,g,b} = hexToRgb(color);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+    if(color.startsWith("rgb(")){
+      return color.replace("rgb(", "rgba(").replace(")", `,${a})`);
+    }
+    if(color.startsWith("rgba(")) return color;
+    return `rgba(255,255,255,${a})`;
+  }
+
+  function normalizeColor(v){
+    if(/^#([0-9a-f]{6})$/i.test(v)) return v;
+    return "#000000";
+  }
+
+  function cssLengthToPx(raw, fallback){
+    const val = (raw || "").trim();
+    if(!val) return fallback;
+    if(val.endsWith("px")) return parseFloat(val);
+    if(val.endsWith("rem")){
+      const fs = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      return parseFloat(val) * fs;
+    }
+    const n = parseFloat(val);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function colorToHex(value, fallback = "#000000"){
+    const v = (value || "").trim();
+    if(/^#([0-9a-f]{6})$/i.test(v)) return v;
+    const m = v.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+    if(m){
+      const toHex = (n)=> Math.max(0, Math.min(255, parseInt(n, 10))).toString(16).padStart(2, "0");
+      return `#${toHex(m[1])}${toHex(m[2])}${toHex(m[3])}`;
+    }
+    return fallback;
+  }
+
+  function clampNumber(n, min, max){
+    if(!Number.isFinite(n)) return min;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  const CUSTOM_STYLE_VARS = [
+    "--custom-cover-bg-color",
+    "--custom-letter-bg-color",
+    "--custom-cover-title-color",
+    "--custom-cover-title-size",
+    "--custom-cover-badge-color",
+    "--custom-cover-badge-size",
+    "--custom-cover-author-color",
+    "--custom-cover-author-size",
+    "--custom-cover-image-opacity",
+    "--custom-meta-color",
+    "--custom-meta-size",
+    "--custom-card-box-color",
+    "--custom-card-box-opacity",
+    "--custom-card-box-bg",
+    "--custom-deco-color",
+    "--custom-letter-color",
+    "--custom-letter-size",
+    "--custom-word-color",
+    "--custom-word-size",
+    "--custom-trans-color",
+    "--custom-trans-size",
+    "--custom-body-color",
+    "--custom-body-size"
+  ];
+
+  function clearCustomStyleVars(){
+    if(!previewScope) return;
+    CUSTOM_STYLE_VARS.forEach((k)=> previewScope.style.removeProperty(k));
+  }
+
+  function syncFineTuneControls(resetToTheme = false){
+    if(!previewScope) return;
+    const css = getComputedStyle(previewScope);
+    const pickColor = (key, cssFallback, hardFallback)=>{
+      const src = (!resetToTheme && state.vars[key]) ? state.vars[key] : (css.getPropertyValue(cssFallback).trim() || hardFallback);
+      return colorToHex(src, hardFallback);
+    };
+    const pickPx = (key, el, min, max, fallback)=>{
+      const fromState = !resetToTheme ? parseInt(state.vars[key], 10) : NaN;
+      const fromCss = parseInt(getComputedStyle(el).fontSize, 10);
+      return clampNumber(Number.isFinite(fromState) ? fromState : (Number.isFinite(fromCss) ? fromCss : fallback), min, max);
+    };
+
+    const coverBgColorVal = pickColor("--custom-cover-bg-color", "--color-background", "#101722");
+    const letterBgColorVal = pickColor("--custom-letter-bg-color", "--color-background", "#101722");
+    const coverTitleColorVal = pickColor("--custom-cover-title-color", "--color-cover-title", "#ffffff");
+    const coverBadgeColorVal = pickColor("--custom-cover-badge-color", "--color-cover-badge", "#ffffff");
+    const coverAuthorColorVal = pickColor("--custom-cover-author-color", "--color-cover-author", "#dddddd");
+    const metaColorVal = pickColor("--custom-meta-color", "--color-text-secondary", "#9aa4b8");
+    const boxColorVal = pickColor("--custom-card-box-color", "--color-surface", "#ffffff");
+    const decoColorVal = pickColor("--custom-deco-color", "--color-border", "#cccccc");
+    const letterColorVal = pickColor("--custom-letter-color", "--color-accent", "#7aa8ff");
+    const wordColorVal = pickColor("--custom-word-color", "--color-primary", "#1a1a1a");
+    const transColorVal = pickColor("--custom-trans-color", "--color-text-secondary", "#9aa4b8");
+    const bodyColorVal = pickColor("--custom-body-color", "--color-text", "#1a1a1a");
+
+    const titleSizeVal = pickPx("--custom-cover-title-size", pvTitle, 18, 80, 42);
+    const badgeSizeVal = pickPx("--custom-cover-badge-size", pvBadge, 10, 34, 14);
+    const authorSizeVal = pickPx("--custom-cover-author-size", pvAuthor, 10, 34, 16);
+    const metaSizeVal = pickPx("--custom-meta-size", pvMetaTitle, 10, 30, 13);
+    const letterSizeVal = pickPx("--custom-letter-size", pvLetter, 20, 130, 44);
+    const wordSizeVal = pickPx("--custom-word-size", pvWord, 12, 56, 22);
+    const transSizeVal = pickPx("--custom-trans-size", pvTrans, 12, 30, 16);
+    const bodySizeVal = pickPx("--custom-body-size", pvPara, 12, 36, 16);
+
+    const opFromState = !resetToTheme ? parseFloat(state.vars["--custom-cover-image-opacity"]) : NaN;
+    const coverOpacityVal = clampNumber(Math.round((Number.isFinite(opFromState) ? opFromState : 1) * 100), 0, 100);
+    const boxOpFromState = !resetToTheme ? parseFloat(state.vars["--custom-card-box-opacity"]) : NaN;
+    const boxOpacityVal = clampNumber(Math.round((Number.isFinite(boxOpFromState) ? boxOpFromState : 1) * 100), 0, 100);
+
+    coverBgColor.value = coverBgColorVal;
+    letterBgColor.value = letterBgColorVal;
+    coverTitleColor.value = coverTitleColorVal;
+    coverBadgeColor.value = coverBadgeColorVal;
+    coverAuthorColor.value = coverAuthorColorVal;
+    metaColor.value = metaColorVal;
+    cardBoxColor.value = boxColorVal;
+    decoColor.value = decoColorVal;
+    letterColor.value = letterColorVal;
+    wordColorFine.value = wordColorVal;
+    transColorFine.value = transColorVal;
+    bodyColorFine.value = bodyColorVal;
+
+    coverTitleSize.value = `${titleSizeVal}`;
+    coverBadgeSize.value = `${badgeSizeVal}`;
+    coverAuthorSize.value = `${authorSizeVal}`;
+    metaSize.value = `${metaSizeVal}`;
+    letterSize.value = `${letterSizeVal}`;
+    wordSizeFine.value = `${wordSizeVal}`;
+    bodySize.value = `${transSizeVal}`;
+    bodySizeFine.value = `${bodySizeVal}`;
+    coverImageOpacity.value = `${coverOpacityVal}`;
+    cardBoxOpacity.value = `${boxOpacityVal}`;
+
+    coverTitleSizeLabel.textContent = `${titleSizeVal}px`;
+    coverBadgeSizeLabel.textContent = `${badgeSizeVal}px`;
+    coverAuthorSizeLabel.textContent = `${authorSizeVal}px`;
+    metaSizeLabel.textContent = `${metaSizeVal}px`;
+    letterSizeLabel.textContent = `${letterSizeVal}px`;
+    wordSizeFineLabel.textContent = `${wordSizeVal}px`;
+    bodySizeLabel.textContent = `${transSizeVal}px`;
+    bodySizeFineLabel.textContent = `${bodySizeVal}px`;
+    coverImageOpacityLabel.textContent = `${coverOpacityVal}%`;
+    cardBoxOpacityLabel.textContent = `${boxOpacityVal}%`;
+
+    setVar("--custom-cover-bg-color", coverBgColorVal);
+    setVar("--custom-letter-bg-color", letterBgColorVal);
+    setVar("--custom-cover-title-color", coverTitleColorVal);
+    setVar("--custom-cover-title-size", `${titleSizeVal}px`);
+    setVar("--custom-cover-badge-color", coverBadgeColorVal);
+    setVar("--custom-cover-badge-size", `${badgeSizeVal}px`);
+    setVar("--custom-cover-author-color", coverAuthorColorVal);
+    setVar("--custom-cover-author-size", `${authorSizeVal}px`);
+    setVar("--custom-cover-image-opacity", `${coverOpacityVal / 100}`);
+    setVar("--custom-meta-color", metaColorVal);
+    setVar("--custom-meta-size", `${metaSizeVal}px`);
+    setVar("--custom-card-box-color", boxColorVal);
+    setVar("--custom-card-box-opacity", `${boxOpacityVal / 100}`);
+    setVar("--custom-card-box-bg", rgba(boxColorVal, boxOpacityVal / 100));
+    setVar("--custom-deco-color", decoColorVal);
+    setVar("--custom-letter-color", letterColorVal);
+    setVar("--custom-letter-size", `${letterSizeVal}px`);
+    setVar("--custom-word-color", wordColorVal);
+    setVar("--custom-word-size", `${wordSizeVal}px`);
+    setVar("--custom-trans-color", transColorVal);
+    setVar("--custom-trans-size", `${transSizeVal}px`);
+    setVar("--custom-body-color", bodyColorVal);
+    setVar("--custom-body-size", `${bodySizeVal}px`);
+  }
+
+  function readThemeVarsFromCss(themeId){
+    if(!themeProbe){
+      return {...FALLBACK_VARS};
+    }
+    themeProbe.setAttribute("data-theme", themeId);
+    const css = getComputedStyle(themeProbe);
+
+    const bg = css.getPropertyValue("--color-background").trim() || FALLBACK_VARS["--bg"];
+    const card = css.getPropertyValue("--color-surface").trim() || FALLBACK_VARS["--card"];
+    const text = css.getPropertyValue("--color-text").trim() || FALLBACK_VARS["--text"];
+    const muted = css.getPropertyValue("--color-text-secondary").trim() || FALLBACK_VARS["--muted"];
+    const accent = css.getPropertyValue("--color-accent").trim() || FALLBACK_VARS["--accent"];
+    const fontFamily = css.getPropertyValue("--font-family").trim() || FALLBACK_VARS["--fontBody"];
+    const titleSizePx = cssLengthToPx(css.getPropertyValue("--font-size-title"), 28);
+    const bodySizePx = cssLengthToPx(css.getPropertyValue("--font-size-body"), 16);
+    const radiusPx = cssLengthToPx(css.getPropertyValue("--radius-card"), 18);
+    const lineHeight = parseFloat(css.getPropertyValue("--line-height-body").trim()) || 1.7;
+    const border = css.getPropertyValue("--color-border").trim() || "rgba(255,255,255,.08)";
+    const shadow = css.getPropertyValue("--shadow-card").trim() || FALLBACK_VARS["--shadow"];
+
+    return {
+      "--bg": bg,
+      "--card": card,
+      "--text": text,
+      "--muted": muted,
+      "--accent": accent,
+      "--titleSize": `${Math.round(titleSizePx)}px`,
+      "--bodySize": `${Math.round(bodySizePx)}px`,
+      "--radius": `${Math.round(radiusPx)}px`,
+      "--lineHeight": `${lineHeight}`,
+      "--fontTitle": fontFamily,
+      "--fontBody": fontFamily,
+      "--bd": border,
+      "--shadow": shadow,
+      "--color-background": bg,
+      "--color-surface": card,
+      "--color-text": text,
+      "--color-text-secondary": muted,
+      "--color-accent": accent,
+      "--font-family": fontFamily,
+      "--radius-card": `${Math.round(radiusPx)}px`,
+      "--line-height-body": `${lineHeight}`,
+      "--font-size-title": css.getPropertyValue("--font-size-title").trim() || `${Math.round(titleSizePx)/16}rem`,
+      "--font-size-subtitle": css.getPropertyValue("--font-size-subtitle").trim() || `${Math.max(1, Math.round(titleSizePx*0.62))/16}rem`,
+      "--font-size-body": css.getPropertyValue("--font-size-body").trim() || `${Math.round(bodySizePx)/16}rem`,
+      "--font-size-small": css.getPropertyValue("--font-size-small").trim() || `${Math.max(0.75, Math.round(bodySizePx*0.85)/16)}rem`
+    };
+  }
+
+  function applyPreviewBackground(){
+    if(!previewScope) return;
+    const coverUrl = state.coverBgImageRuntimeUrl || state.coverBgImageData || "";
+    const letterUrl = state.letterBgImageRuntimeUrl || state.letterBgImageData || "";
+    const hasCoverBg = Boolean(state.coverBgImageEnabled && coverUrl);
+    const hasLetterBg = Boolean(state.letterBgImageEnabled && letterUrl);
+    const coverSafeUrl = hasCoverBg ? `url("${String(coverUrl).replace(/"/g, "%22")}")` : "none";
+    const letterSafeUrl = hasLetterBg ? `url("${String(letterUrl).replace(/"/g, "%22")}")` : "none";
+
+    // Keep preview container clean: uploaded background only affects export frames.
+    previewScope.style.setProperty("--background-image", "none");
+    previewScope.style.backgroundImage = "";
+    previewScope.style.backgroundSize = "";
+    previewScope.style.backgroundPosition = "";
+
+    if(coverFrame){
+      coverFrame.style.setProperty("--background-image", coverSafeUrl);
+      coverFrame.style.setProperty("--background-size", "cover");
+      coverFrame.style.setProperty("--background-position", "center");
+      if(hasCoverBg){
+        coverFrame.style.backgroundImage = `linear-gradient(rgba(0,0,0,.14), rgba(0,0,0,.14)), ${coverSafeUrl}, var(--gradient-cover)`;
+        coverFrame.style.backgroundSize = "cover, cover, 100% 100%";
+        coverFrame.style.backgroundPosition = "center, center, 0 0";
+      }else{
+        coverFrame.style.backgroundImage = "var(--gradient-cover)";
+        coverFrame.style.backgroundSize = "100% 100%";
+        coverFrame.style.backgroundPosition = "0 0";
+      }
+    }
+    if(letterFrame){
+      letterFrame.style.setProperty("--background-image", letterSafeUrl);
+      letterFrame.style.setProperty("--background-size", "cover");
+      letterFrame.style.setProperty("--background-position", "center");
+      letterFrame.style.backgroundColor = "var(--custom-letter-bg-color, var(--color-background))";
+      if(hasLetterBg){
+        letterFrame.style.backgroundImage = `linear-gradient(rgba(255,255,255,.06), rgba(255,255,255,.06)), ${letterSafeUrl}, var(--gradient-decoration)`;
+        letterFrame.style.backgroundSize = "cover, cover, 100% 100%";
+        letterFrame.style.backgroundPosition = "center, center, 0 0";
+      }else{
+        letterFrame.style.backgroundImage = "var(--gradient-decoration)";
+        letterFrame.style.backgroundSize = "100% 100%";
+        letterFrame.style.backgroundPosition = "0 0";
+      }
+    }
+  }
+
+  function revokeObjectUrl(key){
+    if(state[key]){
+      try{
+        URL.revokeObjectURL(state[key]);
+      }catch(_){}
+      state[key] = "";
+    }
+  }
+
+  function applyCoverImage(){
+    if(!coverFrame || !coverImagePreview) return;
+    const hasImage = Boolean(state.coverImageEnabled && state.coverImageData);
+    coverFrame.classList.toggle("az-cover--has-image", hasImage);
+    if(hasImage){
+      if(coverImagePreview.src !== state.coverImageData){
+        coverImagePreview.src = state.coverImageData;
+      }
+      coverImagePreview.hidden = false;
+      coverImagePreview.alt = "封面头图";
+    }else{
+      coverImagePreview.src = "";
+      coverImagePreview.hidden = true;
+    }
+  }
+
+  function pickWord(style, letter){
+    const pool = (STYLE_OVERRIDES[style] && STYLE_OVERRIDES[style][letter]) || GENERIC[letter] || [["Word","单词"]];
+    const [en, zh] = pool[Math.floor(Math.random()*pool.length)];
+    return {en, zh};
+  }
+
+  function ensureDefaultsIfEmpty(){
+    const it = state.items[state.current];
+    if(!it.en && !it.zh){
+      const w = pickWord(state.style, state.current);
+      it.en = w.en; it.zh = w.zh;
+    }
+  }
+
+  function countDone(){
+    let done = 0;
+    letters.forEach(L=>{
+      if(hasEntryContent(state.items[L].text)) done++;
+    });
+    return done;
+  }
+
+  function updateProgress(){
+    progressPill.textContent = `完成度 ${countDone()}/26`;
+  }
+
+  function renderAZ(){
+    azList.innerHTML = "";
+    letters.forEach(L=>{
+      const b = document.createElement("div");
+      b.className = "azBtn";
+      if(L === state.current) b.classList.add("active");
+      if(state.items[L].locked) b.classList.add("locked");
+      b.textContent = L;
+      const dot = document.createElement("span");
+      dot.className = "lockDot";
+      b.appendChild(dot);
+      b.addEventListener("click", ()=>{
+        saveCurrentEdits();
+        state.current = L;
+        loadCurrentEdits();
+        renderAZ();
+        renderPreview();
+      });
+      azList.appendChild(b);
+    });
+    renderWordList();
+  }
+
+  function renderWordList(){
+    if(!wordList) return;
+    wordList.innerHTML = "";
+    letters.forEach((L)=>{
+      const it = state.items[L] || {en:"", zh:"", locked:false};
+      const row = document.createElement("div");
+      row.className = "wordRow" + (L === state.current ? " active" : "");
+      const en = (it.en || "").trim() || "（未设置英文）";
+      const zh = (it.zh || "").trim() || "（未设置中文翻译）";
+      row.innerHTML = `
+        <div class="wordRowTop">
+          <span class="wordRowLetter">${L}${it.locked ? " · 锁" : ""}</span>
+          <span class="wordRowEn">${en}</span>
+        </div>
+        <div class="wordRowZh">${zh}</div>
+      `;
+      row.addEventListener("click", ()=>{
+        saveCurrentEdits();
+        state.current = L;
+        loadCurrentEdits();
+        renderAZ();
+        renderPreview();
+      });
+      wordList.appendChild(row);
+    });
+  }
+
+  function saveCurrentEdits(){
+    const it = state.items[state.current];
+    it.en = wordEn.value.trim();
+    it.zh = wordZh.value.trim();
+    it.text = getEntryHtmlFromEditor();
+  }
+
+  function loadCurrentEdits(){
+    const it = state.items[state.current];
+    curLetter.textContent = state.current;
+    wordEn.value = it.en || "";
+    wordZh.value = it.zh || "";
+    setEntryHtmlToEditor(it.text || "");
+    lockPill.textContent = it.locked ? "已锁定" : "未锁定";
+    lockPill.style.borderColor = it.locked ? "rgba(255,122,176,.45)" : "rgba(255,255,255,.12)";
+    updateEntryCount(it.text || "");
+  }
+
+  function renderPreview(){
+    const it = state.items[state.current];
+    pvLetter.textContent = state.current;
+    if(pvCardWrap) pvCardWrap.setAttribute("data-letter", state.current);
+    pvWord.textContent = it.en || "（英文单词）";
+    pvTrans.textContent = it.zh || "（中文翻译）";
+    const bodyHtml = sanitizeEntryHtml(toCandidateEntryHtml(it.text || ""));
+    if(hasEntryContent(bodyHtml)){
+      pvPara.innerHTML = bodyHtml;
+    }else{
+      pvPara.innerHTML = `<p class="entryPlaceholder">（在左侧输入你的段落）</p>`;
+    }
+
+    const title = ($("projectTitle").value || "").trim() || state.projectTitle;
+    const author = ($("projectAuthor").value || "").trim();
+    const subtitle = (projectSubtitleInput.value || "").trim() || state.projectSubtitle;
+    const watermark = (projectWatermarkInput.value || "").trim() || state.projectWatermark;
+
+    if(pvBadge) pvBadge.textContent = subtitle;
+    pvTitle.textContent = title;
+    pvAuthor.textContent = author ? `作者：${author}` : "作者：—";
+    if(pvCoverSubtitle){
+      pvCoverSubtitle.textContent = "";
+      pvCoverSubtitle.style.display = "none";
+    }
+    if(pvMetaTitle && pvMetaTitle.value !== subtitle) pvMetaTitle.value = subtitle;
+    if(pvMetaAuthor && pvMetaAuthor.value !== (author ? `作者：${author}` : "作者：—")) pvMetaAuthor.value = author ? `作者：${author}` : "作者：—";
+    if(pvWatermark && pvWatermark.value !== watermark) pvWatermark.value = watermark;
+
+    syncPreviewAspect();
+    applyPreviewBackground();
+    applyCoverImage();
+    renderWordList();
+    updateProgress();
+  }
+
+  function applyTheme(themeId){
+    state.theme = THEME_IDS.includes(themeId) ? themeId : "light";
+    const base = readThemeVarsFromCss(state.theme);
+    state.vars = {...base};
+    if(previewScope){
+      previewScope.setAttribute("data-theme", state.theme);
+      clearCustomStyleVars();
+      previewScope.style.removeProperty("--gradient-cover");
+    }
+    setCSSVars(state.vars);
+
+    coverBgColor.value = normalizeColor(state.vars["--custom-cover-bg-color"] || state.vars["--bg"] || "#101722");
+    letterBgColor.value = normalizeColor(state.vars["--custom-letter-bg-color"] || state.vars["--bg"] || "#101722");
+    transColorFine.value = normalizeColor(state.vars["--custom-trans-color"] || state.vars["--muted"] || "#9aa4b8");
+
+    bodySize.value = parseInt(state.vars["--custom-trans-size"],10) || 16;
+    radius.value = parseInt(state.vars["--radius"],10) || 18;
+
+    bodySizeLabel.textContent = `${bodySize.value}px`;
+    radiusLabel.textContent = `${radius.value}px`;
+    syncFineTuneControls(true);
+    $("themeSelect").value = state.theme;
+    showToast("已切换主题，并重置变量为默认。");
+  }
+
+  function setVar(k, v){
+    state.vars[k] = v;
+    const target = previewScope || document.documentElement;
+    target.style.setProperty(k, v);
+    const map = {
+      "--bg":"--color-background",
+      "--card":"--color-surface",
+      "--text":"--color-text",
+      "--muted":"--color-text-secondary",
+      "--accent":"--color-accent",
+      "--radius":"--radius-card",
+      "--fontBody":"--font-family"
+    };
+    if(map[k]){
+      state.vars[map[k]] = v;
+      target.style.setProperty(map[k], v);
+    }
+    if(k === "--titleSize"){
+      const px = parseInt(v, 10);
+      if(Number.isFinite(px)){
+        const rem = `${Math.max(12, px)/16}rem`;
+        state.vars["--font-size-title"] = rem;
+        target.style.setProperty("--font-size-title", rem);
+      }
+    }
+    if(k === "--bg"){
+      // make cover background react to bg color picker directly
+      const coverGrad = `linear-gradient(180deg, ${v} 0%, ${v} 100%)`;
+      state.vars["--gradient-cover"] = coverGrad;
+      target.style.setProperty("--gradient-cover", coverGrad);
+    }
+    if(k === "--custom-cover-bg-color"){
+      const coverGrad = `linear-gradient(180deg, ${v} 0%, ${v} 100%)`;
+      state.vars["--gradient-cover"] = coverGrad;
+      target.style.setProperty("--gradient-cover", coverGrad);
+    }
+    if(k === "--custom-letter-bg-color"){
+      state.vars["--color-background"] = v;
+      target.style.setProperty("--color-background", v);
+    }
+  }
+
+  function setFrameBackgroundImageData(kind, dataUrl){
+    const isCover = kind === "cover";
+    const dataKey = isCover ? "coverBgImageData" : "letterBgImageData";
+    const runtimeKey = isCover ? "coverBgImageRuntimeUrl" : "letterBgImageRuntimeUrl";
+    const objectKey = isCover ? "coverBgImageObjectUrl" : "letterBgImageObjectUrl";
+    const elKey = isCover ? "coverBgImageEl" : "letterBgImageEl";
+
+    revokeObjectUrl(objectKey);
+    state[dataKey] = dataUrl || "";
+    state[runtimeKey] = state[dataKey];
+    state[elKey] = null;
+    applyPreviewBackground();
+    if(!state[dataKey]){
+      return;
+    }
+    const img = new Image();
+    img.onload = ()=>{
+      state[elKey] = img;
+      applyPreviewBackground();
+    };
+    img.onerror = ()=>{
+      state[dataKey] = "";
+      state[runtimeKey] = "";
+      state[elKey] = null;
+      applyPreviewBackground();
+      showToast(isCover ? "封面背景图加载失败。" : "卡片页背景图加载失败。");
+    };
+    img.src = state[dataKey];
+  }
+
+  function setFrameBackgroundImageFile(kind, file){
+    if(!file) return;
+    const isCover = kind === "cover";
+    const dataKey = isCover ? "coverBgImageData" : "letterBgImageData";
+    const runtimeKey = isCover ? "coverBgImageRuntimeUrl" : "letterBgImageRuntimeUrl";
+    const objectKey = isCover ? "coverBgImageObjectUrl" : "letterBgImageObjectUrl";
+    const elKey = isCover ? "coverBgImageEl" : "letterBgImageEl";
+    revokeObjectUrl(objectKey);
+
+    state[dataKey] = "";
+    state[elKey] = null;
+    try{
+      state[objectKey] = URL.createObjectURL(file);
+      state[runtimeKey] = state[objectKey];
+    }catch(_){
+      state[objectKey] = "";
+      state[runtimeKey] = "";
+    }
+
+    applyPreviewBackground();
+
+    if(state[runtimeKey]){
+      const img = new Image();
+      img.onload = ()=>{ state[elKey] = img; };
+      img.onerror = ()=>{ showToast(isCover ? "封面背景图预览失败，请换一张图片。" : "卡片页背景图预览失败，请换一张图片。"); };
+      img.src = state[runtimeKey];
+    }
+
+    if(!isCover && letterFrame){
+      const safeUrl = state[runtimeKey] ? `url("${String(state[runtimeKey]).replace(/"/g, "%22")}")` : "none";
+      letterFrame.style.setProperty("--background-image", safeUrl);
+    }
+
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      state[dataKey] = String(reader.result || "");
+      if(!state[runtimeKey]){
+        state[runtimeKey] = state[dataKey];
+        applyPreviewBackground();
+      }
+    };
+    reader.onerror = ()=>{};
+    reader.readAsDataURL(file);
+  }
+
+  function setCoverImageData(dataUrl){
+    state.coverImageData = dataUrl || "";
+    if(!state.coverImageData){
+      applyCoverImage();
+      return;
+    }
+    const img = new Image();
+    img.onload = ()=> applyCoverImage();
+    img.onerror = ()=>{
+      state.coverImageData = "";
+      applyCoverImage();
+      showToast("封面头图加载失败。");
+    };
+    img.src = state.coverImageData;
+  }
+
+  function generateAZ(){
+    const updatedLetters = [];
+    letters.forEach(L=>{
+      const it = state.items[L];
+      if(it.locked) return;
+      const prevEn = it.en || "";
+      const prevZh = it.zh || "";
+      const w = pickWord(state.style, L);
+      it.en = w.en;
+      it.zh = w.zh;
+      if(prevEn !== it.en || prevZh !== it.zh){
+        updatedLetters.push(L);
+      }
+    });
+    if(updatedLetters.length){
+      state.current = updatedLetters[0];
+    }
+    loadCurrentEdits();
+    renderAZ();
+    renderPreview();
+    showToast(`已为未锁定字母生成词表，更新 ${updatedLetters.length} 项。`);
+  }
+
+  function buildAiDraftPayload(){
+    const keywords = String(aiKeywordsInput?.value || "")
+      .split(/[,，\n]+/)
+      .map((s)=>s.trim())
+      .filter(Boolean);
+    const styleHint = String(aiStyleHintInput?.value || "").trim();
+    const fallbackStyle = STYLE_PRESET_LABEL[String(state.style || "").trim()] || "";
+    const styleFromKeywords = keywords.join(" / ");
+    const style = styleFromKeywords || fallbackStyle;
+    const targetLetters = letters.filter((L)=> !state.items[L].locked);
+    const lockedItems = letters
+      .filter((L)=> state.items[L].locked)
+      .map((L)=>({ letter:L, en:state.items[L].en || "", zh:state.items[L].zh || "" }));
+    const previousTargetItems = targetLetters.map((L)=>({
+      letter: L,
+      en: state.items[L].en || "",
+      zh: state.items[L].zh || ""
+    }));
+    const existingItems = letters.map((L)=>({
+      letter: L,
+      en: state.items[L].en || "",
+      zh: state.items[L].zh || "",
+      locked: !!state.items[L].locked
+    }));
+    return {
+      keywords,
+      styleHint,
+      style,
+      theme: "",
+      requestNonce: Date.now(),
+      rerollSalt: `${Date.now()}-${Math.random().toString(36).slice(2,10)}`,
+      rerollAttempt: 0,
+      targetLetters,
+      lockedItems,
+      previousTargetItems,
+      existingItems
+    };
+  }
+
+  function setAiGenerateBusy(isBusy, text){
+    if(genAiBtn){
+      genAiBtn.disabled = isBusy;
+      genAiBtn.textContent = isBusy ? "试试手气..." : "试试手气";
+    }
+    if(aiGenInfo && text) aiGenInfo.textContent = text;
+    if(aiResultBadge){
+      if(isBusy){
+        aiResultBadge.className = "aiResultBadge busy";
+        aiResultBadge.textContent = "生成中...";
+      }else if(aiResultBadge.classList.contains("busy")){
+        aiResultBadge.className = "aiResultBadge";
+      }
+    }
+  }
+
+  function setAiResultBadge(stateType, count, detail){
+    if(!aiResultBadge) return;
+    const n = Number.isFinite(count) ? Math.max(0, count) : 0;
+    const extra = detail ? ` · ${detail}` : "";
+    if(stateType === "success"){
+      aiResultBadge.className = "aiResultBadge success";
+      aiResultBadge.textContent = `本次成功 ${n} 个${extra}`;
+      return;
+    }
+    if(stateType === "fallback"){
+      aiResultBadge.className = "aiResultBadge fallback";
+      aiResultBadge.textContent = `部分保留 ${n} 个${extra}`;
+      return;
+    }
+    if(stateType === "error"){
+      aiResultBadge.className = "aiResultBadge error";
+      aiResultBadge.textContent = detail || "生成失败";
+      return;
+    }
+    aiResultBadge.className = "aiResultBadge";
+    aiResultBadge.textContent = `本次成功 ${n} 个`;
+  }
+
+  function normalizeAiResponseItems(raw){
+    if(!raw) return {};
+    const root = raw.items ?? raw.data ?? raw.result ?? raw;
+    const out = {};
+    if(Array.isArray(root)){
+      root.forEach((it)=>{
+        if(!it || typeof it !== "object") return;
+        const letter = String(it.letter || it.L || "").trim().toUpperCase();
+        if(!/^[A-Z]$/.test(letter)) return;
+        out[letter] = {
+          en: String(it.en ?? it.word ?? it.english ?? "").trim(),
+          zh: String(it.zh ?? it.translation ?? it.chinese ?? "").trim()
+        };
+      });
+      return out;
+    }
+    if(typeof root === "object"){
+      Object.entries(root).forEach(([k, v])=>{
+        const letter = String(k || "").trim().toUpperCase();
+        if(!/^[A-Z]$/.test(letter) || !v || typeof v !== "object") return;
+        out[letter] = {
+          en: String(v.en ?? v.word ?? v.english ?? "").trim(),
+          zh: String(v.zh ?? v.translation ?? v.chinese ?? "").trim()
+        };
+      });
+    }
+    return out;
+  }
+
+  function isWordValidForLetter(letter, en){
+    if(!en) return false;
+    const first = en.trim().charAt(0).toUpperCase();
+    return first === letter;
+  }
+
+  function applyAiResultWithValidation(payload, normalized){
+    const accepted = {};
+    const usedEn = new Set(
+      letters
+        .filter((L)=> state.items[L].locked)
+        .map((L)=> String(state.items[L].en || "").trim().toLowerCase())
+        .filter(Boolean)
+    );
+    let invalidCount = 0;
+
+    payload.targetLetters.forEach((L)=>{
+      const item = normalized[L];
+      if(!item){ invalidCount++; return; }
+      const en = String(item.en || "").replace(/\s+/g, " ").trim();
+      const zh = String(item.zh || "").replace(/\s+/g, " ").trim();
+      if(!en || !zh || !isWordValidForLetter(L, en)){ invalidCount++; return; }
+      const key = en.toLowerCase();
+      if(usedEn.has(key)){ invalidCount++; return; }
+      usedEn.add(key);
+      accepted[L] = { en, zh };
+    });
+
+    let applied = 0;
+    let keptCount = 0;
+    const updatedLetters = [];
+    payload.targetLetters.forEach((L)=>{
+      if(state.items[L].locked) return;
+      const prevEn = state.items[L].en || "";
+      const prevZh = state.items[L].zh || "";
+      if(accepted[L]){
+        state.items[L].en = accepted[L].en;
+        state.items[L].zh = accepted[L].zh;
+        applied++;
+      }else{
+        keptCount++;
+      }
+      if(prevEn !== state.items[L].en || prevZh !== state.items[L].zh){
+        updatedLetters.push(L);
+      }
+    });
+    return { applied, keptCount, invalidCount, updatedLetters };
+  }
+
+  async function generateAZWithAiDraft(){
+    const payload = buildAiDraftPayload();
+    if(payload.targetLetters.length === 0){
+      setAiResultBadge("error", 0, "全部已锁定");
+      showToast("全部字母已锁定，没有可生成项。");
+      return;
+    }
+    state.aiKeywords = aiKeywordsInput ? aiKeywordsInput.value.trim() : "";
+    state.aiStyleHint = aiStyleHintInput ? aiStyleHintInput.value.trim() : "";
+
+    console.log("[AI-REQUEST-PAYLOAD]", payload);
+    setAiGenerateBusy(true, "正在根据关键词生成词表...");
+    const controller = new AbortController();
+    const t = setTimeout(()=> controller.abort(), AI_TIMEOUT_MS);
+    try{
+      const requestOnce = async (reqPayload)=>{
+        const rsp = await fetch(AI_API_ENDPOINT, {
+          method: "POST",
+          cache: "no-store",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(reqPayload),
+          signal: controller.signal
+        });
+        if(!rsp.ok){
+          throw new Error(`HTTP_${rsp.status}`);
+        }
+        const json = await rsp.json();
+        const normalized = normalizeAiResponseItems(json);
+        return applyAiResultWithValidation(reqPayload, normalized);
+      };
+
+      let result = await requestOnce(payload);
+      let bestResult = result;
+      if(payload.targetLetters.length > 0){
+        for(let attempt = 1; attempt <= 2; attempt++){
+          if(bestResult.updatedLetters.length > 0) break;
+          const retryPayload = {
+            ...payload,
+            rerollAttempt: attempt,
+            rerollSalt: `${Date.now()}-${attempt}-${Math.random().toString(36).slice(2,10)}`
+          };
+          const retryResult = await requestOnce(retryPayload);
+          if(retryResult.updatedLetters.length >= bestResult.updatedLetters.length){
+            bestResult = retryResult;
+          }
+        }
+      }
+      result = bestResult;
+      if(result.updatedLetters && result.updatedLetters.length){
+        state.current = result.updatedLetters[0];
+      }
+      loadCurrentEdits();
+      renderAZ();
+      renderPreview();
+      if(result.keptCount > 0){
+        setAiResultBadge("fallback", result.updatedLetters.length, `保留 ${result.keptCount}`);
+      }else{
+        setAiResultBadge("success", result.updatedLetters.length, `AI命中 ${result.applied}`);
+      }
+      showToast(`AI 生成完成：命中 ${result.applied}，保留 ${result.keptCount}，更新 ${result.updatedLetters.length} 项。`);
+      setAiGenerateBusy(false, `本次请求完成：目标 ${payload.targetLetters.length}，更新 ${result.updatedLetters.length}。`);
+    }catch(err){
+      console.error(err);
+      setAiResultBadge("error", 0, "接口失败");
+      showToast("AI 接口失败，未改动当前词表。");
+      setAiGenerateBusy(false, "接口失败，请稍后重试或检查 key/网络。");
+      return;
+    }finally{
+      clearTimeout(t);
+    }
+    setAiGenerateBusy(false, "AI 仅覆盖未锁定项，锁定项不会被修改。");
+  }
+
+  function fillDemoText(){
+    letters.forEach(L=>{
+      const it = state.items[L];
+      if(hasEntryContent(it.text)) return;
+      const en = it.en || L;
+      it.text = `<p>围绕「${escapeHtml(en)}」写一段：</p><p>他（她）在那一刻终于明白，所谓主题并不是束缚，而是一条能把碎片串起来的线。每一个字母都像一扇门，推开之后，是不同的光。</p>`;
+    });
+    loadCurrentEdits();
+    renderPreview();
+    showToast("已为未写段落填入示例文本（可随时改）。");
+  }
+
+  function clearAllText(){
+    if(!confirm("确定要清空全部 26 段文本吗？（单词不清空）")) return;
+    letters.forEach(L=> state.items[L].text = "");
+    loadCurrentEdits();
+    renderPreview();
+    updateProgress();
+    showToast("已清空全部段落。");
+  }
+
+  function toggleLockCurrent(){
+    state.items[state.current].locked = !state.items[state.current].locked;
+    renderAZ();
+    loadCurrentEdits();
+    showToast(state.items[state.current].locked ? "已锁定当前字母" : "已解锁当前字母");
+  }
+  function lockAll(v){
+    letters.forEach(L=> state.items[L].locked = v);
+    renderAZ();
+    loadCurrentEdits();
+    showToast(v ? "已全锁定" : "已全部解锁");
+  }
+
+  // ---------- Export Shared Helpers ----------
+  function getExportSpec(){
+    const [wStr,hStr] = $("sizePreset").value.split("x");
+    const W = parseInt(wStr,10), H = parseInt(hStr,10);
+    const vars = state.vars || FALLBACK_VARS;
+    return {
+      W,H,
+      bg: vars["--bg"] || "#000000",
+      card: vars["--card"] || "#111111",
+      text: vars["--text"] || "#ffffff",
+      muted: vars["--muted"] || "#aaaaaa",
+      accent: vars["--accent"] || "#7aa8ff",
+      titleSizePx: parseInt(vars["--titleSize"],10) || 28,
+      bodySizePx: parseInt(vars["--bodySize"],10) || 16,
+      radiusPx: parseInt(vars["--radius"],10) || 18,
+      fontTitle: vars["--fontTitle"] || "Georgia, serif",
+      fontBody: vars["--fontBody"] || "system-ui, -apple-system, Segoe UI, Roboto, Arial"
+    };
+  }
+
+  function downloadCanvas(canvas, filename){
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function safeTitle(){
+    const t = ($("projectTitle").value || "").trim() || state.projectTitle || "AZ";
+    return t.replace(/[\\/:*?"<>|]+/g,"_").slice(0,40);
+  }
+
+  function canvasToBlob(canvas){
+    return new Promise((resolve, reject)=>{
+      canvas.toBlob((blob)=>{
+        if(blob) resolve(blob);
+        else reject(new Error("canvas.toBlob failed"));
+      }, "image/png");
+    });
+  }
+
+  // ---------- DOM export overrides (match preview) ----------
+  function waitNextFrame(){
+    return new Promise((resolve)=> requestAnimationFrame(()=> requestAnimationFrame(resolve)));
+  }
+
+  async function waitFontsReady(){
+    if(document.fonts && document.fonts.ready){
+      try { await document.fonts.ready; } catch(_) {}
+    }
+  }
+
+  async function waitImagesReady(scopeEl){
+    if(!scopeEl) return;
+    const imgs = Array.from(scopeEl.querySelectorAll("img"));
+    const pending = imgs.map((img)=>{
+      const src = String(img.currentSrc || img.getAttribute("src") || "").trim();
+      if(!src) return Promise.resolve();
+      if(img.complete) return Promise.resolve();
+      return new Promise((resolve)=>{
+        const t = setTimeout(resolve, 2200);
+        const done = ()=> resolve();
+        const finish = ()=>{
+          clearTimeout(t);
+          done();
+        };
+        img.addEventListener("load", finish, {once:true});
+        img.addEventListener("error", finish, {once:true});
+      });
+    });
+    await Promise.all(pending);
+  }
+
+  // Cap cover capture scale to avoid very slow exports on high-res presets.
+  const COVER_CAPTURE_MAX_SCALE = 2.2;
+
+  function syncPreviewAspect(spec = getExportSpec()){
+    if(!previewScope) return;
+    previewScope.style.setProperty("--export-aspect-cover", `${spec.W} / ${spec.H}`);
+    previewScope.style.setProperty("--export-aspect-letter", `${spec.W} / ${spec.H}`);
+    const ratio = spec.W / Math.max(1, spec.H);
+    let shape = "portrait";
+    let coverScale = 1;
+    if(ratio > 1.06){
+      shape = "landscape";
+      coverScale = 0.74;
+    }else if(ratio >= 0.94 && ratio <= 1.06){
+      shape = "square";
+      coverScale = 0.86;
+    }
+    previewScope.setAttribute("data-export-shape", shape);
+    previewScope.style.setProperty("--custom-cover-scale", `${coverScale}`);
+  }
+
+  async function captureFrameCanvas(frameEl, spec, options = {}){
+    if(typeof html2canvas === "undefined"){
+      throw new Error("html2canvas not loaded");
+    }
+    syncPreviewAspect(spec);
+    await waitFontsReady();
+    await waitNextFrame();
+    await waitImagesReady(frameEl);
+    await waitNextFrame();
+
+    const rect = frameEl.getBoundingClientRect();
+    const width = Math.max(1, rect.width);
+    const height = Math.max(1, rect.height);
+    let cropBox = null;
+    if(options.cropEl){
+      const cropRect = options.cropEl.getBoundingClientRect();
+      cropBox = {
+        x: Math.max(0, cropRect.left - rect.left),
+        y: Math.max(0, cropRect.top - rect.top),
+        w: Math.max(1, cropRect.width),
+        h: Math.max(1, cropRect.height)
+      };
+    }
+    const targetScale = Math.max(1, spec.W / width);
+    const maxScale = Number.isFinite(options.maxScale) ? Math.max(1, options.maxScale) : targetScale;
+    const scale = Math.min(targetScale, maxScale);
+    const src = await html2canvas(frameEl, {
+      backgroundColor: null,
+      useCORS: true,
+      scale
+    });
+    let out = src;
+    if(src.width !== spec.W || src.height !== spec.H){
+      out = document.createElement("canvas");
+      out.width = spec.W;
+      out.height = spec.H;
+      const octx = out.getContext("2d");
+      octx.drawImage(src, 0, 0, out.width, out.height);
+    }
+    if(!cropBox){
+      return out;
+    }
+
+    const sx = out.width / width;
+    const sy = out.height / height;
+    const cropX = Math.max(0, Math.round(cropBox.x * sx));
+    const cropY = Math.max(0, Math.round(cropBox.y * sy));
+    const cropW = Math.max(1, Math.round(cropBox.w * sx));
+    const cropH = Math.max(1, Math.round(cropBox.h * sy));
+    const clampedW = Math.min(cropW, Math.max(1, out.width - cropX));
+    const clampedH = Math.min(cropH, Math.max(1, out.height - cropY));
+    const cropped = document.createElement("canvas");
+    cropped.width = clampedW;
+    cropped.height = clampedH;
+    const cctx = cropped.getContext("2d");
+    cctx.drawImage(out, cropX, cropY, clampedW, clampedH, 0, 0, clampedW, clampedH);
+    return cropped;
+  }
+
+  function switchCurrentLetter(letter){
+    state.current = letter;
+    loadCurrentEdits();
+    renderAZ();
+    renderPreview();
+  }
+
+  async function exportCoverPNG(){
+    await runExportWithStatus("封面", async()=>{
+      saveCurrentEdits();
+      if(!coverFrame){
+        throw new Error("封面预览节点不存在。");
+      }
+      const spec = getExportSpec();
+      const canvas = await captureFrameCanvas(coverFrame, spec, { maxScale: COVER_CAPTURE_MAX_SCALE });
+      downloadCanvas(canvas, `${safeTitle()}-00-Cover.png`);
+      showToast("已开始下载封面 PNG。");
+    });
+  }
+
+  async function exportLetterPNG(letter){
+    await runExportWithStatus("当前字母卡片", async()=>{
+      saveCurrentEdits();
+      if(!letterFrame){
+        throw new Error("字母卡片预览节点不存在。");
+      }
+      const prev = state.current;
+      try{
+        if(letter !== prev){
+          switchCurrentLetter(letter);
+        }
+        const spec = getExportSpec();
+        const canvas = await captureFrameCanvas(letterFrame, spec);
+        downloadCanvas(canvas, `${safeTitle()}-${letter}.png`);
+        showToast("已开始下载当前字母 PNG。");
+      }finally{
+        if(prev !== state.current){
+          switchCurrentLetter(prev);
+        }
+      }
+    });
+  }
+
+  async function exportZip(){
+    await runExportWithStatus("ZIP 打包", async()=>{
+      saveCurrentEdits();
+      if(typeof JSZip === "undefined"){
+        throw new Error("JSZip 未加载，无法导出 ZIP。");
+      }
+      if(typeof html2canvas === "undefined"){
+        throw new Error("html2canvas 未加载，无法导出 ZIP。");
+      }
+      if(!coverFrame || !letterFrame){
+        throw new Error("导出节点缺失。");
+      }
+
+      const spec = getExportSpec();
+      const zip = new JSZip();
+      const prev = state.current;
+      showToast("正在按预览样式打包封面+26字母，请稍候...");
+      try{
+        const coverCanvas = await captureFrameCanvas(coverFrame, spec);
+        zip.file(`${safeTitle()}-00-Cover.png`, await canvasToBlob(coverCanvas));
+
+        for(let i=0;i<letters.length;i++){
+          const L = letters[i];
+          switchCurrentLetter(L);
+          const letterCanvas = await captureFrameCanvas(letterFrame, spec);
+          zip.file(`${safeTitle()}-${String(i+1).padStart(2,"0")}-${L}.png`, await canvasToBlob(letterCanvas));
+        }
+
+        const blob = await zip.generateAsync({type:"blob", compression:"DEFLATE", compressionOptions:{level:6}});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${safeTitle()}-Cover+26Letters.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast("ZIP 导出完成（与预览一致）。");
+      }finally{
+        switchCurrentLetter(prev);
+      }
+    });
+  }
+
+  async function exportLongPNG(){
+    await runExportWithStatus("正文长图", async()=>{
+      saveCurrentEdits();
+      if(typeof html2canvas === "undefined"){
+        throw new Error("html2canvas 未加载，无法导出长图。");
+      }
+      if(!coverFrame || !letterFrame){
+        throw new Error("导出节点缺失。");
+      }
+
+      const baseSpec = getExportSpec();
+      const coverSpec = (() => {
+        const w = Math.max(baseSpec.W, baseSpec.H);
+        let h = Math.min(baseSpec.W, baseSpec.H);
+        if(h >= w){
+          h = Math.max(1, Math.round(w * 9 / 16));
+        }
+        return {...baseSpec, W:w, H:h};
+      })();
+      const cardSpec = (() => {
+        const w = Math.min(baseSpec.W, baseSpec.H);
+        let h = Math.max(baseSpec.W, baseSpec.H);
+        if(w >= h){
+          h = Math.max(w + 1, Math.round(w * 16 / 9));
+        }
+        return {...baseSpec, W:w, H:h};
+      })();
+      const captureCardOnlyCanvas = async (letter) => {
+        switchCurrentLetter(letter);
+        syncPreviewAspect(cardSpec);
+        await waitNextFrame();
+        const cardEl = letterFrame.querySelector(".az-letter-page__card");
+        if(!cardEl){
+          throw new Error("未找到正文文本框节点。");
+        }
+        await waitImagesReady(cardEl);
+        await waitNextFrame();
+        const frameRect = letterFrame.getBoundingClientRect();
+        const frameW = Math.max(1, frameRect.width);
+        const targetScale = Math.max(1, cardSpec.W / frameW);
+        return await html2canvas(cardEl, {
+          backgroundColor: null,
+          useCORS: true,
+          scale: targetScale
+        });
+      };
+
+      const prev = state.current;
+      try{
+        const coverCanvas = await captureFrameCanvas(coverFrame, coverSpec, { maxScale: COVER_CAPTURE_MAX_SCALE });
+        await waitFontsReady();
+
+        const cards = [];
+        for(let i=0;i<letters.length;i++){
+          cards.push(await captureCardOnlyCanvas(letters[i]));
+        }
+
+        const MAX_CANVAS_SIDE = 30000;
+        // Cover is scaled to match card width.
+        const cardWRaw = cards.reduce((m, c)=> Math.max(m, c.width || 1), 1);
+        const coverWRaw = cardWRaw;
+        const coverHRaw = Math.max(1, Math.round(coverSpec.H * (coverWRaw / Math.max(1, coverSpec.W))));
+        const cardsHRaw = cards.reduce((sum, c)=> sum + (c.height || 1), 0);
+        const rawW = cardWRaw;
+        const rawH = coverHRaw + cardsHRaw;
+        const shrink = Math.max(rawW / MAX_CANVAS_SIDE, rawH / MAX_CANVAS_SIDE, 1);
+        const outW = Math.max(1, Math.round(rawW / shrink));
+        const coverH = Math.max(1, Math.round(coverHRaw / shrink));
+        const outH = Math.max(1, Math.round(rawH / shrink));
+
+        const out = document.createElement("canvas");
+        out.width = outW;
+        out.height = outH;
+        const octx = out.getContext("2d");
+        octx.fillStyle = state.vars["--bg"] || "#0b0f14";
+        octx.fillRect(0, 0, outW, outH);
+
+        const coverW = outW;
+        const coverX = 0;
+        octx.drawImage(coverCanvas, coverX, 0, coverW, coverH);
+
+        let yy = coverH;
+        cards.forEach((c, i)=>{
+          const cardH = Math.max(1, Math.round((c.height || 1) / shrink));
+          octx.drawImage(c, 0, yy, outW, cardH);
+          yy += cardH;
+        });
+        downloadCanvas(out, `${safeTitle()}-LongBody.png`);
+        showToast("已开始下载正文长图 PNG（仅文本框 + 文字纵向拼接）。");
+      }finally{
+        switchCurrentLetter(prev);
+      }
+    });
+  }
+
+  // ---------- Local save/load ----------
+  const STORAGE_KEY = "az_writer_demo_v3_unified_theme";
+  function saveLocal(){
+    saveCurrentEdits();
+    const payload = {
+      projectTitle: $("projectTitle").value,
+      projectAuthor: $("projectAuthor").value,
+      projectSubtitle: projectSubtitleInput.value,
+      projectWatermark: projectWatermarkInput.value,
+      aiKeywords: aiKeywordsInput.value,
+      aiStyleHint: aiStyleHintInput.value,
+      style: state.style,
+      theme: state.theme,
+      vars: state.vars,
+      coverBgImageData: state.coverBgImageData,
+      coverBgImageEnabled: state.coverBgImageEnabled,
+      letterBgImageData: state.letterBgImageData,
+      letterBgImageEnabled: state.letterBgImageEnabled,
+      coverImageData: state.coverImageData,
+      coverImageEnabled: state.coverImageEnabled,
+      items: state.items,
+      current: state.current
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    showToast("已保存到本地（localStorage）。");
+  }
+  function loadLocal(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){ showToast("本地没有存档。"); return; }
+    try{
+      const p = JSON.parse(raw);
+      state.style = p.style || state.style;
+      state.theme = THEME_IDS.includes(p.theme) ? p.theme : state.theme;
+      state.vars = p.vars || readThemeVarsFromCss(state.theme);
+      state.coverBgImageEnabled = typeof p.coverBgImageEnabled === "boolean"
+        ? p.coverBgImageEnabled
+        : (typeof p.bgImageEnabled === "boolean" ? p.bgImageEnabled : true);
+      state.letterBgImageEnabled = typeof p.letterBgImageEnabled === "boolean"
+        ? p.letterBgImageEnabled
+        : (typeof p.bgImageEnabled === "boolean" ? p.bgImageEnabled : true);
+      state.coverImageEnabled = typeof p.coverImageEnabled === "boolean" ? p.coverImageEnabled : true;
+      state.items = p.items || state.items;
+      state.current = p.current || "A";
+      state.projectSubtitle = typeof p.projectSubtitle === "string"
+        ? p.projectSubtitle
+        : (typeof p.cardMetaTitle === "string" ? p.cardMetaTitle : state.projectSubtitle);
+      state.projectWatermark = typeof p.projectWatermark === "string"
+        ? p.projectWatermark
+        : (typeof p.cardWatermark === "string" ? p.cardWatermark : state.projectWatermark);
+      state.aiKeywords = typeof p.aiKeywords === "string" ? p.aiKeywords : "";
+      state.aiStyleHint = typeof p.aiStyleHint === "string" ? p.aiStyleHint : "";
+
+      $("themeSelect").value = state.theme;
+      $("projectTitle").value = p.projectTitle || "";
+      $("projectAuthor").value = p.projectAuthor || "";
+      projectSubtitleInput.value = state.projectSubtitle;
+      projectWatermarkInput.value = state.projectWatermark;
+      aiKeywordsInput.value = state.aiKeywords;
+      aiStyleHintInput.value = state.aiStyleHint;
+      coverBgImageEnabled.checked = state.coverBgImageEnabled;
+      letterBgImageEnabled.checked = state.letterBgImageEnabled;
+      coverImageEnabled.checked = state.coverImageEnabled;
+      setFrameBackgroundImageData("cover", p.coverBgImageData || p.bgImageData || "");
+      setFrameBackgroundImageData("letter", p.letterBgImageData || p.bgImageData || "");
+      setCoverImageData(p.coverImageData || "");
+
+      clearCustomStyleVars();
+      setCSSVars(state.vars);
+      radius.value = parseInt(state.vars["--radius"],10) || 18;
+      radiusLabel.textContent = `${radius.value}px`;
+      syncFineTuneControls(false);
+
+      renderAZ();
+      loadCurrentEdits();
+      renderPreview();
+      showToast("已从本地载入。");
+    }catch(e){
+      console.error(e);
+      showToast("载入失败：存档损坏。");
+    }
+  }
+
+  // ---------- Events ----------
+  $("themeSelect").addEventListener("change", (e)=>{
+    applyTheme(e.target.value);
+    renderPreview();
+  });
+
+  $("sizePreset").addEventListener("change", ()=>{
+    syncPreviewAspect();
+    renderPreview();
+  });
+
+  coverBgImageInput.addEventListener("change", (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    state.coverBgImageEnabled = true;
+    coverBgImageEnabled.checked = true;
+    setFrameBackgroundImageFile("cover", file);
+    applyPreviewBackground();
+    showToast("封面背景图已更新。");
+    coverBgImageInput.value = "";
+  });
+
+  coverBgImageEnabled.addEventListener("change", ()=>{
+    state.coverBgImageEnabled = coverBgImageEnabled.checked;
+    applyPreviewBackground();
+  });
+
+  clearCoverBgImageBtn.addEventListener("click", ()=>{
+    setFrameBackgroundImageData("cover", "");
+    state.coverBgImageEnabled = false;
+    coverBgImageEnabled.checked = false;
+    showToast("已清除封面背景图。");
+  });
+
+  letterBgImageInput.addEventListener("change", (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    state.letterBgImageEnabled = true;
+    letterBgImageEnabled.checked = true;
+    setFrameBackgroundImageFile("letter", file);
+    applyPreviewBackground();
+    showToast("卡片页背景图已更新。");
+    letterBgImageInput.value = "";
+  });
+
+  letterBgImageEnabled.addEventListener("change", ()=>{
+    state.letterBgImageEnabled = letterBgImageEnabled.checked;
+    applyPreviewBackground();
+  });
+
+  clearLetterBgImageBtn.addEventListener("click", ()=>{
+    setFrameBackgroundImageData("letter", "");
+    state.letterBgImageEnabled = false;
+    letterBgImageEnabled.checked = false;
+    showToast("已清除卡片页背景图。");
+  });
+
+  coverImageInput.addEventListener("change", (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      setCoverImageData(String(reader.result || ""));
+      state.coverImageEnabled = true;
+      coverImageEnabled.checked = true;
+      showToast("封面头图已更新。");
+    };
+    reader.readAsDataURL(file);
+    coverImageInput.value = "";
+  });
+
+  coverImageEnabled.addEventListener("change", ()=>{
+    state.coverImageEnabled = coverImageEnabled.checked;
+    applyCoverImage();
+  });
+
+  clearCoverImageBtn.addEventListener("click", ()=>{
+    setCoverImageData("");
+    state.coverImageEnabled = false;
+    coverImageEnabled.checked = false;
+    showToast("已清除封面头图。");
+  });
+
+  $("projectTitle").addEventListener("input", renderPreview);
+  $("projectAuthor").addEventListener("input", renderPreview);
+  aiKeywordsInput.addEventListener("input", ()=>{
+    state.aiKeywords = aiKeywordsInput.value.trim();
+  });
+  aiStyleHintInput.addEventListener("input", ()=>{
+    state.aiStyleHint = aiStyleHintInput.value.trim();
+  });
+  projectSubtitleInput.addEventListener("input", ()=>{
+    state.projectSubtitle = projectSubtitleInput.value.trim() || "A–Z 短篇合集";
+    renderPreview();
+  });
+  projectWatermarkInput.addEventListener("input", ()=>{
+    state.projectWatermark = projectWatermarkInput.value.trim() || "{letter} / Z";
+    renderPreview();
+  });
+
+  wordEn.addEventListener("input", ()=>{ saveCurrentEdits(); renderPreview(); });
+  wordZh.addEventListener("input", ()=>{ saveCurrentEdits(); renderPreview(); });
+
+  entryText.addEventListener("input", ()=>{
+    saveCurrentEdits();
+    updateEntryCount();
+    renderPreview();
+  });
+  entryText.addEventListener("blur", ()=>{
+    const it = state.items[state.current];
+    setEntryHtmlToEditor(it.text || "");
+  });
+  entryText.addEventListener("paste", ()=>{
+    setTimeout(()=>{
+      saveCurrentEdits();
+      renderPreview();
+      updateEntryCount();
+    }, 0);
+  });
+
+  document.querySelectorAll("[data-rich-cmd]").forEach((btn)=>{
+    btn.addEventListener("click", ()=>{
+      const cmd = btn.getAttribute("data-rich-cmd");
+      if(!cmd) return;
+      applyRichCommand(cmd);
+    });
+  });
+  if(entryImageBtn && entryImageInput){
+    entryImageBtn.addEventListener("click", ()=> entryImageInput.click());
+    entryImageInput.addEventListener("change", (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      insertImageFromFile(file);
+      entryImageInput.value = "";
+    });
+  }
+
+  $("genAiBtn").addEventListener("click", ()=>{ saveCurrentEdits(); generateAZWithAiDraft(); });
+  $("fillDemoBtn").addEventListener("click", ()=>{ saveCurrentEdits(); fillDemoText(); });
+  $("clearAllBtn").addEventListener("click", clearAllText);
+
+  $("toggleLockBtn").addEventListener("click", toggleLockCurrent);
+  $("lockAllBtn").addEventListener("click", ()=>lockAll(true));
+  $("unlockAllBtn").addEventListener("click", ()=>lockAll(false));
+
+  $("prevBtn").addEventListener("click", ()=>{
+    saveCurrentEdits();
+    let idx = letters.indexOf(state.current);
+    idx = (idx - 1 + 26) % 26;
+    state.current = letters[idx];
+    loadCurrentEdits();
+    renderAZ();
+    renderPreview();
+  });
+
+  $("nextBtn").addEventListener("click", ()=>{
+    saveCurrentEdits();
+    let idx = letters.indexOf(state.current);
+    idx = (idx + 1) % 26;
+    state.current = letters[idx];
+    loadCurrentEdits();
+    renderAZ();
+    renderPreview();
+  });
+
+  coverBgColor.addEventListener("input", ()=> setVar("--custom-cover-bg-color", coverBgColor.value));
+  letterBgColor.addEventListener("input", ()=> setVar("--custom-letter-bg-color", letterBgColor.value));
+  transColorFine.addEventListener("input", ()=> setVar("--custom-trans-color", transColorFine.value));
+  bodySize.addEventListener("input", ()=>{
+    bodySizeLabel.textContent = `${bodySize.value}px`;
+    setVar("--custom-trans-size", `${bodySize.value}px`);
+  });
+  radius.addEventListener("input", ()=>{
+    radiusLabel.textContent = `${radius.value}px`;
+    setVar("--radius", `${radius.value}px`);
+  });
+
+  coverTitleColor.addEventListener("input", ()=> setVar("--custom-cover-title-color", coverTitleColor.value));
+  coverBadgeColor.addEventListener("input", ()=> setVar("--custom-cover-badge-color", coverBadgeColor.value));
+  coverAuthorColor.addEventListener("input", ()=> setVar("--custom-cover-author-color", coverAuthorColor.value));
+  metaColor.addEventListener("input", ()=> setVar("--custom-meta-color", metaColor.value));
+  decoColor.addEventListener("input", ()=> setVar("--custom-deco-color", decoColor.value));
+  letterColor.addEventListener("input", ()=> setVar("--custom-letter-color", letterColor.value));
+  wordColorFine.addEventListener("input", ()=> setVar("--custom-word-color", wordColorFine.value));
+  bodyColorFine.addEventListener("input", ()=> setVar("--custom-body-color", bodyColorFine.value));
+
+  coverTitleSize.addEventListener("input", ()=>{
+    coverTitleSizeLabel.textContent = `${coverTitleSize.value}px`;
+    setVar("--custom-cover-title-size", `${coverTitleSize.value}px`);
+  });
+  coverBadgeSize.addEventListener("input", ()=>{
+    coverBadgeSizeLabel.textContent = `${coverBadgeSize.value}px`;
+    setVar("--custom-cover-badge-size", `${coverBadgeSize.value}px`);
+  });
+  coverAuthorSize.addEventListener("input", ()=>{
+    coverAuthorSizeLabel.textContent = `${coverAuthorSize.value}px`;
+    setVar("--custom-cover-author-size", `${coverAuthorSize.value}px`);
+  });
+  metaSize.addEventListener("input", ()=>{
+    metaSizeLabel.textContent = `${metaSize.value}px`;
+    setVar("--custom-meta-size", `${metaSize.value}px`);
+  });
+  letterSize.addEventListener("input", ()=>{
+    letterSizeLabel.textContent = `${letterSize.value}px`;
+    setVar("--custom-letter-size", `${letterSize.value}px`);
+  });
+  wordSizeFine.addEventListener("input", ()=>{
+    wordSizeFineLabel.textContent = `${wordSizeFine.value}px`;
+    setVar("--custom-word-size", `${wordSizeFine.value}px`);
+  });
+  bodySizeFine.addEventListener("input", ()=>{
+    bodySizeFineLabel.textContent = `${bodySizeFine.value}px`;
+    setVar("--custom-body-size", `${bodySizeFine.value}px`);
+  });
+  coverImageOpacity.addEventListener("input", ()=>{
+    coverImageOpacityLabel.textContent = `${coverImageOpacity.value}%`;
+    setVar("--custom-cover-image-opacity", `${(Number(coverImageOpacity.value) || 0) / 100}`);
+  });
+  const syncCardBoxFill = ()=>{
+    const alpha = (Number(cardBoxOpacity.value) || 0) / 100;
+    cardBoxOpacityLabel.textContent = `${cardBoxOpacity.value}%`;
+    setVar("--custom-card-box-color", cardBoxColor.value);
+    setVar("--custom-card-box-opacity", `${alpha}`);
+    setVar("--custom-card-box-bg", rgba(cardBoxColor.value, alpha));
+  };
+  cardBoxColor.addEventListener("input", syncCardBoxFill);
+  cardBoxOpacity.addEventListener("input", syncCardBoxFill);
+
+  $("resetVarsBtn").addEventListener("click", ()=> applyTheme(state.theme));
+  $("saveLocalBtn").addEventListener("click", saveLocal);
+  $("loadLocalBtn").addEventListener("click", loadLocal);
+
+  $("exportCoverBtn").addEventListener("click", exportCoverPNG);
+  $("exportOneBtn").addEventListener("click", ()=>{
+    exportLetterPNG(state.current);
+  });
+  $("exportZipBtn").addEventListener("click", exportZip);
+  $("exportLongBtn").addEventListener("click", exportLongPNG);
+
+  if(mobileJumpProjectBtn){
+    mobileJumpProjectBtn.addEventListener("click", ()=> scrollToSection(projectSection));
+  }
+  if(mobileJumpWordsBtn){
+    mobileJumpWordsBtn.addEventListener("click", ()=> scrollToSection(wordsSection));
+  }
+  if(mobileJumpPreviewBtn){
+    mobileJumpPreviewBtn.addEventListener("click", ()=> scrollToSection(previewSection));
+  }
+  if(introConfirmBtn){
+    introConfirmBtn.addEventListener("click", ()=>{
+      safeWriteLocal(INTRO_SEEN_KEY, "1");
+      closeIntro();
+    });
+  }
+
+  window.addEventListener("beforeunload", ()=>{
+    revokeObjectUrl("coverBgImageObjectUrl");
+    revokeObjectUrl("letterBgImageObjectUrl");
+  });
+
+  // ---------- Init ----------
+  initItems();
+  mountThemeVarsPanel();
+  setAiResultBadge("idle", 0);
+  setExportButtonsDisabled(false);
+  setExportStatus("idle", "导出状态：待机");
+  applyTheme(state.theme);
+  projectSubtitleInput.value = state.projectSubtitle;
+  projectWatermarkInput.value = state.projectWatermark;
+  aiKeywordsInput.value = state.aiKeywords;
+  aiStyleHintInput.value = state.aiStyleHint;
+
+  // Seed A
+  const wA = pickWord(state.style, "A");
+  state.items["A"].en = wA.en;
+  state.items["A"].zh = wA.zh;
+
+  renderAZ();
+  loadCurrentEdits();
+  renderPreview();
+  maybeShowIntro();
+})();
+</script>
+</body>
+</html>
+
+

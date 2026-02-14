@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>复古宋体预览对比</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/az-theme-retro-fonts.css" />
+  <style>
+    body {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #f2ebe2;
+      color: #3d3630;
+      font-family: "Noto Serif SC", serif;
+      line-height: 1.8;
+    }
+    h1 {
+      text-align: center;
+      color: #a63d2e;
+      border-bottom: 2px solid #c4a77d;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      font-family: "Noto Serif SC", serif;
+    }
+    .font-sample {
+      background: #fff;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid #c4a77d;
+      border-left: 4px solid #a63d2e;
+      box-shadow: 0 2px 8px rgba(61, 54, 48, 0.08);
+    }
+    .font-name {
+      font-size: 1.2rem;
+      color: #a63d2e;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-family: "Noto Serif SC", serif;
+    }
+    .font-desc {
+      font-size: 0.9rem;
+      color: #5c5348;
+      margin-bottom: 1rem;
+      font-family: "Noto Serif SC", serif;
+    }
+    .sample-title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+    .sample-text {
+      font-size: 1.1rem;
+      line-height: 1.85;
+    }
+    .font-1 .sample-title,
+    .font-1 .sample-text {
+      font-family: "Zhuque Fangsong", "朱雀仿宋", serif;
+    }
+    .font-2 .sample-title,
+    .font-2 .sample-text {
+      font-family: "Source Han Serif SC VF", "Source Han Serif SC", serif;
+    }
+    .font-3 .sample-title,
+    .font-3 .sample-text {
+      font-family: "Noto Serif SC", serif;
+    }
+    .font-4 .sample-title,
+    .font-4 .sample-text {
+      font-family: "SimSun", "宋体", serif;
+    }
+    .note {
+      background: #fff9e6;
+      border: 1px solid #e6d7a3;
+      border-left: 4px solid #c4a77d;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+    .note strong {
+      color: #a63d2e;
+    }
+    .status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
+      font-family: "Noto Serif SC", serif;
+    }
+    .status-primary {
+      background: #ffeaa7;
+      color: #d63031;
+      font-weight: 600;
+    }
+    .status-cdn {
+      background: #dfe6e9;
+      color: #2d3436;
+    }
+    .status-fallback {
+      background: #b2bec3;
+      color: #2d3436;
+    }
+    .download-box {
+      background: #e8dfd4;
+      border: 2px dashed #a63d2e;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .download-box h3 {
+      margin: 0 0 1rem 0;
+      color: #a63d2e;
+      font-family: "Noto Serif SC", serif;
+    }
+    .download-btn {
+      display: inline-block;
+      background: #a63d2e;
+      color: #fff;
+      padding: 0.75rem 2rem;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 600;
+      transition: background 0.3s;
+      margin: 0.5rem;
+    }
+    .download-btn:hover {
+      background: #8b3626;
+    }
+  </style>
+</head>
+<body>
+  <h1>复古宋体字体预览对比</h1>
+  
+  <div class="note">
+    <strong>说明：</strong>本页面展示中式复古主题使用的宋体字体效果对比。<br>
+    <strong>当前主题配置：</strong>优先使用朱雀仿宋（本地），其他字体作为 CDN 备选。
+  </div>
+
+  <div class="download-box">
+    <h3>💡 要获得最佳复古效果，请下载朱雀仿宋字体</h3>
+    <a href="https://github.com/TrionesType/zhuque/releases" target="_blank" class="download-btn">
+      📥 下载朱雀仿宋（GitHub）
+    </a>
+    <a href="https://atomgit.com/TrionesType/zhuque" target="_blank" class="download-btn">
+      📥 下载朱雀仿宋（镜像）
+    </a>
+    <div style="margin-top: 1rem; font-size: 0.9rem; color: #5c5348;">
+      下载后将字体文件放入项目的 <code>fonts/</code> 目录，详见 <code>fonts-setup-guide.md</code>
+    </div>
+  </div>
+
+  <div class="font-sample font-1">
+    <div class="font-name">
+      1️⃣ 朱雀仿宋 Zhuque Fangsong
+      <span class="status status-primary">主力推荐</span>
+    </div>
+    <div class="font-desc">
+      特点：民国1932年"南宋"活字改刻，中宫收紧，撇捺舒展<br>
+      风格：民国活字韵味 + 浓厚书卷气 + 含蓄秀美而充满力量感<br>
+      加载：本地字体（需下载安装）| 授权：OFL 1.1（免费商用）
+    </div>
+    <div class="sample-title">从 Apple 到 Zenith · 二十六封信</div>
+    <div class="sample-text">
+      她总在午后削一只苹果，皮连成长长的一条，从不间断。他说那是她留给他看的耐心。后来他去了很远的地方，她仍每天削一只，皮依旧不断，只是再没人坐在对面，笑着看她把果肉切成小块，一块一块递过来。窗台上的苹果渐渐堆成小山，有的烂了，她也不扔，仿佛烂掉的不是苹果，是那些再也不会回来的下午。
+    </div>
+  </div>
+
+  <div class="font-sample font-2">
+    <div class="font-name">
+      2️⃣ 思源宋体 Source Han Serif SC
+      <span class="status status-cdn">CDN 自动加载</span>
+    </div>
+    <div class="font-desc">
+      特点：Adobe 开源宋体，清晰易读，现代专业排版<br>
+      风格：现代宋体，笔画均匀，结构规整<br>
+      加载：jsDelivr CDN（自动）| 授权：OFL 1.1（免费商用）
+    </div>
+    <div class="sample-title">从 Apple 到 Zenith · 二十六封信</div>
+    <div class="sample-text">
+      树是去年移来的，都说活不成，她却天天浇水，从不说话。今年春天，枝头忽然爆出花苞，一夜之间全开了。她站在树下看了很久，然后转身进屋，把一封没寄出的信撕碎，撒进花根。信里写的是：等花开的时候，我就去找你。如今花开了，她哪儿也没去，只是再也没提过那个名字。
+    </div>
+  </div>
+
+  <div class="font-sample font-3">
+    <div class="font-name">
+      3️⃣ Noto Serif SC（思源宋体）
+      <span class="status status-cdn">Google Fonts</span>
+    </div>
+    <div class="font-desc">
+      特点：Google Fonts 版本的思源宋体<br>
+      风格：与思源宋体相同，不同 CDN 来源<br>
+      加载：Google Fonts CDN（自动）| 授权：OFL 1.1（免费商用）
+    </div>
+    <div class="sample-title">从 Apple 到 Zenith · 二十六封信</div>
+    <div class="sample-text">
+      他指着天边说，那朵云像一只船。她说，像一顶帽子。两人争了一下午，直到云散开，什么也不像了。他们沉默地走回家，再也没一起看过云。很多年后她路过旧街，抬头看见满天云朵，忽然想起，他们从未说过那朵云像「再见」。
+    </div>
+  </div>
+
+  <div class="font-sample font-4">
+    <div class="font-name">
+      4️⃣ SimSun（宋体）
+      <span class="status status-fallback">系统字体</span>
+    </div>
+    <div class="font-desc">
+      特点：Windows/macOS 系统自带宋体<br>
+      风格：传统宋体，最终备选<br>
+      加载：系统字体（无需下载）| 授权：系统预装
+    </div>
+    <div class="sample-title">从 Apple 到 Zenith · 二十六封信</div>
+    <div class="sample-text">
+      她总在黎明前醒来，说是梦会在这时碎掉。他问，碎掉之后呢？她说，碎掉之后就可以起床了。后来他也在那个时刻醒来，发现窗外灰蓝一片，分不清是夜是昼，才明白她说的「碎掉」是什么意思。
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>✅ 字体对比总结：</strong><br><br>
+    
+    <strong>朱雀仿宋（推荐）</strong><br>
+    • 优点：民国活字韵味浓厚，笔画粗细变化强烈，撇捺舒展，中宫收紧，书卷气十足<br>
+    • 适合：文学作品、小说排版、复古设计、需要浓厚传统氛围的场景<br>
+    • 缺点：需手动下载安装，字符覆盖 11,000+ 汉字（可能不支持生僻字）<br><br>
+    
+    <strong>思源宋体</strong><br>
+    • 优点：自动 CDN 加载，无需安装，清晰易读，全字符集支持，专业排版<br>
+    • 适合：正文阅读、专业文档、无法使用本地字体时的备选<br>
+    • 缺点：现代风格，缺少民国活字的复古韵味<br><br>
+    
+    <strong>系统宋体</strong><br>
+    • 优点：系统自带，无需下载，最终保底<br>
+    • 适合：应急备选<br>
+    • 缺点：风格传统但略显陈旧，缺乏设计感
+  </div>
+
+  <div class="note">
+    <strong>💡 字体加载顺序：</strong><br>
+    1. 朱雀仿宋（本地 fonts/ 目录）<br>
+    2. 朱雀仿宋（系统安装）<br>
+    3. 思源宋体（jsDelivr CDN）<br>
+    4. Noto Serif SC（Google Fonts CDN）<br>
+    5. SimSun 宋体（系统字体）<br><br>
+    
+    如果您看到的效果不是朱雀仿宋，说明本地字体未安装，系统正在使用备选字体。<br>
+    要获得最佳复古效果，请下载朱雀仿宋字体并放入 <code>fonts/</code> 目录。
+  </div>
+
+  <div class="note">
+    <strong>📚 相关文档：</strong><br>
+    • <strong>fonts-setup-guide.md</strong>：完整的字体下载、安装和配置指南<br>
+    • <strong>fonts-readme.md</strong>：字体说明和使用方法<br>
+    • <strong>fonts/README.md</strong>：字体目录说明<br>
+    • <strong>css/az-theme-retro-fonts.css</strong>：字体 CSS 配置文件
+  </div>
+
+  <div class="download-box" style="margin-top: 3rem;">
+    <h3>🎨 查看完整排版效果</h3>
+    <p style="margin-bottom: 1rem; color: #5c5348;">
+      在主预览页面中查看封面、单字母页和整本正文的完整效果
+    </p>
+    <a href="preview.html" class="download-btn">
+      📖 打开主预览页面
+    </a>
+  </div>
+</body>
+</html>

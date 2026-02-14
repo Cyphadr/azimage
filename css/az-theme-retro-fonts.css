@@ -1,0 +1,70 @@
+/* ============================================
+   中式复古主题字体配置
+   包含：思源宋体 CDN + 朱雀仿宋本地字体
+   ============================================ */
+
+/* 朱雀仿宋 - 本地字体配置（需将字体文件放在 fonts/ 目录） */
+@font-face {
+  font-family: 'Zhuque Fangsong';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Zhuque Fangsong'),
+       local('朱雀仿宋'),
+       url('../fonts/ZhuqueFangsong-Regular.woff2') format('woff2'),
+       url('../fonts/ZhuqueFangsong-Regular.woff') format('woff'),
+       url('../fonts/ZhuqueFangsong-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Zhuque Fangsong';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Zhuque Fangsong Medium'),
+       local('朱雀仿宋 Medium'),
+       url('../fonts/ZhuqueFangsong-Medium.woff2') format('woff2'),
+       url('../fonts/ZhuqueFangsong-Medium.woff') format('woff'),
+       url('../fonts/ZhuqueFangsong-Medium.ttf') format('truetype');
+}
+
+/* 思源宋体 - jsDelivr CDN（分割加载，优化性能） */
+/* Regular 400 */
+@font-face {
+  font-family: 'Source Han Serif SC VF';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/cn-fontsource-source-han-serif-sc-vf-regular@1.0.9/SourceHanSerifSC-VF.woff2') format('woff2');
+  unicode-range: U+4E00-9FFF, U+3400-4DBF;
+}
+
+/* Medium 500 */
+@font-face {
+  font-family: 'Source Han Serif SC';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/source-han-serif-sc@4.5.11/files/source-han-serif-sc-chinese-simplified-500-normal.woff2') format('woff2');
+  unicode-range: U+4E00-9FFF, U+3400-4DBF;
+}
+
+/* SemiBold 600 */
+@font-face {
+  font-family: 'Source Han Serif SC';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/source-han-serif-sc@4.5.11/files/source-han-serif-sc-chinese-simplified-600-normal.woff2') format('woff2');
+  unicode-range: U+4E00-9FFF, U+3400-4DBF;
+}
+
+/* Bold 700 */
+@font-face {
+  font-family: 'Source Han Serif SC';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/source-han-serif-sc@4.5.11/files/source-han-serif-sc-chinese-simplified-700-normal.woff2') format('woff2');
+  unicode-range: U+4E00-9FFF, U+3400-4DBF;
+}
