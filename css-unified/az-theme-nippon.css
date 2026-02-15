@@ -98,19 +98,10 @@
   border-radius: var(--radius-card);
   position: relative;
 }
-[data-theme="nippon"] .az-letter-page__card::after { display: none; }
-[data-theme="nippon"] .az-letter-page__card::before { display: none; }
-[data-theme="nippon"] .az-letter-page__card::after {
-  content: "";
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.5rem;
-  width: 6px;
-  height: 6px;
-  background: var(--color-accent);
-  transform: rotate(45deg);
-  z-index: 1;
-  display: block;
+[data-theme="nippon"] .az-letter-page__card::after,
+[data-theme="nippon"] .az-letter-page__card::before {
+  content: none;
+  display: none;
 }
 [data-theme="nippon"] .az-full-page__item::after {
   content: "";
@@ -165,24 +156,12 @@
   box-sizing: border-box;
 }
 [data-theme="nippon"] .az-letter-page__word::before {
-  content: "";
-  position: absolute;
-  left: 0.25rem;
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
-  width: 5px;
-  height: 5px;
-  background: var(--color-word-diamond);
+  content: none;
+  display: none;
 }
 [data-theme="nippon"] .az-letter-page__word::after {
-  content: "";
-  position: absolute;
-  right: 0.25rem;
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
-  width: 5px;
-  height: 5px;
-  background: var(--color-word-diamond);
+  content: none;
+  display: none;
 }
 
 [data-theme="nippon"] .az-full-page__item {

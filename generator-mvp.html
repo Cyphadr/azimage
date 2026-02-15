@@ -658,6 +658,17 @@
     #previewScope .az-letter-page__card{
       background: var(--custom-card-box-bg, var(--color-surface)) !important;
       border-color: var(--custom-deco-color, var(--color-border)) !important;
+      border-radius: var(--custom-card-radius, var(--radius-card)) !important;
+    }
+    #previewScope .az-export-frame--cover,
+    #previewScope .az-export-frame--letter,
+    #previewScope .az-cover,
+    #previewScope .az-letter-page{
+      border-radius: 0 !important;
+    }
+    #previewScope .az-cover__image,
+    #previewScope .az-cover__image-preview{
+      border-radius: 0 !important;
     }
     #previewScope .az-export-frame--cover{
       border: none !important;
@@ -675,6 +686,25 @@
     /* Export-stability mode: avoid html2canvas artifacts on complex shadows/bars. */
     #previewScope[data-exporting="1"] .az-letter-page__card{
       box-shadow: none !important;
+    }
+    #previewScope[data-exporting="1"][data-export-simple="1"] .az-cover::before,
+    #previewScope[data-exporting="1"][data-export-simple="1"] .az-cover::after,
+    #previewScope[data-exporting="1"][data-export-simple="1"] .az-cover .az-cover__deco{
+      content: none !important;
+      display: none !important;
+      border: 0 !important;
+    }
+    #previewScope[data-exporting="1"][data-export-simple="1"] .az-letter-page__card::after{
+      content: none !important;
+      display: none !important;
+    }
+    #previewScope[data-exporting="1"][data-export-simple="1"] .az-cover,
+    #previewScope[data-exporting="1"][data-export-simple="1"] .az-letter-page,
+    #previewScope[data-exporting="1"][data-export-simple="1"] .az-letter-page__card{
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      backdrop-filter: none !important;
     }
     #previewScope[data-exporting="1"] .az-export-frame--letter{
       border: none !important;
@@ -769,6 +799,12 @@
     #previewScope .az-letter-page__body{
       color: var(--custom-body-color, var(--color-text)) !important;
       font-size: var(--custom-body-size, var(--font-size-body)) !important;
+    }
+    #previewScope[data-theme="nippon"] .az-letter-page__card::after,
+    #previewScope[data-theme="nippon"] .az-letter-page__word::before,
+    #previewScope[data-theme="nippon"] .az-letter-page__word::after{
+      content: none !important;
+      display: none !important;
     }
     #previewScope[data-export-shape="square"] .az-cover{
       justify-content: center !important;
@@ -1147,10 +1183,16 @@
         <div class="row">
           <button class="btn" id="exportCoverBtn">导出封面</button>
           <button class="btn" id="exportOneBtn">导出当前字母</button>
-          <button class="btn" id="exportOnePwBtn">Playwright测当前字母</button>
           <button class="btn btnPrimary" id="exportZipBtn">导出封面+26字母 ZIP</button>
           <button class="btn" id="exportLongBtn">导出正文长图</button>
           <span class="pill exportStatus idle" id="exportStatusPill">导出状态：待机</span>
+        </div>
+        <div class="row" style="margin-top:6px; flex-wrap:wrap; gap:6px;">
+          <span class="small">备用导出（html2canvas，简化效果）</span>
+          <button class="btn" id="exportCoverFallbackBtn">备用封面</button>
+          <button class="btn" id="exportOneFallbackBtn">备用当前字母</button>
+          <button class="btn" id="exportZipFallbackBtn">备用ZIP</button>
+          <button class="btn" id="exportLongFallbackBtn">备用长图</button>
         </div>
       </div>
 
@@ -1235,10 +1277,11 @@
 
               <div class="control">
                 <div>
-                  <div style="font-size:12px;color:var(--muted)">圆角</div>
+                  <div style="font-size:12px;color:var(--muted)">文本框圆角</div>
+                  <div style="font-size:11px;opacity:.72">仅作用字母卡片文本框</div>
                   <div style="font-size:12px;opacity:.9" id="radiusLabel">18px</div>
                 </div>
-                <input type="range" id="radius" min="10" max="34" value="18" />
+                <input type="range" id="radius" min="0" max="40" value="18" />
               </div>
 
               <div style="height:12px"></div>
@@ -1496,6 +1539,9 @@
   const AI_API_ENDPOINT = location.hostname.endsWith("github.io")
     ? "https://azimage-production.up.railway.app/api/az-generate-ai"
     : "/api/az-generate-ai";
+  const RENDER_API_ENDPOINT = location.hostname.endsWith("github.io")
+    ? "https://azimage-production.up.railway.app/api/render-shot"
+    : "/api/render-shot";
   const AI_TIMEOUT_MS = 30000;
   const MAX_UPLOAD_FILE_BYTES = 1024 * 1024; // 1MB
   const MAX_PROGRESS_JSON_BYTES = 5 * 1024 * 1024; // 5MB
@@ -1716,9 +1762,12 @@
   const introConfirmBtn = $("introConfirmBtn");
   const exportCoverBtn = $("exportCoverBtn");
   const exportOneBtn = $("exportOneBtn");
-  const exportOnePwBtn = $("exportOnePwBtn");
   const exportZipBtn = $("exportZipBtn");
   const exportLongBtn = $("exportLongBtn");
+  const exportCoverFallbackBtn = $("exportCoverFallbackBtn");
+  const exportOneFallbackBtn = $("exportOneFallbackBtn");
+  const exportZipFallbackBtn = $("exportZipFallbackBtn");
+  const exportLongFallbackBtn = $("exportLongFallbackBtn");
   const exportStatusPill = $("exportStatusPill");
   const exportJsonBtn = $("exportJsonBtn");
   const importJsonBtn = $("importJsonBtn");
@@ -1821,7 +1870,16 @@
 
   let exportBusy = false;
   function setExportButtonsDisabled(disabled){
-    [exportCoverBtn, exportOneBtn, exportOnePwBtn, exportZipBtn, exportLongBtn].forEach((btn)=>{
+    [
+      exportCoverBtn,
+      exportOneBtn,
+      exportZipBtn,
+      exportLongBtn,
+      exportCoverFallbackBtn,
+      exportOneFallbackBtn,
+      exportZipFallbackBtn,
+      exportLongFallbackBtn
+    ].forEach((btn)=>{
       if(btn) btn.disabled = !!disabled;
     });
   }
@@ -1852,11 +1910,41 @@
     const bw = Math.max(0, parseFloat(css.borderLeftWidth) || 0);
     previewScope.style.setProperty("--export-card-border-w", `${bw}px`);
   }
+  function applyLetterFrameExportSizing(keepContentHeight){
+    if(!letterFrame) return;
+    if(keepContentHeight){
+      letterFrame.style.removeProperty("height");
+      letterFrame.style.removeProperty("min-height");
+      letterFrame.style.removeProperty("max-height");
+      letterFrame.style.removeProperty("overflow");
+      return;
+    }
+    const spec = getExportSpec();
+    const rect = letterFrame.getBoundingClientRect();
+    const width = Math.max(1, rect.width || letterFrame.clientWidth || spec.W || 1);
+    const targetHeight = Math.max(1, Math.round(width * (spec.H / Math.max(1, spec.W))));
+    letterFrame.style.height = `${targetHeight}px`;
+    letterFrame.style.minHeight = `${targetHeight}px`;
+    letterFrame.style.maxHeight = `${targetHeight}px`;
+    letterFrame.style.overflow = "hidden";
+  }
+  function clearLetterFrameExportSizing(){
+    if(!letterFrame) return;
+    letterFrame.style.removeProperty("height");
+    letterFrame.style.removeProperty("min-height");
+    letterFrame.style.removeProperty("max-height");
+    letterFrame.style.removeProperty("overflow");
+  }
   function setExportRendering(active, frameEl = letterFrame, options = {}){
     if(!previewScope) return;
     if(active){
       syncExportCardCompensation(frameEl || letterFrame);
       previewScope.setAttribute("data-exporting", "1");
+      if(options && options.simpleMode){
+        previewScope.setAttribute("data-export-simple", "1");
+      }else{
+        previewScope.removeAttribute("data-export-simple");
+      }
       if(options && options.keepContentHeight){
         previewScope.setAttribute("data-export-keep-content", "1");
         document.body.classList.add("exportKeepContentShot");
@@ -1864,14 +1952,19 @@
         previewScope.removeAttribute("data-export-keep-content");
         document.body.classList.remove("exportKeepContentShot");
       }
+      if((frameEl || letterFrame) === letterFrame){
+        applyLetterFrameExportSizing(!!(options && options.keepContentHeight));
+      }
       return;
     }
     previewScope.removeAttribute("data-exporting");
+    previewScope.removeAttribute("data-export-simple");
     previewScope.removeAttribute("data-export-keep-content");
     previewScope.style.removeProperty("--export-card-border-w");
     document.body.classList.remove("exportKeepContentShot");
+    clearLetterFrameExportSizing();
   }
-  async function runExportWithStatus(taskName, runner){
+  async function runExportWithStatus(taskName, runner, options = {}){
     if(exportBusy){
       setExportStatus("busy", "导出状态：正在导出中...");
       showToast("已有导出任务进行中，请稍候。");
@@ -1880,7 +1973,10 @@
     exportBusy = true;
     setExportButtonsDisabled(true);
     setExportStatus("busy", `导出状态：${taskName}导出中...`);
-    setExportRendering(true, letterFrame);
+    setExportRendering(true, options.frameEl || letterFrame, {
+      keepContentHeight: !!options.keepContentHeight,
+      simpleMode: !!options.simpleMode
+    });
     try{
       await runner();
       setExportStatus("success", `导出状态：${taskName}成功`);
@@ -2193,7 +2289,8 @@
     "--custom-trans-color",
     "--custom-trans-size",
     "--custom-body-color",
-    "--custom-body-size"
+    "--custom-body-size",
+    "--custom-card-radius"
   ];
 
   function clearCustomStyleVars(){
@@ -2240,6 +2337,14 @@
     const coverOpacityVal = clampNumber(Math.round((Number.isFinite(opFromState) ? opFromState : 1) * 100), 0, 100);
     const boxOpFromState = !resetToTheme ? parseFloat(state.vars["--custom-card-box-opacity"]) : NaN;
     const boxOpacityVal = clampNumber(Math.round((Number.isFinite(boxOpFromState) ? boxOpFromState : 1) * 100), 0, 100);
+    const cardEl = pvCardWrap ? pvCardWrap.querySelector(".az-letter-page__card") : null;
+    const cardRadiusState = !resetToTheme ? parseInt(state.vars["--custom-card-radius"], 10) : NaN;
+    const cardRadiusCss = cardEl ? Math.round(cssLengthToPx(getComputedStyle(cardEl).borderTopLeftRadius, 18)) : NaN;
+    const cardRadiusVal = clampNumber(
+      Number.isFinite(cardRadiusState) ? cardRadiusState : (Number.isFinite(cardRadiusCss) ? cardRadiusCss : 18),
+      0,
+      40
+    );
 
     coverBgColor.value = coverBgColorVal;
     letterBgColor.value = letterBgColorVal;
@@ -2264,6 +2369,7 @@
     bodySizeFine.value = `${bodySizeVal}`;
     coverImageOpacity.value = `${coverOpacityVal}`;
     cardBoxOpacity.value = `${boxOpacityVal}`;
+    radius.value = `${cardRadiusVal}`;
 
     coverTitleSizeLabel.textContent = `${titleSizeVal}px`;
     coverBadgeSizeLabel.textContent = `${badgeSizeVal}px`;
@@ -2275,6 +2381,7 @@
     bodySizeFineLabel.textContent = `${bodySizeVal}px`;
     coverImageOpacityLabel.textContent = `${coverOpacityVal}%`;
     cardBoxOpacityLabel.textContent = `${boxOpacityVal}%`;
+    radiusLabel.textContent = `${cardRadiusVal}px`;
 
     setVar("--custom-cover-bg-color", coverBgColorVal);
     setVar("--custom-letter-bg-color", letterBgColorVal);
@@ -2299,6 +2406,7 @@
     setVar("--custom-trans-size", `${transSizeVal}px`);
     setVar("--custom-body-color", bodyColorVal);
     setVar("--custom-body-size", `${bodySizeVal}px`);
+    setVar("--custom-card-radius", `${cardRadiusVal}px`);
   }
 
   function readThemeVarsFromCss(themeId){
@@ -2565,7 +2673,7 @@
     transColorFine.value = normalizeColor(state.vars["--custom-trans-color"] || state.vars["--muted"] || "#9aa4b8");
 
     bodySize.value = parseInt(state.vars["--custom-trans-size"],10) || 16;
-    radius.value = parseInt(state.vars["--radius"],10) || 18;
+    radius.value = parseInt(state.vars["--custom-card-radius"],10) || parseInt(state.vars["--radius"],10) || 18;
 
     bodySizeLabel.textContent = `${bodySize.value}px`;
     radiusLabel.textContent = `${radius.value}px`;
@@ -3009,10 +3117,59 @@
       accent: vars["--accent"] || "#7aa8ff",
       titleSizePx: parseInt(vars["--titleSize"],10) || 28,
       bodySizePx: parseInt(vars["--bodySize"],10) || 16,
-      radiusPx: parseInt(vars["--radius"],10) || 18,
+      radiusPx: parseInt(vars["--custom-card-radius"],10) || parseInt(vars["--radius"],10) || 18,
       fontTitle: vars["--fontTitle"] || "Georgia, serif",
       fontBody: vars["--fontBody"] || "system-ui, -apple-system, Segoe UI, Roboto, Arial"
     };
+  }
+
+  const PLAYWRIGHT_STABLE_MAX_PIXELS = 1080 * 1920;
+  const PLAYWRIGHT_429_RETRY_MAX = 3;
+  const PLAYWRIGHT_429_RETRY_BASE_MS = 1200;
+
+  function parseSizePresetValue(raw){
+    const m = String(raw || "").trim().match(/^(\d+)x(\d+)$/i);
+    if(!m) return null;
+    const W = parseInt(m[1], 10);
+    const H = parseInt(m[2], 10);
+    if(!Number.isFinite(W) || !Number.isFinite(H) || W <= 0 || H <= 0) return null;
+    return { W, H };
+  }
+
+  function pickStableExportPreset(rawPreset){
+    const parsed = parseSizePresetValue(rawPreset);
+    if(!parsed) return "1080x1920";
+    const area = parsed.W * parsed.H;
+    if(area <= PLAYWRIGHT_STABLE_MAX_PIXELS){
+      return `${parsed.W}x${parsed.H}`;
+    }
+    const ratio = parsed.W / Math.max(1, parsed.H);
+    if(ratio > 1.06){
+      return "1920x1080";
+    }
+    if(ratio >= 0.94 && ratio <= 1.06){
+      return "1080x1080";
+    }
+    return "1080x1920";
+  }
+
+  function getExportSpecFromPreset(rawPreset){
+    const fallback = getExportSpec();
+    const parsed = parseSizePresetValue(rawPreset);
+    if(!parsed){
+      return fallback;
+    }
+    return {
+      ...fallback,
+      W: parsed.W,
+      H: parsed.H
+    };
+  }
+
+  function notifyStablePreset(taskName, requested, resolved){
+    if(!requested || !resolved || requested === resolved) return;
+    setExportStatus("busy", `导出状态：${taskName}导出中（稳定尺寸 ${resolved}）`);
+    showToast(`为提高稳定性，本次使用较小尺寸 ${resolved}。`);
   }
 
   function downloadCanvas(canvas, filename){
@@ -3101,6 +3258,47 @@
     }
     previewScope.setAttribute("data-export-shape", shape);
     previewScope.style.setProperty("--custom-cover-scale", `${coverScale}`);
+  }
+
+  async function needAutoHeightForLetterExport(targetLetter, spec, options = {}){
+    if(!letterFrame) return false;
+    const target = normalizeLetter(targetLetter || state.current) || state.current;
+    const prev = state.current;
+    const switched = prev !== target;
+    const shouldRestore = options.restore !== false;
+    if(switched){
+      switchCurrentLetter(target);
+    }
+    try{
+      syncPreviewAspect(spec);
+      await waitFontsReady();
+      await waitNextFrame();
+      await waitImagesReady(letterFrame);
+      await waitNextFrame();
+      const cardWrap = letterFrame.querySelector(".az-letter-page__card-wrap");
+      const card = letterFrame.querySelector(".az-letter-page__card");
+      if(!cardWrap || !card){
+        return false;
+      }
+      const frameRect = letterFrame.getBoundingClientRect();
+      const pageEl = letterFrame.querySelector(".az-letter-page");
+      const wrapRect = cardWrap.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      const overflowPx = Math.max(
+        (letterFrame.scrollHeight || 0) - (letterFrame.clientHeight || 0),
+        pageEl ? (pageEl.scrollHeight || 0) - (letterFrame.clientHeight || 0) : 0,
+        frameRect.top - cardRect.top,
+        cardRect.bottom - frameRect.bottom,
+        cardRect.height - wrapRect.height,
+        cardRect.bottom - wrapRect.bottom,
+        (cardWrap.scrollHeight || 0) - (cardWrap.clientHeight || 0)
+      );
+      return overflowPx > 1.5;
+    }finally{
+      if(switched && shouldRestore && state.current !== prev){
+        switchCurrentLetter(prev);
+      }
+    }
   }
 
   async function captureFrameCanvas(frameEl, spec, options = {}){
@@ -3208,16 +3406,18 @@
     filename,
     letter,
     sizePresetOverride = "",
+    retryLabel = "",
     keepContentHeight = false,
     viewport = { width: 1860, height: 2400 },
-    scale = 2,
+    scale = 1.8,
     waitMs = 180
   }){
     const sizePresetSel = $("sizePreset");
     const spec = getExportSpec();
-    const resolvedSizePreset = (typeof sizePresetOverride === "string" && sizePresetOverride.trim())
+    const requestedSizePreset = (typeof sizePresetOverride === "string" && sizePresetOverride.trim())
       ? sizePresetOverride.trim()
       : (sizePresetSel ? sizePresetSel.value : `${spec.W}x${spec.H}`);
+    const resolvedSizePreset = pickStableExportPreset(requestedSizePreset);
     const payload = buildProgressData();
     if(letter){
       payload.current = letter;
@@ -3239,20 +3439,37 @@
         waitMs
       }
     };
-    const res = await fetch("/api/render-shot", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    });
-    if(!res.ok){
-      const detail = await readRenderErrorMessage(res);
-      throw new Error(detail ? `HTTP_${res.status} ${detail}` : `HTTP_${res.status}`);
+    for(let retry = 0; retry <= PLAYWRIGHT_429_RETRY_MAX; retry++){
+      const res = await fetch(RENDER_API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if(res.status === 429 && retry < PLAYWRIGHT_429_RETRY_MAX){
+        const waitRetryMs = PLAYWRIGHT_429_RETRY_BASE_MS * (retry + 1);
+        const waitRetrySec = (waitRetryMs / 1000).toFixed(1).replace(/\.0$/, "");
+        const stepLabel = retryLabel ? `（${retryLabel}）` : "";
+        setExportStatus(
+          "busy",
+          `导出状态：服务器繁忙，排队重试${stepLabel} ${retry + 1}/${PLAYWRIGHT_429_RETRY_MAX}，${waitRetrySec}s后重试`
+        );
+        if(retry === 0){
+          showToast("截图服务忙，已自动排队重试。");
+        }
+        await new Promise((resolve)=> setTimeout(resolve, waitRetryMs));
+        continue;
+      }
+      if(!res.ok){
+        const detail = await readRenderErrorMessage(res);
+        throw new Error(detail ? `HTTP_${res.status} ${detail}` : `HTTP_${res.status}`);
+      }
+      const blob = await res.blob();
+      if(!blob || !blob.size){
+        throw new Error("Playwright 返回空文件。");
+      }
+      return blob;
     }
-    const blob = await res.blob();
-    if(!blob || !blob.size){
-      throw new Error("Playwright 返回空文件。");
-    }
-    return blob;
+    throw new Error("HTTP_429 服务器繁忙，请稍后重试。");
   }
 
   function blobToImageEl(blob){
@@ -3274,13 +3491,18 @@
   async function exportCoverPNG(){
     await runExportWithStatus("封面", async()=>{
       saveCurrentEdits();
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("封面", selectedPreset, stablePreset);
       const filename = `${safeTitle()}-00-Cover.png`;
       const blob = await requestPlaywrightShotBlob({
         selector: "#coverFrame",
         filename,
+        sizePresetOverride: stablePreset,
+        retryLabel: "封面",
         keepContentHeight: false,
-        viewport: { width: 1860, height: 1400 },
-        scale: 2,
+        viewport: { width: 1320, height: 980 },
+        scale: 1.6,
         waitMs: 180
       });
       downloadBlob(blob, filename);
@@ -3292,23 +3514,26 @@
     await runExportWithStatus("当前字母卡片", async()=>{
       saveCurrentEdits();
       const targetLetter = normalizeLetter(letter || state.current) || state.current;
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("当前字母卡片", selectedPreset, stablePreset);
+      const spec = getExportSpecFromPreset(stablePreset);
+      const keepContentHeight = await needAutoHeightForLetterExport(targetLetter, spec);
       const filename = `${safeTitle()}-${targetLetter}.png`;
       const blob = await requestPlaywrightShotBlob({
         selector: "#letterFrame",
         filename,
         letter: targetLetter,
-        keepContentHeight: true,
-        viewport: { width: 1860, height: 2600 },
-        scale: 2,
+        sizePresetOverride: stablePreset,
+        retryLabel: targetLetter,
+        keepContentHeight,
+        viewport: { width: 1320, height: 2200 },
+        scale: 1.6,
         waitMs: 220
       });
       downloadBlob(blob, filename);
-      showToast("已开始下载当前字母 PNG（Playwright）。");
+      showToast(`已开始下载当前字母 PNG（Playwright，${keepContentHeight ? "长文本自动拉长" : "固定比例"}）。`);
     });
-  }
-
-  async function exportLetterByPlaywright(letter){
-    await exportLetterPNG(letter);
   }
 
   async function exportZip(){
@@ -3317,6 +3542,10 @@
       if(typeof JSZip === "undefined"){
         throw new Error("JSZip 未加载，无法导出 ZIP。");
       }
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("ZIP 打包", selectedPreset, stablePreset);
+      const cardSpec = getExportSpecFromPreset(stablePreset);
       const zip = new JSZip();
       const totalShots = letters.length + 1;
       let doneShots = 0;
@@ -3327,9 +3556,11 @@
       const coverBlob = await requestPlaywrightShotBlob({
         selector: "#coverFrame",
         filename: coverName,
+        sizePresetOverride: stablePreset,
+        retryLabel: "封面",
         keepContentHeight: false,
-        viewport: { width: 1860, height: 1400 },
-        scale: 2,
+        viewport: { width: 1320, height: 980 },
+        scale: 1.6,
         waitMs: 180
       });
       zip.file(coverName, coverBlob);
@@ -3339,13 +3570,16 @@
       for(let i=0;i<letters.length;i++){
         const L = letters[i];
         const name = `${safeTitle()}-${String(i+1).padStart(2,"0")}-${L}.png`;
+        const keepContentHeight = await needAutoHeightForLetterExport(L, cardSpec);
         const letterBlob = await requestPlaywrightShotBlob({
           selector: "#letterFrame",
           filename: name,
           letter: L,
-          keepContentHeight: true,
-          viewport: { width: 1860, height: 2600 },
-          scale: 2,
+          sizePresetOverride: stablePreset,
+          retryLabel: L,
+          keepContentHeight,
+          viewport: { width: 1320, height: 2200 },
+          scale: 1.6,
           waitMs: 220
         });
         zip.file(name, letterBlob);
@@ -3363,6 +3597,9 @@
   async function exportLongPNG(){
     await runExportWithStatus("正文长图", async()=>{
       saveCurrentEdits();
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("正文长图", selectedPreset, stablePreset);
       const totalShots = letters.length + 1;
       let doneShots = 0;
       showToast("正在使用 Playwright 生成正文长图，请稍候...");
@@ -3372,9 +3609,10 @@
         selector: "#coverFrame",
         filename: `${safeTitle()}-00-Cover-long.png`,
         sizePresetOverride: "1920x1080",
+        retryLabel: "封面",
         keepContentHeight: false,
-        viewport: { width: 1860, height: 1400 },
-        scale: 2,
+        viewport: { width: 1320, height: 980 },
+        scale: 1.6,
         waitMs: 180
       });
       const coverImg = await blobToImageEl(coverBlob);
@@ -3387,9 +3625,11 @@
           selector: "#letterFrame",
           filename: `${safeTitle()}-${L}-long.png`,
           letter: L,
+          sizePresetOverride: stablePreset,
+          retryLabel: L,
           keepContentHeight: true,
-          viewport: { width: 1860, height: 2600 },
-          scale: 2,
+          viewport: { width: 1320, height: 2200 },
+          scale: 1.6,
           waitMs: 220
         });
         letterImgs.push(await blobToImageEl(blob));
@@ -3435,6 +3675,150 @@
       downloadCanvas(out, `${safeTitle()}-LongBody.png`);
       showToast("已开始下载正文长图 PNG（Playwright）。");
     });
+  }
+
+  async function exportCoverPNGFallback(){
+    await runExportWithStatus("备用封面", async()=>{
+      saveCurrentEdits();
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("备用封面", selectedPreset, stablePreset);
+      const spec = getExportSpecFromPreset(stablePreset);
+      const canvas = await captureFrameCanvas(coverFrame, spec, { maxScale: 1.6 });
+      downloadCanvas(canvas, `${safeTitle()}-00-Cover-fallback.png`);
+      showToast("已开始下载备用封面 PNG（html2canvas 简化模式）。");
+    }, { frameEl: coverFrame, simpleMode: true });
+  }
+
+  async function exportLetterPNGFallback(letter){
+    await runExportWithStatus("备用当前字母卡片", async()=>{
+      saveCurrentEdits();
+      const targetLetter = normalizeLetter(letter || state.current) || state.current;
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("备用当前字母卡片", selectedPreset, stablePreset);
+      const spec = getExportSpecFromPreset(stablePreset);
+      const prev = state.current;
+      try{
+        if(prev !== targetLetter){
+          switchCurrentLetter(targetLetter);
+        }
+        const keepContentHeight = await needAutoHeightForLetterExport(targetLetter, spec, { restore: false });
+        setExportRendering(true, letterFrame, { simpleMode: true, keepContentHeight });
+        const canvas = await captureFrameCanvas(letterFrame, spec, { keepContentHeight, maxScale: 1.6 });
+        downloadCanvas(canvas, `${safeTitle()}-${targetLetter}-fallback.png`);
+      }finally{
+        if(prev !== state.current){
+          switchCurrentLetter(prev);
+        }
+      }
+      showToast("已开始下载备用当前字母 PNG（html2canvas 简化模式）。");
+    }, { frameEl: letterFrame, simpleMode: true });
+  }
+
+  async function exportZipFallback(){
+    await runExportWithStatus("备用ZIP打包", async()=>{
+      saveCurrentEdits();
+      if(typeof JSZip === "undefined"){
+        throw new Error("JSZip 未加载，无法导出 ZIP。");
+      }
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("备用ZIP打包", selectedPreset, stablePreset);
+      const spec = getExportSpecFromPreset(stablePreset);
+      const zip = new JSZip();
+      const total = letters.length + 1;
+      let done = 0;
+      const prev = state.current;
+      setExportProgress("备用ZIP打包", done, total);
+      try{
+        const coverCanvas = await captureFrameCanvas(coverFrame, spec, { maxScale: 1.6 });
+        zip.file(`${safeTitle()}-00-Cover-fallback.png`, await canvasToBlob(coverCanvas));
+        done += 1;
+        setExportProgress("备用ZIP打包", done, total);
+
+        for(let i=0;i<letters.length;i++){
+          const L = letters[i];
+          switchCurrentLetter(L);
+          const keepContentHeight = await needAutoHeightForLetterExport(L, spec, { restore: false });
+          setExportRendering(true, letterFrame, { simpleMode: true, keepContentHeight });
+          const letterCanvas = await captureFrameCanvas(letterFrame, spec, { keepContentHeight, maxScale: 1.6 });
+          zip.file(`${safeTitle()}-${String(i+1).padStart(2,"0")}-${L}-fallback.png`, await canvasToBlob(letterCanvas));
+          done += 1;
+          setExportProgress("备用ZIP打包", done, total);
+        }
+        setExportProgress("备用ZIP打包", done, total, "正在压缩");
+        const zipBlob = await zip.generateAsync({type:"blob", compression:"DEFLATE", compressionOptions:{level:6}});
+        downloadBlob(zipBlob, `${safeTitle()}-Cover+26Letters-fallback.zip`);
+      }finally{
+        if(prev !== state.current){
+          switchCurrentLetter(prev);
+        }
+      }
+      showToast("备用ZIP导出完成（html2canvas 简化模式）。");
+    }, { frameEl: letterFrame, simpleMode: true });
+  }
+
+  async function exportLongPNGFallback(){
+    await runExportWithStatus("备用正文长图", async()=>{
+      saveCurrentEdits();
+      const selectedPreset = $("sizePreset").value;
+      const stablePreset = pickStableExportPreset(selectedPreset);
+      notifyStablePreset("备用正文长图", selectedPreset, stablePreset);
+      const coverSpec = getExportSpecFromPreset("1920x1080");
+      const cardSpec = getExportSpecFromPreset(stablePreset);
+      const total = letters.length + 1;
+      let done = 0;
+      const prev = state.current;
+      setExportProgress("备用正文长图", done, total);
+      try{
+        const coverCanvas = await captureFrameCanvas(coverFrame, coverSpec, { maxScale: 1.6 });
+        done += 1;
+        setExportProgress("备用正文长图", done, total);
+
+        const cards = [];
+        for(let i=0;i<letters.length;i++){
+          const L = letters[i];
+          switchCurrentLetter(L);
+          cards.push(await captureFrameCanvas(letterFrame, cardSpec, { keepContentHeight: true, maxScale: 1.6 }));
+          done += 1;
+          setExportProgress("备用正文长图", done, total);
+        }
+
+        setExportProgress("备用正文长图", done, total, "正在拼接");
+        const MAX_CANVAS_SIDE = 30000;
+        const cardWRaw = cards.reduce((m, c)=> Math.max(m, c.width || 1), 1);
+        const coverHRaw = Math.max(1, Math.round((coverCanvas.height || 1) * (cardWRaw / Math.max(1, coverCanvas.width || 1))));
+        const cardsHRaw = cards.reduce((sum, c)=> sum + (c.height || 1), 0);
+        const rawW = cardWRaw;
+        const rawH = coverHRaw + cardsHRaw;
+        const shrink = Math.max(rawW / MAX_CANVAS_SIDE, rawH / MAX_CANVAS_SIDE, 1);
+        const outW = Math.max(1, Math.round(rawW / shrink));
+        const coverH = Math.max(1, Math.round(coverHRaw / shrink));
+        const outH = Math.max(1, Math.round(rawH / shrink));
+
+        const out = document.createElement("canvas");
+        out.width = outW;
+        out.height = outH;
+        const octx = out.getContext("2d");
+        octx.fillStyle = state.vars["--bg"] || "#0b0f14";
+        octx.fillRect(0, 0, outW, outH);
+        octx.drawImage(coverCanvas, 0, 0, outW, coverH);
+
+        let yy = coverH;
+        cards.forEach((c)=>{
+          const h = Math.max(1, Math.round((c.height || 1) / shrink));
+          octx.drawImage(c, 0, yy, outW, h);
+          yy += h;
+        });
+        downloadCanvas(out, `${safeTitle()}-LongBody-fallback.png`);
+      }finally{
+        if(prev !== state.current){
+          switchCurrentLetter(prev);
+        }
+      }
+      showToast("已开始下载备用正文长图 PNG（html2canvas 简化模式）。");
+    }, { frameEl: letterFrame, simpleMode: true, keepContentHeight: true });
   }
 
   // ---------- Local save/load ----------
@@ -3532,7 +3916,7 @@
 
     clearCustomStyleVars();
     setCSSVars(state.vars);
-    radius.value = parseInt(state.vars["--radius"],10) || 18;
+    radius.value = parseInt(state.vars["--custom-card-radius"],10) || parseInt(state.vars["--radius"],10) || 18;
     radiusLabel.textContent = `${radius.value}px`;
     syncFineTuneControls(false);
 
@@ -3810,7 +4194,7 @@
   });
   radius.addEventListener("input", ()=>{
     radiusLabel.textContent = `${radius.value}px`;
-    setVar("--radius", `${radius.value}px`);
+    setVar("--custom-card-radius", `${radius.value}px`);
   });
 
   coverTitleColor.addEventListener("input", ()=> setVar("--custom-cover-title-color", coverTitleColor.value));
@@ -3886,13 +4270,20 @@
   $("exportOneBtn").addEventListener("click", ()=>{
     exportLetterPNG(state.current);
   });
-  if(exportOnePwBtn){
-    exportOnePwBtn.addEventListener("click", ()=>{
-      exportLetterByPlaywright(state.current);
-    });
-  }
   $("exportZipBtn").addEventListener("click", exportZip);
   $("exportLongBtn").addEventListener("click", exportLongPNG);
+  if(exportCoverFallbackBtn){
+    exportCoverFallbackBtn.addEventListener("click", exportCoverPNGFallback);
+  }
+  if(exportOneFallbackBtn){
+    exportOneFallbackBtn.addEventListener("click", ()=> exportLetterPNGFallback(state.current));
+  }
+  if(exportZipFallbackBtn){
+    exportZipFallbackBtn.addEventListener("click", exportZipFallback);
+  }
+  if(exportLongFallbackBtn){
+    exportLongFallbackBtn.addEventListener("click", exportLongPNGFallback);
+  }
 
   if(mobileJumpProjectBtn){
     mobileJumpProjectBtn.addEventListener("click", ()=> scrollToSection(projectSection));
@@ -3942,6 +4333,7 @@
         }
       }
       setExportRendering(!!options.exporting, letterFrame, {
+        simpleMode: !!options.simpleMode,
         keepContentHeight: !!options.keepContentHeight
       });
       const waitMs = Math.max(0, Math.min(3000, Number(options.waitMs) || 120));
