@@ -6,7 +6,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "playwright:install": "npx playwright install chromium",
+    "render:health": "node -e \"fetch('http://localhost:8787/api/render-shot/health').then(r=>r.text()).then(console.log).catch(e=>{console.error(e);process.exit(1);})\""
   },
   "engines": {
     "node": ">=18"
@@ -15,5 +17,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "playwright": "^1.58.2"
   }
 }
