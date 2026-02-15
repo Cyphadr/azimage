@@ -659,6 +659,16 @@
       background: var(--custom-card-box-bg, var(--color-surface)) !important;
       border-color: var(--custom-deco-color, var(--color-border)) !important;
     }
+    #previewScope .az-export-frame--cover{
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+    #previewScope .az-export-frame--letter{
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
     #previewScope .az-letter-page__card::after{
       background: var(--custom-deco-color, var(--gradient-accent)) !important;
     }
@@ -731,9 +741,14 @@
       right: calc(-1 * var(--export-card-border-w, 0px)) !important;
       background: var(--custom-deco-color, var(--color-accent)) !important;
     }
-    #previewScope .az-cover::after,
+    #previewScope .az-cover::after{
+      content: none !important;
+      display: none !important;
+      border: 0 !important;
+    }
     #previewScope .az-cover .az-cover__deco{
-      border-color: var(--custom-deco-color, var(--color-border)) !important;
+      display: none !important;
+      border: 0 !important;
     }
     #previewScope .az-letter-page__letter{
       color: var(--custom-letter-color, var(--color-accent)) !important;
@@ -1154,7 +1169,6 @@
                     <p class="az-cover__subtitle" id="pvCoverSubtitle"></p>
                     <p class="az-cover__author" id="pvAuthor">作者：—</p>
                   </div>
-                  <div class="az-cover__deco" aria-hidden="true"></div>
                 </div>
               </div>
 
@@ -1172,7 +1186,7 @@
                     </div>
                   </div>
                   <div class="az-body-page-watermark" aria-label="水印">
-                    <div class="az-body-page-watermark__input" id="pvWatermark">A / Z</div>
+                    <div class="az-body-page-watermark__input" id="pvWatermark">@26字母生成器</div>
                   </div>
                 </div>
               </div>
@@ -1621,7 +1635,7 @@
     projectTitle: "A–Z 主题短篇集",
     projectAuthor: "",
     projectSubtitle: "A–Z 短篇合集",
-    projectWatermark: "{letter} / Z",
+    projectWatermark: "@26字母生成器",
     aiKeywords: "",
     aiStyleHint: "",
     style: "gothic",
@@ -3710,7 +3724,7 @@
     renderPreview();
   });
   projectWatermarkInput.addEventListener("input", ()=>{
-    state.projectWatermark = projectWatermarkInput.value.trim() || "{letter} / Z";
+    state.projectWatermark = projectWatermarkInput.value.trim() || "@26字母生成器";
     renderPreview();
   });
 
