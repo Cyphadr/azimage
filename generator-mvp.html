@@ -422,10 +422,12 @@
 
     .previewWrap{
       padding: 10px;
+      overflow: auto;
     }
     .previewStage{
       min-width: 0;
       min-height: 0;
+      overflow: auto;
     }
     .previewSticky{
       position: sticky;
@@ -442,9 +444,12 @@
     }
     .dualPreview{
       display:grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, var(--export-width));
       gap: 14px;
       align-items:start;
+      justify-content: center;
+      width: max-content;
+      min-width: 100%;
     }
     .dualItem{
       min-width: 0;
@@ -456,7 +461,9 @@
       padding-left: 2px;
     }
     .dualPreview .az-export-frame{
-      max-width: none;
+      width: var(--export-width);
+      min-width: var(--export-width);
+      max-width: var(--export-width);
     }
     .dualPreview .az-letter-page__body{
       white-space: normal;
@@ -487,7 +494,8 @@
     }
     @media (max-width: 1050px){
       .dualPreview{
-        grid-template-columns: 1fr;
+        grid-template-columns: var(--export-width);
+        justify-content: center;
       }
     }
     @media (max-width: 1320px){
@@ -641,12 +649,87 @@
       padding-top: var(--spacing-page);
       padding-bottom: calc(var(--spacing-page) + 2.2rem);
     }
+    /* Remove giant translucent initial in all themes (preview + export). */
+    #previewScope .az-letter-page__card-wrap::before,
+    #previewScope .az-full-page__body::before{
+      content: none !important;
+      display: none !important;
+    }
     #previewScope .az-letter-page__card{
       background: var(--custom-card-box-bg, var(--color-surface)) !important;
       border-color: var(--custom-deco-color, var(--color-border)) !important;
     }
     #previewScope .az-letter-page__card::after{
       background: var(--custom-deco-color, var(--gradient-accent)) !important;
+    }
+    /* Export-stability mode: avoid html2canvas artifacts on complex shadows/bars. */
+    #previewScope[data-exporting="1"] .az-letter-page__card{
+      box-shadow: none !important;
+    }
+    #previewScope[data-exporting="1"] .az-export-frame--letter{
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+    }
+    #previewScope[data-exporting="1"][data-export-keep-content="1"] .az-export-frame--letter{
+      aspect-ratio: auto !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+    }
+    #previewScope[data-exporting="1"][data-export-keep-content="1"] .az-letter-page{
+      min-height: 0 !important;
+      display: block !important;
+    }
+    #previewScope[data-exporting="1"][data-export-keep-content="1"] .az-letter-page__card-wrap{
+      display: block !important;
+      flex: 0 0 auto !important;
+      justify-content: flex-start !important;
+      padding-top: var(--spacing-page) !important;
+      padding-bottom: var(--spacing-page) !important;
+    }
+    #previewScope[data-exporting="1"][data-export-keep-content="1"] .az-letter-page__card{
+      width: 100% !important;
+    }
+    #previewScope[data-exporting="1"][data-export-keep-content="1"] .az-letter-page > .az-body-page-watermark{
+      position: static !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      transform: none !important;
+      margin: 0 !important;
+      padding: 0 0 var(--spacing-page) !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+    }
+    body.exportKeepContentShot{
+      overflow: visible !important;
+    }
+    body.exportKeepContentShot .previewSticky{
+      position: static !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+    body.exportKeepContentShot .previewWrap,
+    body.exportKeepContentShot .previewStage,
+    body.exportKeepContentShot .previewStage.az-page{
+      overflow: visible !important;
+      max-height: none !important;
+    }
+    body.exportKeepContentShot .dualPreview{
+      width: auto !important;
+      min-width: 0 !important;
+    }
+    #previewScope[data-exporting="1"] .az-letter-page__header{
+      border-image: none !important;
+      border-bottom-color: var(--custom-deco-color, var(--color-border)) !important;
+    }
+    #previewScope[data-exporting="1"] .az-letter-page__card::after{
+      left: calc(-1 * var(--export-card-border-w, 0px)) !important;
+      right: calc(-1 * var(--export-card-border-w, 0px)) !important;
+      background: var(--custom-deco-color, var(--color-accent)) !important;
     }
     #previewScope .az-cover::after,
     #previewScope .az-cover .az-cover__deco{
@@ -1049,6 +1132,7 @@
         <div class="row">
           <button class="btn" id="exportCoverBtn">导出封面</button>
           <button class="btn" id="exportOneBtn">导出当前字母</button>
+          <button class="btn" id="exportOnePwBtn">Playwright测当前字母</button>
           <button class="btn btnPrimary" id="exportZipBtn">导出封面+26字母 ZIP</button>
           <button class="btn" id="exportLongBtn">导出正文长图</button>
           <span class="pill exportStatus idle" id="exportStatusPill">导出状态：待机</span>
@@ -1559,6 +1643,11 @@
     current: "A"
   };
 
+  function normalizeLetter(v){
+    const s = String(v || "").trim().toUpperCase();
+    return /^[A-Z]$/.test(s) ? s : "";
+  }
+
   function initItems(){
     letters.forEach(L=>{
       state.items[L] = state.items[L] || { en:"", zh:"", text:"", locked:false };
@@ -1613,6 +1702,7 @@
   const introConfirmBtn = $("introConfirmBtn");
   const exportCoverBtn = $("exportCoverBtn");
   const exportOneBtn = $("exportOneBtn");
+  const exportOnePwBtn = $("exportOnePwBtn");
   const exportZipBtn = $("exportZipBtn");
   const exportLongBtn = $("exportLongBtn");
   const exportStatusPill = $("exportStatusPill");
@@ -1676,6 +1766,7 @@
   }
 
   function showToast(msg){
+    if(window.__AZ_SUPPRESS_TOAST || msg === "__silent__") return;
     toast.textContent = msg;
     toast.classList.add("show");
     clearTimeout(showToast._t);
@@ -1716,7 +1807,7 @@
 
   let exportBusy = false;
   function setExportButtonsDisabled(disabled){
-    [exportCoverBtn, exportOneBtn, exportZipBtn, exportLongBtn].forEach((btn)=>{
+    [exportCoverBtn, exportOneBtn, exportOnePwBtn, exportZipBtn, exportLongBtn].forEach((btn)=>{
       if(btn) btn.disabled = !!disabled;
     });
   }
@@ -1728,6 +1819,44 @@
     }
     exportStatusPill.textContent = text || "导出状态：待机";
   }
+  function setExportProgress(taskName, done, total, extra = ""){
+    const d = Math.max(0, Number(done) || 0);
+    const t = Math.max(1, Number(total) || 1);
+    const tail = extra ? `，${extra}` : "";
+    setExportStatus("busy", `导出状态：${taskName}（已导出 ${d}/${t}${tail}）`);
+  }
+  function syncExportCardCompensation(frameEl){
+    if(!previewScope) return;
+    const cardEl = frameEl && frameEl.querySelector
+      ? frameEl.querySelector(".az-letter-page__card")
+      : null;
+    if(!cardEl){
+      previewScope.style.setProperty("--export-card-border-w", "0px");
+      return;
+    }
+    const css = getComputedStyle(cardEl);
+    const bw = Math.max(0, parseFloat(css.borderLeftWidth) || 0);
+    previewScope.style.setProperty("--export-card-border-w", `${bw}px`);
+  }
+  function setExportRendering(active, frameEl = letterFrame, options = {}){
+    if(!previewScope) return;
+    if(active){
+      syncExportCardCompensation(frameEl || letterFrame);
+      previewScope.setAttribute("data-exporting", "1");
+      if(options && options.keepContentHeight){
+        previewScope.setAttribute("data-export-keep-content", "1");
+        document.body.classList.add("exportKeepContentShot");
+      }else{
+        previewScope.removeAttribute("data-export-keep-content");
+        document.body.classList.remove("exportKeepContentShot");
+      }
+      return;
+    }
+    previewScope.removeAttribute("data-exporting");
+    previewScope.removeAttribute("data-export-keep-content");
+    previewScope.style.removeProperty("--export-card-border-w");
+    document.body.classList.remove("exportKeepContentShot");
+  }
   async function runExportWithStatus(taskName, runner){
     if(exportBusy){
       setExportStatus("busy", "导出状态：正在导出中...");
@@ -1737,6 +1866,7 @@
     exportBusy = true;
     setExportButtonsDisabled(true);
     setExportStatus("busy", `导出状态：${taskName}导出中...`);
+    setExportRendering(true, letterFrame);
     try{
       await runner();
       setExportStatus("success", `导出状态：${taskName}成功`);
@@ -1745,6 +1875,7 @@
       setExportStatus("error", `导出状态：${taskName}失败`);
       showToast((err && err.message) ? err.message : `${taskName}导出失败，请重试。`);
     }finally{
+      setExportRendering(false);
       exportBusy = false;
       setExportButtonsDisabled(false);
     }
@@ -2963,6 +3094,9 @@
       throw new Error("html2canvas not loaded");
     }
     syncPreviewAspect(spec);
+    if(frameEl === letterFrame){
+      syncExportCardCompensation(frameEl);
+    }
     await waitFontsReady();
     await waitNextFrame();
     await waitImagesReady(frameEl);
@@ -3036,40 +3170,131 @@
     renderPreview();
   }
 
+  async function readRenderErrorMessage(res){
+    try{
+      const json = await res.json();
+      if(json && typeof json.message === "string" && json.message.trim()){
+        return json.message.trim();
+      }
+      if(json && typeof json.error === "string" && json.error.trim()){
+        return json.error.trim();
+      }
+      return "";
+    }catch(_){
+      try{
+        return (await res.text()).trim();
+      }catch(_2){
+        return "";
+      }
+    }
+  }
+
+  async function requestPlaywrightShotBlob({
+    selector,
+    filename,
+    letter,
+    sizePresetOverride = "",
+    keepContentHeight = false,
+    viewport = { width: 1860, height: 2400 },
+    scale = 2,
+    waitMs = 180
+  }){
+    const sizePresetSel = $("sizePreset");
+    const spec = getExportSpec();
+    const resolvedSizePreset = (typeof sizePresetOverride === "string" && sizePresetOverride.trim())
+      ? sizePresetOverride.trim()
+      : (sizePresetSel ? sizePresetSel.value : `${spec.W}x${spec.H}`);
+    const payload = buildProgressData();
+    if(letter){
+      payload.current = letter;
+    }
+    const body = {
+      pagePath: "/generator-mvp.stability.html",
+      selector,
+      viewport,
+      scale,
+      timeoutMs: 90000,
+      waitMs,
+      filename,
+      payload,
+      options: {
+        sizePreset: resolvedSizePreset,
+        current: letter || payload.current || state.current,
+        exporting: true,
+        keepContentHeight: !!keepContentHeight,
+        waitMs
+      }
+    };
+    const res = await fetch("/api/render-shot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const detail = await readRenderErrorMessage(res);
+      throw new Error(detail ? `HTTP_${res.status} ${detail}` : `HTTP_${res.status}`);
+    }
+    const blob = await res.blob();
+    if(!blob || !blob.size){
+      throw new Error("Playwright 返回空文件。");
+    }
+    return blob;
+  }
+
+  function blobToImageEl(blob){
+    return new Promise((resolve, reject)=>{
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = ()=>{
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
+      img.onerror = ()=>{
+        URL.revokeObjectURL(url);
+        reject(new Error("图片解码失败"));
+      };
+      img.src = url;
+    });
+  }
+
   async function exportCoverPNG(){
     await runExportWithStatus("封面", async()=>{
       saveCurrentEdits();
-      if(!coverFrame){
-        throw new Error("封面预览节点不存在。");
-      }
-      const spec = getExportSpec();
-      const canvas = await captureFrameCanvas(coverFrame, spec, { maxScale: COVER_CAPTURE_MAX_SCALE });
-      downloadCanvas(canvas, `${safeTitle()}-00-Cover.png`);
-      showToast("已开始下载封面 PNG。");
+      const filename = `${safeTitle()}-00-Cover.png`;
+      const blob = await requestPlaywrightShotBlob({
+        selector: "#coverFrame",
+        filename,
+        keepContentHeight: false,
+        viewport: { width: 1860, height: 1400 },
+        scale: 2,
+        waitMs: 180
+      });
+      downloadBlob(blob, filename);
+      showToast("已开始下载封面 PNG（Playwright）。");
     });
   }
 
   async function exportLetterPNG(letter){
     await runExportWithStatus("当前字母卡片", async()=>{
       saveCurrentEdits();
-      if(!letterFrame){
-        throw new Error("字母卡片预览节点不存在。");
-      }
-      const prev = state.current;
-      try{
-        if(letter !== prev){
-          switchCurrentLetter(letter);
-        }
-        const spec = getExportSpec();
-        const canvas = await captureFrameCanvas(letterFrame, spec, { keepContentHeight: true });
-        downloadCanvas(canvas, `${safeTitle()}-${letter}.png`);
-        showToast("已开始下载当前字母 PNG。");
-      }finally{
-        if(prev !== state.current){
-          switchCurrentLetter(prev);
-        }
-      }
+      const targetLetter = normalizeLetter(letter || state.current) || state.current;
+      const filename = `${safeTitle()}-${targetLetter}.png`;
+      const blob = await requestPlaywrightShotBlob({
+        selector: "#letterFrame",
+        filename,
+        letter: targetLetter,
+        keepContentHeight: true,
+        viewport: { width: 1860, height: 2600 },
+        scale: 2,
+        waitMs: 220
+      });
+      downloadBlob(blob, filename);
+      showToast("已开始下载当前字母 PNG（Playwright）。");
     });
+  }
+
+  async function exportLetterByPlaywright(letter){
+    await exportLetterPNG(letter);
   }
 
   async function exportZip(){
@@ -3078,136 +3303,123 @@
       if(typeof JSZip === "undefined"){
         throw new Error("JSZip 未加载，无法导出 ZIP。");
       }
-      if(typeof html2canvas === "undefined"){
-        throw new Error("html2canvas 未加载，无法导出 ZIP。");
-      }
-      if(!coverFrame || !letterFrame){
-        throw new Error("导出节点缺失。");
-      }
-
-      const spec = getExportSpec();
       const zip = new JSZip();
-      const prev = state.current;
-      showToast("正在按预览样式打包封面+26字母，请稍候...");
-      try{
-        const coverCanvas = await captureFrameCanvas(coverFrame, spec);
-        zip.file(`${safeTitle()}-00-Cover.png`, await canvasToBlob(coverCanvas));
+      const totalShots = letters.length + 1;
+      let doneShots = 0;
+      showToast("正在使用 Playwright 打包封面+26字母，请稍候...");
+      setExportProgress("ZIP 打包", doneShots, totalShots);
 
-        for(let i=0;i<letters.length;i++){
-          const L = letters[i];
-          switchCurrentLetter(L);
-          const letterCanvas = await captureFrameCanvas(letterFrame, spec, { keepContentHeight: true });
-          zip.file(`${safeTitle()}-${String(i+1).padStart(2,"0")}-${L}.png`, await canvasToBlob(letterCanvas));
-        }
+      const coverName = `${safeTitle()}-00-Cover.png`;
+      const coverBlob = await requestPlaywrightShotBlob({
+        selector: "#coverFrame",
+        filename: coverName,
+        keepContentHeight: false,
+        viewport: { width: 1860, height: 1400 },
+        scale: 2,
+        waitMs: 180
+      });
+      zip.file(coverName, coverBlob);
+      doneShots += 1;
+      setExportProgress("ZIP 打包", doneShots, totalShots);
 
-        const blob = await zip.generateAsync({type:"blob", compression:"DEFLATE", compressionOptions:{level:6}});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${safeTitle()}-Cover+26Letters.zip`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        showToast("ZIP 导出完成（与预览一致）。");
-      }finally{
-        switchCurrentLetter(prev);
+      for(let i=0;i<letters.length;i++){
+        const L = letters[i];
+        const name = `${safeTitle()}-${String(i+1).padStart(2,"0")}-${L}.png`;
+        const letterBlob = await requestPlaywrightShotBlob({
+          selector: "#letterFrame",
+          filename: name,
+          letter: L,
+          keepContentHeight: true,
+          viewport: { width: 1860, height: 2600 },
+          scale: 2,
+          waitMs: 220
+        });
+        zip.file(name, letterBlob);
+        doneShots += 1;
+        setExportProgress("ZIP 打包", doneShots, totalShots);
       }
+
+      setExportProgress("ZIP 打包", doneShots, totalShots, "正在压缩");
+      const zipBlob = await zip.generateAsync({type:"blob", compression:"DEFLATE", compressionOptions:{level:6}});
+      downloadBlob(zipBlob, `${safeTitle()}-Cover+26Letters.zip`);
+      showToast("ZIP 导出完成（Playwright）。");
     });
   }
 
   async function exportLongPNG(){
     await runExportWithStatus("正文长图", async()=>{
       saveCurrentEdits();
-      if(typeof html2canvas === "undefined"){
-        throw new Error("html2canvas 未加载，无法导出长图。");
-      }
-      if(!coverFrame || !letterFrame){
-        throw new Error("导出节点缺失。");
-      }
+      const totalShots = letters.length + 1;
+      let doneShots = 0;
+      showToast("正在使用 Playwright 生成正文长图，请稍候...");
+      setExportProgress("正文长图", doneShots, totalShots);
 
-      const baseSpec = getExportSpec();
-      const coverSpec = (() => {
-        const w = Math.max(baseSpec.W, baseSpec.H);
-        let h = Math.min(baseSpec.W, baseSpec.H);
-        if(h >= w){
-          h = Math.max(1, Math.round(w * 9 / 16));
-        }
-        return {...baseSpec, W:w, H:h};
-      })();
-      const cardSpec = (() => {
-        const w = Math.min(baseSpec.W, baseSpec.H);
-        let h = Math.max(baseSpec.W, baseSpec.H);
-        if(w >= h){
-          h = Math.max(w + 1, Math.round(w * 16 / 9));
-        }
-        return {...baseSpec, W:w, H:h};
-      })();
-      const captureCardOnlyCanvas = async (letter) => {
-        switchCurrentLetter(letter);
-        syncPreviewAspect(cardSpec);
-        await waitNextFrame();
-        const cardEl = letterFrame.querySelector(".az-letter-page__card");
-        if(!cardEl){
-          throw new Error("未找到正文文本框节点。");
-        }
-        await waitImagesReady(cardEl);
-        await waitNextFrame();
-        const frameRect = letterFrame.getBoundingClientRect();
-        const frameW = Math.max(1, frameRect.width);
-        const targetScale = Math.max(1, cardSpec.W / frameW);
-        return await html2canvas(cardEl, {
-          backgroundColor: null,
-          useCORS: true,
-          scale: targetScale
+      const coverBlob = await requestPlaywrightShotBlob({
+        selector: "#coverFrame",
+        filename: `${safeTitle()}-00-Cover-long.png`,
+        sizePresetOverride: "1920x1080",
+        keepContentHeight: false,
+        viewport: { width: 1860, height: 1400 },
+        scale: 2,
+        waitMs: 180
+      });
+      const coverImg = await blobToImageEl(coverBlob);
+      doneShots += 1;
+      setExportProgress("正文长图", doneShots, totalShots);
+      const letterImgs = [];
+      for(let i=0;i<letters.length;i++){
+        const L = letters[i];
+        const blob = await requestPlaywrightShotBlob({
+          selector: "#letterFrame",
+          filename: `${safeTitle()}-${L}-long.png`,
+          letter: L,
+          keepContentHeight: true,
+          viewport: { width: 1860, height: 2600 },
+          scale: 2,
+          waitMs: 220
         });
-      };
-
-      const prev = state.current;
-      try{
-        const coverCanvas = await captureFrameCanvas(coverFrame, coverSpec, { maxScale: COVER_CAPTURE_MAX_SCALE });
-        await waitFontsReady();
-
-        const cards = [];
-        for(let i=0;i<letters.length;i++){
-          cards.push(await captureCardOnlyCanvas(letters[i]));
-        }
-
-        const MAX_CANVAS_SIDE = 30000;
-        // Cover is scaled to match card width.
-        const cardWRaw = cards.reduce((m, c)=> Math.max(m, c.width || 1), 1);
-        const coverWRaw = cardWRaw;
-        const coverHRaw = Math.max(1, Math.round(coverSpec.H * (coverWRaw / Math.max(1, coverSpec.W))));
-        const cardsHRaw = cards.reduce((sum, c)=> sum + (c.height || 1), 0);
-        const rawW = cardWRaw;
-        const rawH = coverHRaw + cardsHRaw;
-        const shrink = Math.max(rawW / MAX_CANVAS_SIDE, rawH / MAX_CANVAS_SIDE, 1);
-        const outW = Math.max(1, Math.round(rawW / shrink));
-        const coverH = Math.max(1, Math.round(coverHRaw / shrink));
-        const outH = Math.max(1, Math.round(rawH / shrink));
-
-        const out = document.createElement("canvas");
-        out.width = outW;
-        out.height = outH;
-        const octx = out.getContext("2d");
-        octx.fillStyle = state.vars["--bg"] || "#0b0f14";
-        octx.fillRect(0, 0, outW, outH);
-
-        const coverW = outW;
-        const coverX = 0;
-        octx.drawImage(coverCanvas, coverX, 0, coverW, coverH);
-
-        let yy = coverH;
-        cards.forEach((c, i)=>{
-          const cardH = Math.max(1, Math.round((c.height || 1) / shrink));
-          octx.drawImage(c, 0, yy, outW, cardH);
-          yy += cardH;
-        });
-        downloadCanvas(out, `${safeTitle()}-LongBody.png`);
-        showToast("已开始下载正文长图 PNG（仅文本框 + 文字纵向拼接）。");
-      }finally{
-        switchCurrentLetter(prev);
+        letterImgs.push(await blobToImageEl(blob));
+        doneShots += 1;
+        setExportProgress("正文长图", doneShots, totalShots);
       }
+
+      setExportProgress("正文长图", doneShots, totalShots, "正在拼接");
+      const MAX_CANVAS_SIDE = 30000;
+      const cardWRaw = letterImgs.reduce((m, img)=> Math.max(m, (img.naturalWidth || img.width || 1)), 1);
+      const coverWRaw = cardWRaw;
+      const coverSrcW = Math.max(1, coverImg.naturalWidth || coverImg.width || 1);
+      const coverSrcH = Math.max(1, coverImg.naturalHeight || coverImg.height || 1);
+      const coverHRaw = Math.max(1, Math.round(coverSrcH * (coverWRaw / coverSrcW)));
+      const cardHRawList = letterImgs.map((img)=>{
+        const iw = Math.max(1, img.naturalWidth || img.width || 1);
+        const ih = Math.max(1, img.naturalHeight || img.height || 1);
+        return Math.max(1, Math.round(ih * (cardWRaw / iw)));
+      });
+      const cardsHRaw = cardHRawList.reduce((sum, h)=> sum + h, 0);
+      const rawW = cardWRaw;
+      const rawH = coverHRaw + cardsHRaw;
+      const shrink = Math.max(rawW / MAX_CANVAS_SIDE, rawH / MAX_CANVAS_SIDE, 1);
+      const outW = Math.max(1, Math.round(rawW / shrink));
+      const coverH = Math.max(1, Math.round(coverHRaw / shrink));
+      const outH = Math.max(1, Math.round(rawH / shrink));
+
+      const out = document.createElement("canvas");
+      out.width = outW;
+      out.height = outH;
+      const octx = out.getContext("2d");
+      octx.fillStyle = state.vars["--bg"] || "#0b0f14";
+      octx.fillRect(0, 0, outW, outH);
+      octx.drawImage(coverImg, 0, 0, outW, coverH);
+
+      let yy = coverH;
+      for(let i=0;i<letterImgs.length;i++){
+        const img = letterImgs[i];
+        const h = Math.max(1, Math.round(cardHRawList[i] / shrink));
+        octx.drawImage(img, 0, yy, outW, h);
+        yy += h;
+      }
+      downloadCanvas(out, `${safeTitle()}-LongBody.png`);
+      showToast("已开始下载正文长图 PNG（Playwright）。");
     });
   }
 
@@ -3287,6 +3499,9 @@
     state.aiKeywords = typeof p.aiKeywords === "string" ? p.aiKeywords : "";
     state.aiStyleHint = typeof p.aiStyleHint === "string" ? p.aiStyleHint : "";
 
+    if(previewScope){
+      previewScope.setAttribute("data-theme", state.theme);
+    }
     $("themeSelect").value = state.theme;
     $("projectTitle").value = p.projectTitle || "";
     $("projectAuthor").value = p.projectAuthor || "";
@@ -3310,7 +3525,9 @@
     renderAZ();
     loadCurrentEdits();
     renderPreview();
-    showToast(successMsg || "已载入进度。");
+    if(successMsg !== "__silent__"){
+      showToast(successMsg || "已载入进度。");
+    }
     return true;
   }
 
@@ -3655,6 +3872,11 @@
   $("exportOneBtn").addEventListener("click", ()=>{
     exportLetterPNG(state.current);
   });
+  if(exportOnePwBtn){
+    exportOnePwBtn.addEventListener("click", ()=>{
+      exportLetterByPlaywright(state.current);
+    });
+  }
   $("exportZipBtn").addEventListener("click", exportZip);
   $("exportLongBtn").addEventListener("click", exportLongPNG);
 
@@ -3673,6 +3895,54 @@
       closeIntro();
     });
   }
+
+  // Playwright/Puppeteer test bridge:
+  // server can inject payload and re-render deterministic preview before screenshot.
+  window.__AZ_TEST_SET_STATE = async function(request){
+    const prevSuppress = !!window.__AZ_SUPPRESS_TOAST;
+    window.__AZ_SUPPRESS_TOAST = true;
+    try{
+      // Headless screenshot runs in a fresh context; force-close intro overlay
+      // so the semi-transparent mask won't darken exported images.
+      safeWriteLocal(INTRO_SEEN_KEY, "1");
+      closeIntro();
+      const packet = request && typeof request === "object" ? request : {};
+      const progressRaw = packet.progress && typeof packet.progress === "object" ? packet.progress : packet;
+      const options = packet.options && typeof packet.options === "object" ? packet.options : {};
+      const normalized = normalizeProgressPayload(progressRaw);
+      if(normalized && typeof normalized === "object"){
+        applyProgressData(normalized, "__silent__");
+      }
+      if(typeof options.sizePreset === "string"){
+        const sizeSel = $("sizePreset");
+        if(sizeSel && Array.from(sizeSel.options).some((opt)=> opt.value === options.sizePreset)){
+          sizeSel.value = options.sizePreset;
+          syncPreviewAspect();
+          renderPreview();
+        }
+      }
+      if(typeof options.current === "string"){
+        const L = normalizeLetter(options.current);
+        if(L){
+          switchCurrentLetter(L);
+        }
+      }
+      setExportRendering(!!options.exporting, letterFrame, {
+        keepContentHeight: !!options.keepContentHeight
+      });
+      const waitMs = Math.max(0, Math.min(3000, Number(options.waitMs) || 120));
+      if(waitMs > 0){
+        await new Promise((resolve)=> setTimeout(resolve, waitMs));
+      }
+      await waitFontsReady();
+      await waitNextFrame();
+      return { ok: true, current: state.current, theme: state.theme };
+    }catch(err){
+      return { ok: false, error: String(err && err.message ? err.message : err) };
+    }finally{
+      window.__AZ_SUPPRESS_TOAST = prevSuppress;
+    }
+  };
 
   window.addEventListener("beforeunload", ()=>{
     revokeObjectUrl("coverBgImageObjectUrl");
