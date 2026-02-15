@@ -613,6 +613,13 @@
     }
     #previewScope .az-cover__image-preview{
       opacity: var(--custom-cover-image-opacity, 1);
+      border-radius: var(--custom-cover-image-radius, var(--radius-card)) !important;
+    }
+    #previewScope .az-cover__image{
+      border-radius: var(--custom-cover-image-radius, var(--radius-card)) !important;
+    }
+    #previewScope .az-cover__image::before{
+      border-radius: var(--custom-cover-image-radius, var(--radius-card)) !important;
     }
     #previewScope .az-body-page-watermark__input{
       color: var(--custom-meta-color, var(--color-text-secondary)) !important;
@@ -668,7 +675,7 @@
     }
     #previewScope .az-cover__image,
     #previewScope .az-cover__image-preview{
-      border-radius: 0 !important;
+      border-radius: var(--custom-cover-image-radius, var(--radius-card)) !important;
     }
     #previewScope .az-export-frame--cover{
       border: none !important;
@@ -1339,6 +1346,13 @@
                 </div>
                 <input type="range" id="coverImageOpacity" min="0" max="100" value="100" />
               </div>
+              <div class="control">
+                <div>
+                  <div style="font-size:12px;color:var(--muted)">头图圆角</div>
+                  <div style="font-size:12px;opacity:.9" id="coverImageRadiusLabel">0px</div>
+                </div>
+                <input type="range" id="coverImageRadius" min="0" max="80" value="0" />
+              </div>
 
               <div style="height:12px"></div>
               <div class="panelGroupTitle">卡片精细控制</div>
@@ -1802,6 +1816,8 @@
   const coverAuthorSizeLabel = $("coverAuthorSizeLabel");
   const coverImageOpacity = $("coverImageOpacity");
   const coverImageOpacityLabel = $("coverImageOpacityLabel");
+  const coverImageRadius = $("coverImageRadius");
+  const coverImageRadiusLabel = $("coverImageRadiusLabel");
   const metaColor = $("metaColor");
   const metaSize = $("metaSize");
   const metaSizeLabel = $("metaSizeLabel");
@@ -2276,6 +2292,7 @@
     "--custom-cover-author-color",
     "--custom-cover-author-size",
     "--custom-cover-image-opacity",
+    "--custom-cover-image-radius",
     "--custom-meta-color",
     "--custom-meta-size",
     "--custom-card-box-color",
@@ -2335,6 +2352,17 @@
 
     const opFromState = !resetToTheme ? parseFloat(state.vars["--custom-cover-image-opacity"]) : NaN;
     const coverOpacityVal = clampNumber(Math.round((Number.isFinite(opFromState) ? opFromState : 1) * 100), 0, 100);
+    const coverImageRadiusState = !resetToTheme ? parseInt(state.vars["--custom-cover-image-radius"], 10) : NaN;
+    const coverImageRadiusCss = coverImagePreview
+      ? Math.round(cssLengthToPx(getComputedStyle(coverImagePreview).borderTopLeftRadius, 0))
+      : NaN;
+    const coverImageRadiusVal = clampNumber(
+      Number.isFinite(coverImageRadiusState)
+        ? coverImageRadiusState
+        : (Number.isFinite(coverImageRadiusCss) ? coverImageRadiusCss : 0),
+      0,
+      80
+    );
     const boxOpFromState = !resetToTheme ? parseFloat(state.vars["--custom-card-box-opacity"]) : NaN;
     const boxOpacityVal = clampNumber(Math.round((Number.isFinite(boxOpFromState) ? boxOpFromState : 1) * 100), 0, 100);
     const cardEl = pvCardWrap ? pvCardWrap.querySelector(".az-letter-page__card") : null;
@@ -2368,6 +2396,7 @@
     bodySize.value = `${transSizeVal}`;
     bodySizeFine.value = `${bodySizeVal}`;
     coverImageOpacity.value = `${coverOpacityVal}`;
+    coverImageRadius.value = `${coverImageRadiusVal}`;
     cardBoxOpacity.value = `${boxOpacityVal}`;
     radius.value = `${cardRadiusVal}`;
 
@@ -2380,6 +2409,7 @@
     bodySizeLabel.textContent = `${transSizeVal}px`;
     bodySizeFineLabel.textContent = `${bodySizeVal}px`;
     coverImageOpacityLabel.textContent = `${coverOpacityVal}%`;
+    coverImageRadiusLabel.textContent = `${coverImageRadiusVal}px`;
     cardBoxOpacityLabel.textContent = `${boxOpacityVal}%`;
     radiusLabel.textContent = `${cardRadiusVal}px`;
 
@@ -2392,6 +2422,7 @@
     setVar("--custom-cover-author-color", coverAuthorColorVal);
     setVar("--custom-cover-author-size", `${authorSizeVal}px`);
     setVar("--custom-cover-image-opacity", `${coverOpacityVal / 100}`);
+    setVar("--custom-cover-image-radius", `${coverImageRadiusVal}px`);
     setVar("--custom-meta-color", metaColorVal);
     setVar("--custom-meta-size", `${metaSizeVal}px`);
     setVar("--custom-card-box-color", boxColorVal);
@@ -4237,6 +4268,10 @@
   coverImageOpacity.addEventListener("input", ()=>{
     coverImageOpacityLabel.textContent = `${coverImageOpacity.value}%`;
     setVar("--custom-cover-image-opacity", `${(Number(coverImageOpacity.value) || 0) / 100}`);
+  });
+  coverImageRadius.addEventListener("input", ()=>{
+    coverImageRadiusLabel.textContent = `${coverImageRadius.value}px`;
+    setVar("--custom-cover-image-radius", `${coverImageRadius.value}px`);
   });
   const syncCardBoxFill = ()=>{
     const alpha = (Number(cardBoxOpacity.value) || 0) / 100;

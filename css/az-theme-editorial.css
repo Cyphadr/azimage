@@ -117,7 +117,7 @@
   height: 100%;
   background: #000;
   z-index: -1;
-  border-radius: 0;
+  border-radius: var(--custom-cover-image-radius, var(--radius-card));
 }
 [data-theme="editorial"] .az-cover__image-preview {
   position: relative;
